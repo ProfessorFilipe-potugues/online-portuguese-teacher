@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Professor de Português Online</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f4f6f8;
+      color: #333;
+    }
+    header {
+      background: #0d6efd;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    section {
+      padding: 30px;
+      max-width: 900px;
+      margin: auto;
+    }
+    .btn {
+      display: inline-block;
+      margin: 10px 5px;
+      padding: 12px 20px;
+      background: #0d6efd;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+    .btn:hover {
+      background: #084298;
+    }
+    footer {
+      background: #222;
+      color: #ccc;
+      text-align: center;
+      padding: 15px;
+    }
+    .lang {
+      margin-top: 40px;
+      border-top: 1px solid #ddd;
+      padding-top: 30px;
+    }
+    .chat {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #25d366;
+      color: white;
+      padding: 15px 18px;
+      border-radius: 50%;
+      font-size: 22px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Professor de Português Online</h1>
+  <p>Aulas particulares • Preparação para o CIPLE • Online</p>
+</header>
+
+<section>
+  <h2>🇵🇹 Português</h2>
+  <p>
+    Ofereço aulas de português para estrangeiros, iniciantes e avançados.
+    Preparação completa para o exame <strong>CIPLE</strong>.
+  </p>
+
+  <p><strong>Preços:</strong></p>
+  <ul>
+    <li>Aula experimental: <strong>5 USD</strong></li>
+    <li>Aula individual: <strong>10 USD / hora</strong></li>
+    <li>Pacotes mensais com desconto</li>
+  </ul>
+
+  <a class="btn" href="login.html">Criar conta / Entrar</a>
+  <a class="btn" href="pricing.html">Ver Pacotes</a>
+
+  <div class="lang">
+    <h2>🇬🇧 English</h2>
+    <p>
+      I offer online Portuguese lessons for foreigners.
+      Full preparation for the <strong>CIPLE exam</strong>.
+    </p>
+
+    <p><strong>Prices:</strong></p>
+    <ul>
+      <li>Trial lesson: <strong>$5</strong></li>
+      <li>Private lesson: <strong>$10 / hour</strong></li>
+      <li>Discounted monthly packages</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  © 2026 • Professor de Português Online
+</footer>
+
+<a class="chat" href="https://wa.me/258000000000" target="_blank">💬</a>
+
+<!-- 🔥 FIREBASE – FORMA CORRETA PARA NETLIFY -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
+    authDomain: "portuguese-teacher-platf-68bc5.firebaseapp.com",
+    projectId: "portuguese-teacher-platf-68bc5",
+    storageBucket: "portuguese-teacher-platf-68bc5.firebasestorage.app",
+    messagingSenderId: "653549982098",
+    appId: "1:653549982098:web:42bba4cc75ca56bc69314b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+
+  console.log("🔥 Firebase conectado com sucesso!");
+</script>
+
+</body>
+</html>
