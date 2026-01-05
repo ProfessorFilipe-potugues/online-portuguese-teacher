@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Preços - Professor de Português Online</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; padding: 30px; background: #f4f6f8; color: #333; }
+    .profile { text-align: center; margin-bottom: 30px; }
+    .profile img { border-radius: 50%; width: 150px; }
+    h1 { color: #0d6efd; }
+    .price { font-size: 28px; margin: 20px 0; }
+    .discount { color: red; text-decoration: line-through; font-size: 20px; margin-left: 10px; }
+    .btn { display: block; margin: 20px auto; padding: 12px 25px; background: #0d6efd; color: white; text-decoration: none; border-radius: 5px; width: 200px; text-align: center; }
+    .btn:hover { background: #084298; }
+    .description { max-width: 600px; margin: auto; }
+  </style>
+</head>
+<body>
+
+<div class="profile">
+  <img src="https://via.placeholder.com/150" alt="Filipe Monteiro">
+  <h1>Filipe Monteiro</h1>
+  <p>Professor de Português Online</p>
+  <div class="price">
+    $10 <span class="discount">10</span> (Preço Normal)
+  </div>
+</div>
+
+<div class="description">
+  <p>Aulas para crianças e adultos, focadas em conversação e prática real do Português.  
+  Objetivos do aluno: negócios, viagens, hobbies ou preparação para exames CIPLE, DIPLE e DEPLE.  
+  Tenha aulas divertidas e interativas!</p>
+</div>
+
+<a class="btn" href="login.html">Criar Conta / Entrar</a>
+
+<!-- PayPal Button -->
+<div id="paypal-button-container"></div>
+
+<script src="https://www.paypal.com/sdk/js?client-id=TEU_CLIENT_ID_AQUI&currency=USD"></script>
+<script>
+paypal.Buttons({
+  createOrder: function(data, actions) {
+    return actions.order.create({
+      purchase_units: [{
+        amount: { value: '10.00' },
+        description: "Aula de Português Online"
+      }]
+    });
+  },
+  onApprove: function(data, actions) {
+    return actions.order.capture().then(function(details) {
+      alert("Pagamento realizado com sucesso! Obrigado, " + details.payer.name.given_name);
+      window.location.href = "dashboard.html";
+    });
+  }
+}).render('#paypal-button-container');
+</script>
+
+</body>
+</html>
