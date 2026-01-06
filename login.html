@@ -4,65 +4,142 @@
   <meta charset="UTF-8">
   <title>Login - Professor de Português Online</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
-    body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f4f6f8; }
-    .login-container { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); width: 350px; }
-    input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; }
-    button { width: 100%; padding: 12px; background: #0d6efd; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; }
-    button:hover { background: #084298; }
-    .switch { text-align: center; margin-top: 15px; }
-    .switch a { color: #0d6efd; text-decoration: none; }
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f4f6f8;
+    }
+
+    .login-container {
+      background: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      width: 350px;
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #0d6efd;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button.secondary {
+      background: #198754;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    a {
+      display: block;
+      margin-top: 15px;
+      color: #0d6efd;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
 
 <div class="login-container">
   <h2>Login / Criar Conta</h2>
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Senha">
-  <button id="login-btn">Entrar</button>
-  <button id="signup-btn">Criar Conta</button>
-  <div class="switch">
-    <a href="pricing.html">Voltar para Preços</a>
-  </div>
+
+  <input type="email" id="email" placeholder="Email" required>
+  <input type="password" id="password" placeholder="Senha" required>
+
+  <button id="loginBtn">Entrar</button>
+  <button id="signupBtn" class="secondary">Criar Conta</button>
+
+  <a href="pricing.html">Voltar para Preços</a>
 </div>
 
-<!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import {
+    getAuth,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import {
+    getFirestore,
+    doc,
+    setDoc
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
   const firebaseConfig = {
-    apiKey: "SUA_API_KEY",
-    authDomain: "SEU_PROJECT.firebaseapp.com",
-    projectId: "SEU_PROJECT",
-    storageBucket: "SEU_PROJECT.appspot.com",
-    messagingSenderId: "SUA_MESSAGING_ID",
-    appId: "SEU_APP_ID"
+    apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
+    authDomain: "portuguese-teacher-platf-68bc5.firebaseapp.com",
+    projectId: "portuguese-teacher-platf-68bc5",
+    storageBucket: "portuguese-teacher-platf-68bc5.appspot.com",
+    messagingSenderId: "653549982098",
+    appId: "1:653549982098:web:42bba4cc75ca56bc69314b"
   };
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+  const db = getFirestore(app);
 
-  const form = document.getElementById("loginForm");
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
 
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const email = form.email.value;
-    const password = form.password.value;
-
-    if (form.dataset.action === "signup") {
-      createUserWithEmailAndPassword(auth, email, password)
-        .then(userCredential => alert("Conta criada com sucesso!"))
-        .catch(error => alert(error.message));
-    } else {
-      signInWithEmailAndPassword(auth, email, password)
-        .then(userCredential => alert("Login realizado!"))
-        .catch(error => alert(error.message));
+  // LOGIN
+  document.getElementById("loginBtn").onclick = async () => {
+    try {
+      await signInWithEmailAndPassword(
+        auth,
+        emailInput.value,
+        passwordInput.value
+      );
+      window.location.href = "dashboard.html";
+    } catch (err) {
+      alert(err.message);
     }
-  });
-</script>
+  };
 
+  // CRIAR CONTA
+  document.getElementById("signupBtn").onclick = async () => {
+    try {
+      const cred = await createUserWithEmailAndPassword(
+        auth,
+        emailInput.value,
+        passwordInput.value
+      );
+
+      // cria documento no Firestore
+      await setDoc(doc(db, "users", cred.user.uid), {
+        email: cred.user.email,
+        balance: 0,
+        role: "student",
+        createdAt: new Date()
+      });
+
+      window.location.href = "dashboard.html";
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+</script>
 
 </body>
 </html>
