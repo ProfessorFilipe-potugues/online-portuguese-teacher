@@ -73,6 +73,10 @@
       margin-top: 20px;
     }
 
+    .experience ul {
+      padding-left: 20px;
+    }
+
     /* DIREITA */
     .right-panel {
       flex: 2 1 500px;
@@ -114,7 +118,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      margin-top: 30px;
+      margin: 30px auto;
     }
 
     .gallery img {
@@ -122,9 +126,52 @@
       border-radius: 10px;
     }
 
+    /* OBJETIVOS DOS ESTUDANTES */
+    .student-goals {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      margin: 30px auto;
+      max-width: 1000px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .student-goals h2 {
+      text-align: center;
+      color: #0d6efd;
+      margin-bottom: 20px;
+    }
+
+    .goals-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .goal-card {
+      background: #e7f0ff;
+      color: #0d3c91;
+      padding: 15px 20px;
+      border-radius: 10px;
+      flex: 1 1 200px;
+      text-align: center;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .goal-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
     @media(max-width: 900px){
       .container {
         flex-direction: column;
+      }
+      .goal-card {
+        flex: 1 1 100%;
       }
     }
 
@@ -192,12 +239,25 @@
 
 </div>
 
-<!-- GALERIA EMBAIXO -->
+<!-- GALERIA DO PROFESSOR -->
 <div class="gallery">
   <img src="filipe1.jpg" alt="Foto 1">
   <img src="filipe2.jpg" alt="Foto 2">
   <img src="filipe3.jpg" alt="Foto 3">
 </div>
+
+<!-- OBJETIVOS DOS ESTUDANTES -->
+<section class="student-goals">
+  <h2>Objetivos dos Estudantes</h2>
+  <div class="goals-container">
+    <div class="goal-card">Crianças / Iniciantes</div>
+    <div class="goal-card">Adultos / Conversação</div>
+    <div class="goal-card">Negócios / Profissional</div>
+    <div class="goal-card">Viagens</div>
+    <div class="goal-card">Hobbies & Conversação</div>
+    <div class="goal-card">Preparação para Exames: CIPLE, DIPLE, DEPLE</div>
+  </div>
+</section>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -243,9 +303,9 @@
     signOut(auth).then(()=> window.location.href="login.html");
   };
 
-  // BOTÃO MARCAR AULA (direcionar para PayPal/cartão)
+  // BOTÃO MARCAR AULA
   document.getElementById("book-class").onclick = () => {
-    // Aqui você pode colocar o link do pagamento real do PayPal
+    // Temporário: substituir pelo PayPal/cartão real depois
     window.location.href = "https://www.paypal.com/checkoutnow?token=SEU_TOKEN_AQUI";
   };
 
