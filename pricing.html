@@ -2,51 +2,73 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <title>Preços - Professor de Português Online</title>
+  <title>Preços</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
-    body { font-family: Arial, sans-serif; padding: 30px; background: #f4f6f8; color: #333; }
-    .profile { text-align: center; margin-bottom: 30px; }
-    .profile img { border-radius: 50%; width: 150px; }
-    h1 { color: #0d6efd; }
-    .price { font-size: 28px; margin: 20px 0; }
-    .discount { color: red; text-decoration: line-through; font-size: 20px; margin-left: 10px; }
-    .btn { display: block; margin: 20px auto; padding: 12px 25px; background: #0d6efd; color: white; text-decoration: none; border-radius: 5px; width: 200px; text-align: center; }
-    .btn:hover { background: #084298; }
-    .description { max-width: 600px; margin: auto; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      padding: 30px;
+      color: #333;
+    }
+
+    .card {
+      background: white;
+      max-width: 500px;
+      margin: auto;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,.1);
+      text-align: center;
+    }
+
+    img {
+      width: 120px;
+      border-radius: 50%;
+    }
+
+    h1 {
+      color: #0d6efd;
+    }
+
+    .price {
+      font-size: 32px;
+      margin: 20px 0;
+    }
+
+    .old {
+      text-decoration: line-through;
+      color: red;
+      font-size: 18px;
+      margin-left: 10px;
+    }
   </style>
 </head>
 <body>
 
-<div class="profile">
-  <img src="filipe.jpg" alt="Filipe Monteiro">
+<div class="card">
+  <img src="filipe.jpg" alt="Filipe">
   <h1>Filipe Monteiro</h1>
   <p>Professor de Português Online</p>
+
   <div class="price">
-    $10 <span class="discount">10</span>
+    $10 <span class="old">$15</span>
   </div>
+
+  <div id="paypal-button-container"></div>
 </div>
-
-<div class="description">
-  <p>Aulas para crianças e adultos, focadas em conversação.  
-  Objetivos: negócios, viagens, hobbies ou preparação para exames CIPLE, DIPLE, DEPLE.  
-  Tenha aulas divertidas e interativas!</p>
-</div>
-
-<a class="btn" href="login.html">Criar Conta / Entrar</a>
-
-<div id="paypal-button-container"></div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { getFirestore, doc, setDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
     authDomain: "portuguese-teacher-platf-68bc5.firebaseapp.com",
     projectId: "portuguese-teacher-platf-68bc5",
-    storageBucket: "portuguese-teacher-platf-68bc5.firebasestorage.app",
+    storageBucket: "portuguese-teacher-platf-68bc5.appspot.com",
     messagingSenderId: "653549982098",
     appId: "1:653549982098:web:42bba4cc75ca56bc69314b"
   };
@@ -55,42 +77,41 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  let currentUser = null;
-  onAuthStateChanged(auth, user => {
+  onAuthStateChanged(auth, (user) => {
     if (!user) {
-      alert("Faça login antes de pagar!");
       window.location.href = "login.html";
-    } else {
-      currentUser = user;
+      return;
     }
-  });
 
-  // PayPal
-  const PAYPAL_CLIENT_ID = "TEU_CLIENT_ID_AQUI"; // substitui pelo teu Client ID
-  const script = document.createElement("script");
-  script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=USD`;
-  script.onload = () => {
-    paypal.Buttons({
-      createOrder: (data, actions) => {
-        return actions.order.create({
-          purchase_units: [{
-            amount: { value: '10.00' },
-            description: "Aula de Português Online"
-          }]
-        });
-      },
-      onApprove: (data, actions) => {
-        return actions.order.capture().then(async details => {
-          alert(`Pagamento realizado com sucesso! Obrigado, ${details.payer.name.given_name}`);
-          // Atualiza saldo no Firebase
-          const userRef = doc(db, "users", currentUser.uid);
-          await updateDoc(userRef, { balance: increment(10) });
+    const PAYPAL_CLIENT_ID = "SUBSTITUI_PELO_TEU_CLIENT_ID";
+
+    const script = document.createElement("script");
+    script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=USD`;
+
+    script.onload = () => {
+      paypal.Buttons({
+        createOrder: (data, actions) => {
+          return actions.order.create({
+            purchase_units: [{
+              amount: { value: "10.00" },
+              description: "Aula de Português Online"
+            }]
+          });
+        },
+
+        onApprove: async (data, actions) => {
+          await actions.order.capture();
+
+          const ref = doc(db, "users", user.uid);
+          await setDoc(ref, { balance: increment(10) }, { merge: true });
+
           window.location.href = "dashboard.html";
-        });
-      }
-    }).render('#paypal-button-container');
-  };
-  document.body.appendChild(script);
+        }
+      }).render("#paypal-button-container");
+    };
+
+    document.body.appendChild(script);
+  });
 </script>
 
 </body>
