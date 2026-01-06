@@ -139,26 +139,39 @@
     .student-goals h2 {
       text-align: center;
       color: #0d6efd;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
     }
 
     .goals-container {
       display: flex;
       flex-wrap: wrap;
-      gap: 15px;
+      gap: 20px;
       justify-content: center;
     }
 
     .goal-card {
       background: #e7f0ff;
       color: #0d3c91;
-      padding: 15px 20px;
+      padding: 20px;
       border-radius: 10px;
-      flex: 1 1 200px;
-      text-align: center;
-      font-weight: bold;
+      flex: 1 1 250px;
+      text-align: left;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .goal-card h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .goal-card ul {
+      padding-left: 20px;
+    }
+
+    .goal-card li {
+      margin-bottom: 6px;
     }
 
     .goal-card:hover {
@@ -250,12 +263,43 @@
 <section class="student-goals">
   <h2>Objetivos dos Estudantes</h2>
   <div class="goals-container">
-    <div class="goal-card">Crianças / Iniciantes</div>
-    <div class="goal-card">Adultos / Conversação</div>
-    <div class="goal-card">Negócios / Profissional</div>
-    <div class="goal-card">Viagens</div>
-    <div class="goal-card">Hobbies & Conversação</div>
-    <div class="goal-card">Preparação para Exames: CIPLE, DIPLE, DEPLE</div>
+
+    <!-- Conversação / Gramática -->
+    <div class="goal-card">
+      <h3>Conversação / Gramática</h3>
+      <ul>
+        <li>Prática de diálogos e fluência</li>
+        <li>Reforço de estruturas gramaticais</li>
+      </ul>
+    </div>
+
+    <!-- Negócios / Profissionais -->
+    <div class="goal-card">
+      <h3>Negócios / Profissionais</h3>
+      <ul>
+        <li>Comunicação no ambiente de trabalho</li>
+        <li>Redação de e-mails, reuniões e apresentações</li>
+      </ul>
+    </div>
+
+    <!-- Viagens / Hobbies -->
+    <div class="goal-card">
+      <h3>Viagens / Hobbies</h3>
+      <ul>
+        <li>Frases e vocabulário para viajar ou lazer</li>
+        <li>Conversas sobre interesses pessoais</li>
+      </ul>
+    </div>
+
+    <!-- Preparação para Exames -->
+    <div class="goal-card">
+      <h3>Preparação para Exames</h3>
+      <ul>
+        <li>CIPLE, DIPLE, DEPLE</li>
+        <li>Treino de leitura, escrita, audição e oral</li>
+      </ul>
+    </div>
+
   </div>
 </section>
 
@@ -279,7 +323,6 @@
 
   let currentUser = null;
 
-  // LOGIN DO USUÁRIO
   onAuthStateChanged(auth, async (user) => {
     if(!user){
       window.location.href = "login.html";
@@ -287,10 +330,9 @@
     }
     currentUser = user;
 
-    // Cabeçalho com nome do estudante
     document.getElementById("welcome-header").innerText = `Bem-vindo, ${user.email}`;
 
-    // Buscar dados do Firestore se houver (opcional)
+    // Buscar dados do Firestore se houver
     const userDoc = await getDoc(doc(db, "users", user.uid));
     const data = userDoc.data();
     if(data && data.name){
@@ -298,17 +340,15 @@
     }
   });
 
-  // LOGOUT
   document.getElementById("logout").onclick = () => {
     signOut(auth).then(()=> window.location.href="login.html");
   };
 
-  // BOTÃO MARCAR AULA
+  // Botão temporário de aula experimental
   document.getElementById("book-class").onclick = () => {
-    // Temporário: substituir pelo PayPal/cartão real depois
+    // Link temporário do PayPal pessoal ou checkout real depois
     window.location.href = "https://www.paypal.com/checkoutnow?token=SEU_TOKEN_AQUI";
   };
-
 </script>
 
 </body>
