@@ -64,11 +64,12 @@ button:hover {
 .objectives button {
   background: #e7f0ff;
   color: #0d3c91;
-  margin: 8px 0;
+  margin: 6px 0;
 }
 
-.objectives button:hover {
-  background: #d0e0ff;
+.objectives button.active {
+  background: #0d6efd;
+  color: white;
 }
 </style>
 </head>
@@ -93,12 +94,15 @@ button:hover {
 
 <!-- STEP 3 -->
 <div class="step">
-  <p><strong>Objetivo principal</strong></p>
+  <p><strong>Objetivos</strong></p>
   <div class="objectives">
-    <button onclick="setObjective('Trabalho / Negócios')">Trabalho / Negócios</button>
-    <button onclick="setObjective('Viagens / Hobbies')">Viagens / Hobbies</button>
-    <button onclick="setObjective('Preparação para Exames')">Preparação para Exames</button>
+    <button type="button" onclick="toggleObjective(this,'Trabalho')">Trabalho</button>
+    <button type="button" onclick="toggleObjective(this,'Negócios')">Negócios</button>
+    <button type="button" onclick="toggleObjective(this,'Viagens')">Viagens</button>
+    <button type="button" onclick="toggleObjective(this,'Hobbies')">Hobbies</button>
+    <button type="button" onclick="toggleObjective(this,'Exames')">Exames</button>
   </div>
+  <button onclick="next()">Próximo</button>
 </div>
 
 <!-- STEP 4 -->
@@ -133,7 +137,7 @@ import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10
 const firebaseConfig = {
   apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
   authDomain: "portuguese-teacher-platf-68bc5.firebaseapp.com",
-  projectId: "portuguese-teacher-platf-68bc5",
+  projectId: "portuguese-teacher-platf-68bc5"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -141,23 +145,28 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 let step = 0;
-let objective = "";
+let objectives = [];
 
 const steps = document.querySelectorAll(".step");
 
-function next() {
+window.next = () => {
   steps[step].classList.remove("active");
   step++;
   steps[step].classList.add("active");
-}
+};
 
-window.setObjective = (val) => {
-  objective = val;
-  next();
+window.toggleObjective = (btn, value) => {
+  btn.classList.toggle("active");
+  if (objectives.includes(value)) {
+    objectives = objectives.filter(o => o !== value);
+  } else {
+    objectives.push(value);
+  }
 };
 
 window.finish = async () => {
-  const days = [...document.querySelectorAll("input[type=checkbox]:checked")].map(c => c.value);
+  const days = [...document.querySelectorAll("input[type=checkbox]:checked")]
+    .map(c => c.value);
 
   const user = auth.currentUser;
   if (!user) return alert("Utilizador não autenticado");
@@ -167,7 +176,7 @@ window.finish = async () => {
     name: name.value,
     birthplace: birthplace.value,
     languages: languages.value,
-    objective,
+    objectives: objectives,
     level: level.value,
     preferredDays: days,
     createdAt: new Date()
