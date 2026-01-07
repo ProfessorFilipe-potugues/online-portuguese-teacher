@@ -1,238 +1,180 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <title>Cadastro do Aluno - Português Online</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Cadastro do Aluno</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
 
-    .signup-container {
-      background: #fff;
-      border-radius: 15px;
-      padding: 40px;
-      max-width: 500px;
-      width: 90%;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    }
+.container {
+  background: #fff;
+  padding: 35px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
 
-    h2 {
-      text-align: center;
-      color: #0d6efd;
-      margin-bottom: 20px;
-    }
+h2 {
+  text-align: center;
+  color: #0d6efd;
+}
 
-    .step {
-      display: none;
-      animation: fadeIn 0.3s ease-in-out;
-    }
+.step {
+  display: none;
+}
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+.step.active {
+  display: block;
+}
 
-    input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-    }
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin: 12px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
 
-    .buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-    }
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #0d6efd;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+}
 
-    .buttons button {
-      padding: 12px 20px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      color: white;
-      background: #0d6efd;
-      transition: 0.3s;
-    }
+button:hover {
+  background: #084298;
+}
 
-    .buttons button:hover {
-      background: #084298;
-    }
+.objectives button {
+  background: #e7f0ff;
+  color: #0d3c91;
+  margin: 8px 0;
+}
 
-    .objectives button {
-      display: block;
-      width: 100%;
-      margin: 10px 0;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      color: white;
-      background: #198754;
-      transition: 0.3s;
-    }
-
-    .objectives button:hover {
-      background: #145c37;
-    }
-
-    .info {
-      margin-bottom: 15px;
-      font-size: 14px;
-      color: #555;
-    }
-  </style>
+.objectives button:hover {
+  background: #d0e0ff;
+}
+</style>
 </head>
+
 <body>
 
-<div class="signup-container">
-  <h2>Cadastro do Aluno</h2>
+<div class="container">
+<h2>Cadastro do Aluno</h2>
 
-  <!-- STEP 1: Nome -->
-  <div class="step" id="step-1">
-    <p class="info">Digite seu nome completo:</p>
-    <input type="text" id="student-name" placeholder="Nome completo">
-    <div class="buttons">
-      <button id="next-1">Próximo</button>
-    </div>
-  </div>
+<!-- STEP 1 -->
+<div class="step active">
+  <input id="name" placeholder="Nome completo">
+  <input id="birthplace" placeholder="Local de nascimento">
+  <button onclick="next()">Próximo</button>
+</div>
 
-  <!-- STEP 2: Local de nascimento -->
-  <div class="step" id="step-2">
-    <p class="info">Local de nascimento:</p>
-    <input type="text" id="student-place" placeholder="Cidade / País">
-    <div class="buttons">
-      <button id="prev-2">Voltar</button>
-      <button id="next-2">Próximo</button>
-    </div>
-  </div>
+<!-- STEP 2 -->
+<div class="step">
+  <input id="languages" placeholder="Idiomas que fala (ex: Inglês, Espanhol)">
+  <button onclick="next()">Próximo</button>
+</div>
 
-  <!-- STEP 3: Idiomas -->
-  <div class="step" id="step-3">
-    <p class="info">Qual idioma você fala?</p>
-    <input type="text" id="student-language" placeholder="Ex.: Inglês, Espanhol">
-    <div class="buttons">
-      <button id="prev-3">Voltar</button>
-      <button id="next-3">Próximo</button>
-    </div>
-  </div>
-
-  <!-- STEP 4: Objetivo -->
-  <div class="step" id="step-4">
-    <p class="info">Qual seu objetivo principal?</p>
-    <div class="objectives">
-      <button data-value="trabalho">Trabalho / Negócios</button>
-      <button data-value="viagens">Viagens / Lazer</button>
-      <button data-value="exames">Preparação para Exames</button>
-    </div>
-    <div class="buttons">
-      <button id="prev-4">Voltar</button>
-    </div>
-  </div>
-
-  <!-- STEP 5: Final -->
-  <div class="step" id="step-5">
-    <p class="info">Cadastro concluído! Clique em finalizar para acessar o dashboard.</p>
-    <div class="buttons">
-      <button id="finish">Finalizar</button>
-    </div>
+<!-- STEP 3 -->
+<div class="step">
+  <p><strong>Objetivo principal</strong></p>
+  <div class="objectives">
+    <button onclick="setObjective('Trabalho / Negócios')">Trabalho / Negócios</button>
+    <button onclick="setObjective('Viagens / Hobbies')">Viagens / Hobbies</button>
+    <button onclick="setObjective('Preparação para Exames')">Preparação para Exames</button>
   </div>
 </div>
 
+<!-- STEP 4 -->
+<div class="step">
+  <select id="level">
+    <option value="">Nível de Português</option>
+    <option>Iniciante</option>
+    <option>Intermediário</option>
+    <option>Avançado</option>
+  </select>
+  <button onclick="next()">Próximo</button>
+</div>
+
+<!-- STEP 5 -->
+<div class="step">
+  <p><strong>Dias preferidos</strong></p>
+  <label><input type="checkbox" value="Segunda"> Segunda</label><br>
+  <label><input type="checkbox" value="Terça"> Terça</label><br>
+  <label><input type="checkbox" value="Quarta"> Quarta</label><br>
+  <label><input type="checkbox" value="Quinta"> Quinta</label><br>
+  <label><input type="checkbox" value="Sexta"> Sexta</label><br><br>
+  <button onclick="finish()">Finalizar</button>
+</div>
+
+</div>
+
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
-    authDomain: "portuguese-teacher-platf-68bc5.firebaseapp.com",
-    projectId: "portuguese-teacher-platf-68bc5",
-    storageBucket: "portuguese-teacher-platf-68bc5.appspot.com",
-    messagingSenderId: "653549982098",
-    appId: "1:653549982098:web:42bba4cc75ca56bc69314b"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
+  authDomain: "portuguese-teacher-platf-68bc5.firebaseapp.com",
+  projectId: "portuguese-teacher-platf-68bc5",
+};
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-  let currentStep = 1;
-  const totalSteps = 5;
+let step = 0;
+let objective = "";
 
-  function showStep(step) {
-    for(let i=1; i<=totalSteps; i++){
-      document.getElementById(`step-${i}`).style.display = i === step ? 'block' : 'none';
-    }
-  }
+const steps = document.querySelectorAll(".step");
 
-  // Inicializa o primeiro passo
-  showStep(1);
+function next() {
+  steps[step].classList.remove("active");
+  step++;
+  steps[step].classList.add("active");
+}
 
-  // Navegação
-  document.getElementById("next-1").onclick = () => {
-    if(document.getElementById("student-name").value.trim() === "") return alert("Digite seu nome");
-    showStep(2);
-  };
-  document.getElementById("prev-2").onclick = () => showStep(1);
-  document.getElementById("next-2").onclick = () => {
-    if(document.getElementById("student-place").value.trim() === "") return alert("Digite seu local de nascimento");
-    showStep(3);
-  };
-  document.getElementById("prev-3").onclick = () => showStep(2);
-  document.getElementById("next-3").onclick = () => {
-    if(document.getElementById("student-language").value.trim() === "") return alert("Digite seu idioma");
-    showStep(4);
-  };
-  document.getElementById("prev-4").onclick = () => showStep(3);
+window.setObjective = (val) => {
+  objective = val;
+  next();
+};
 
-  let selectedObjective = "";
-  document.querySelectorAll(".objectives button").forEach(btn => {
-    btn.onclick = () => {
-      selectedObjective = btn.dataset.value;
-      showStep(5);
-    };
+window.finish = async () => {
+  const days = [...document.querySelectorAll("input[type=checkbox]:checked")].map(c => c.value);
+
+  const user = auth.currentUser;
+  if (!user) return alert("Utilizador não autenticado");
+
+  await setDoc(doc(db, "users", user.uid), {
+    role: "student",
+    name: name.value,
+    birthplace: birthplace.value,
+    languages: languages.value,
+    objective,
+    level: level.value,
+    preferredDays: days,
+    createdAt: new Date()
   });
 
-  document.getElementById("finish").onclick = async () => {
-    const email = prompt("Digite seu email para cadastro:");
-    const password = prompt("Digite sua senha:");
-
-    if(!email || !password) return alert("Email e senha são obrigatórios");
-
-    try {
-      const cred = await createUserWithEmailAndPassword(auth, email, password);
-
-      await setDoc(doc(db, "users", cred.user.uid), {
-        name: document.getElementById("student-name").value,
-        place: document.getElementById("student-place").value,
-        language: document.getElementById("student-language").value,
-        objective: selectedObjective,
-        role: "student",
-        balance: 0,
-        createdAt: new Date()
-      });
-
-      alert("Cadastro concluído!");
-      window.location.href = "dashboard-student.html";
-    } catch (err) {
-      alert(err.message);
-    }
-  };
+  window.location.href = "dashboard-student-modern.html";
+};
 </script>
 
 </body>
