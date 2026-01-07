@@ -4,15 +4,53 @@
   <meta charset="UTF-8">
   <title>Login - Português Online</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
-    body { font-family: Arial, sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; background:#f4f6f8; }
-    .login-container { background:white; padding:40px; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.2); width:350px; text-align:center; }
-    input { width:100%; padding:12px; margin:10px 0; border-radius:5px; border:1px solid #ccc; }
-    button { width:100%; padding:12px; margin-top:10px; border:none; border-radius:5px; font-size:16px; cursor:pointer; }
-    button.login { background:#0d6efd; color:white; }
-    button.signup { background:#198754; color:white; }
-    a { display:block; margin-top:15px; color:#0d6efd; text-decoration:none; }
-    select { width:100%; padding:12px; margin-top:10px; border-radius:5px; border:1px solid #ccc; }
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f4f6f8;
+    }
+
+    .login-container {
+      background: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      width: 350px;
+      text-align: center;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button.login {
+      background: #0d6efd;
+      color: white;
+    }
+
+    button.signup {
+      background: #198754;
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -25,7 +63,6 @@
     <option value="teacher">Professor</option>
   </select>
 
-  <input type="text" id="name" placeholder="Nome completo" required>
   <input type="email" id="email" placeholder="Email" required>
   <input type="password" id="password" placeholder="Senha" required>
 
@@ -36,15 +73,12 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
     authDomain: "portuguese-teacher-platf-68bc5.firebaseapp.com",
-    projectId: "portuguese-teacher-platf-68bc5",
-    storageBucket: "portuguese-teacher-platf-68bc5.appspot.com",
-    messagingSenderId: "653549982098",
-    appId: "1:653549982098:web:42bba4cc75ca56bc69314b"
+    projectId: "portuguese-teacher-platf-68bc5"
   };
 
   const app = initializeApp(firebaseConfig);
@@ -53,36 +87,63 @@
 
   const emailInput = document.getElementById("email");
   const passwordInput = document.getElementById("password");
-  const nameInput = document.getElementById("name");
   const roleSelect = document.getElementById("roleSelect");
 
-  // LOGIN
+  // 🔹 LOGIN
   document.getElementById("loginBtn").onclick = async () => {
     try {
-      const cred = await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
-      const userDoc = await (await db).getDoc(doc(db,"users",cred.user.uid));
-      const role = userDoc.data().role;
-      if(role === "student") window.location.href="dashboard-student.html";
-      else window.location.href="dashboard-teacher.html";
-    } catch(err){
+      const cred = await signInWithEmailAndPassword(
+        auth,
+        emailInput.value,
+        passwordInput.value
+      );
+
+      const userDocSnap = await getDoc(
+        doc(db, "users", cred.user.uid)
+      );
+
+      if (!userDocSnap.exists()) {
+        alert("Perfil não encontrado.");
+        return;
+      }
+
+      const role = userDocSnap.data().role;
+
+      if (role === "student") {
+        window.location.href = "dashboard-student.html";
+      } else {
+        window.location.href = "dashboard-teacher.html";
+      }
+
+    } catch (err) {
       alert(err.message);
     }
   };
 
-  // SIGNUP
+  // 🔹 SIGNUP
   document.getElementById("signupBtn").onclick = async () => {
     try {
-      const cred = await createUserWithEmailAndPassword(auth,emailInput.value,passwordInput.value);
-      await setDoc(doc(db,"users",cred.user.uid),{
-        name:nameInput.value,
-        email:emailInput.value,
+      const cred = await createUserWithEmailAndPassword(
+        auth,
+        emailInput.value,
+        passwordInput.value
+      );
+
+      await setDoc(doc(db, "users", cred.user.uid), {
+        email: emailInput.value,
         role: roleSelect.value,
         balance: 0,
         createdAt: new Date()
       });
-      if(roleSelect.value==="student") window.location.href="dashboard-student.html";
-      else window.location.href="dashboard-teacher.html";
-    } catch(err){
+
+      // 👉 fluxo correto após criar conta
+      if (roleSelect.value === "student") {
+        window.location.href = "signup-student.html";
+      } else {
+        window.location.href = "dashboard-teacher.html";
+      }
+
+    } catch (err) {
       alert(err.message);
     }
   };
