@@ -5,6 +5,7 @@
 <title>Dashboard Aluno - Português Online</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- FullCalendar CSS & JS -->
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
 
@@ -48,7 +49,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
@@ -70,9 +71,11 @@
     if(!user) { window.location.href="login.html"; return; }
     currentUser = user;
 
-    const userDoc = await (await db).getDoc(doc(db,"users",user.uid));
-    const data = userDoc.data();
-    document.getElementById("welcome-header").innerText = `Bem-vindo, ${data.name}`;
+    const userDocRef = doc(db,"users",user.uid);
+    const userDocSnap = await getDoc(userDocRef);
+    const data = userDocSnap.exists() ? userDocSnap.data() : {};
+
+    document.getElementById("welcome-header").innerText = `Bem-vindo, ${data.name || user.email}`;
     document.getElementById("balance").innerText = data.balance || 0;
 
     loadClasses();
@@ -96,8 +99,8 @@
     const events = [];
     let nextClassText = "A definir";
 
-    snapshot.forEach(doc => {
-      const c = doc.data();
+    snapshot.forEach(docSnap => {
+      const c = docSnap.data();
       events.push({
         title: `Aula com ${c.teacherEmail}`,
         start: c.date + "T" + c.start,
@@ -108,10 +111,11 @@
     events.sort((a,b)=>new Date(a.start)-new Date(b.start));
     if(events.length>0) nextClassText = events[0].start;
     document.getElementById("nextClass").innerText = nextClassText;
+    calendar.removeAllEvents();
     calendar.addEventSource(events);
   }
 
-  // Marcar aula (simplificado para teste)
+  // Marcar aula (simplificado)
   document.getElementById("bookClassBtn").onclick = async ()=>{
     const date = prompt("Data da aula (YYYY-MM-DD):");
     const start = prompt("Hora início (HH:MM):","08:00");
