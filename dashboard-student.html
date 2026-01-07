@@ -14,11 +14,25 @@
   header { background:#0d6efd; color:white; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; }
   header h1 { margin:0; font-size:20px; }
   header button { padding:6px 15px; border:none; border-radius:5px; cursor:pointer; background:red; color:white; }
-  .container { padding:20px; display:flex; flex-direction:column; gap:20px; max-width:900px; margin:auto; }
-  .card { background:white; padding:20px; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.1); }
+  .container { display:flex; flex-wrap:wrap; padding:20px; gap:20px; max-width:1200px; margin:auto; }
+  /* LEFT PANEL: professor info */
+  .left-panel { flex:1 1 350px; background:white; padding:20px; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.1); }
+  .left-panel img { width:120px; border-radius:50%; float:left; margin-right:15px; }
+  .left-panel h2 { margin:0; font-size:22px; }
+  .experience, .description { clear:both; margin-top:20px; }
+  .experience ul, .description ul { padding-left:20px; }
+  .description p { margin:0; }
+  /* RIGHT PANEL: calendar + video */
+  .right-panel { flex:2 1 600px; display:flex; flex-direction:column; gap:20px; }
+  .video-container iframe { width:100%; height:300px; border-radius:10px; }
+  #calendar { background:white; padding:10px; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.1); height:600px; }
+  .pay-button-container { text-align:center; }
+  .pay-button-container button { background:#0d6efd; color:white; border:none; padding:12px 20px; border-radius:5px; font-size:16px; cursor:pointer; }
+  .pay-button-container button:hover { background:#084298; }
+  .gallery { width:100%; display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
+  .gallery img { width:calc(33% - 10px); border-radius:10px; }
+  .card { background:white; padding:15px; border-radius:10px; box-shadow:0 3px 10px rgba(0,0,0,0.1); margin-bottom:15px; }
   .card h2 { margin:0 0 10px 0; }
-  #calendar { background:white; padding:10px; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.1); }
-  button.book { padding:12px 20px; border:none; border-radius:5px; background:#0d6efd; color:white; font-size:16px; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -29,21 +43,56 @@
 </header>
 
 <div class="container">
+  <!-- LEFT PANEL: Professor info -->
+  <div class="left-panel">
+    <img src="filipe.jpg" alt="Filipe Monteiro">
+    <h2 id="professor-name">Filipe Monteiro</h2>
 
-  <div class="card">
-    <h2>Saldo: $<span id="balance">0</span></h2>
+    <div class="experience">
+      <h3>Experiência Profissional</h3>
+      <ul>
+        <li>Professor de Português Online</li>
+        <li>Aulas para estrangeiros de diferentes idades e níveis</li>
+        <li>Preparação para exames CIPLE, DIPLE, DEPLE</li>
+      </ul>
+    </div>
+
+    <div class="description">
+      <h3>Descrição</h3>
+      <p>
+        Tenho experiência sólida no ensino de Língua Portuguesa para estrangeiros, trabalhando com alunos de diferentes idades, níveis e nacionalidades; incluindo inúmeros falantes de Inglês e Espanhol.
+        Ao longo do meu percurso, desenvolvi um método próprio, claro e objetivo, que ajuda o aluno a construir frases reais desde as primeiras aulas.
+      </p>
+      <ul>
+        <li>Explicações simples e diretas, sem complicações</li>
+        <li>Conversação guiada e prática constante</li>
+        <li>Material personalizado conforme o nível e objetivo do aluno</li>
+        <li>Repetição inteligente e revisão estruturada</li>
+        <li>Exercícios focados em vocabulário do dia a dia</li>
+        <li>Acompanhamento do progresso e correções detalhadas</li>
+      </ul>
+    </div>
+    
+    <!-- GALERIA DO PROFESSOR -->
+    <div class="gallery">
+      <img src="filipe1.jpg" alt="Foto 1">
+      <img src="filipe2.jpg" alt="Foto 2">
+      <img src="filipe3.jpg" alt="Foto 3">
+    </div>
   </div>
 
-  <div class="card">
-    <h2>Próxima Aula: <span id="nextClass">A definir</span></h2>
+  <!-- RIGHT PANEL: Video + Calendar + Botão -->
+  <div class="right-panel">
+    <div class="video-container">
+      <iframe src="https://www.youtube.com/embed/r2J0BiJPR-c" title="YouTube video" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <div id="calendar"></div>
+
+    <div class="pay-button-container">
+      <button id="book-class">Marcar aula experimental</button>
+    </div>
   </div>
-
-  <div class="card">
-    <button class="book" id="bookClassBtn">Marcar Aula</button>
-  </div>
-
-  <div id="calendar"></div>
-
 </div>
 
 <script type="module">
@@ -66,83 +115,6 @@
 
   let currentUser = null;
 
-  // Autenticação
-  onAuthStateChanged(auth, async (user) => {
-    if(!user) { window.location.href="login.html"; return; }
-    currentUser = user;
-
-    const userDocRef = doc(db,"users",user.uid);
-    const userDocSnap = await getDoc(userDocRef);
-    const data = userDocSnap.exists() ? userDocSnap.data() : {};
-
-    document.getElementById("welcome-header").innerText = `Bem-vindo, ${data.name || user.email}`;
-    document.getElementById("balance").innerText = data.balance || 0;
-
-    loadClasses();
-  });
-
-  document.getElementById("logout").onclick = () => signOut(auth).then(()=>window.location.href="login.html");
-
-  // FullCalendar
-  let calendarEl = document.getElementById('calendar');
-  let calendar = new FullCalendar.Calendar(calendarEl, {
-    initialView: 'dayGridMonth',
-    height: 600,
-    events: []
-  });
-  calendar.render();
-
-  async function loadClasses(){
-    const classesRef = collection(db,"classes");
-    const q = query(classesRef, where("studentId","==",currentUser.uid), orderBy("date"));
-    const snapshot = await getDocs(q);
-    const events = [];
-    let nextClassText = "A definir";
-
-    snapshot.forEach(docSnap => {
-      const c = docSnap.data();
-      events.push({
-        title: `Aula com ${c.teacherEmail}`,
-        start: c.date + "T" + c.start,
-        end: c.date + "T" + c.end
-      });
-    });
-
-    events.sort((a,b)=>new Date(a.start)-new Date(b.start));
-    if(events.length>0) nextClassText = events[0].start;
-    document.getElementById("nextClass").innerText = nextClassText;
-    calendar.removeAllEvents();
-    calendar.addEventSource(events);
-  }
-
-  // Marcar aula (simplificado)
-  document.getElementById("bookClassBtn").onclick = async ()=>{
-    const date = prompt("Data da aula (YYYY-MM-DD):");
-    const start = prompt("Hora início (HH:MM):","08:00");
-    const end = prompt("Hora fim (HH:MM):","09:00");
-    const repeat = confirm("Deseja repetir semanalmente?");
-    const weeks = repeat?parseInt(prompt("Quantas semanas?","4")):1;
-
-    for(let i=0;i<weeks;i++){
-      const dt = new Date(date);
-      dt.setDate(dt.getDate()+i*7);
-      await addDoc(collection(db,"classes"),{
-        studentId: currentUser.uid,
-        studentEmail: currentUser.email,
-        teacherId: "teacherUIDhere",
-        teacherEmail: "professor@gmail.com",
-        date: dt.toISOString().split('T')[0],
-        start: start,
-        end: end,
-        status: "confirmed",
-        createdAt: new Date()
-      });
-    }
-
-    loadClasses();
-    alert("Aula marcada com sucesso!");
-  };
-</script>
-
-</body>
-</html>
+  onAuthStateChanged(auth, async (user)=>{
+    if(!user){ window.location.href="login.html"; return; }
+    currentU
