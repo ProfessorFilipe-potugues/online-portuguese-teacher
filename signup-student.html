@@ -8,126 +8,37 @@
 <style>
 body {
   font-family: Arial, sans-serif;
-  background: #f4f6f8;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  background:#f4f6f8;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
 }
-
-.container {
-  background: #fff;
-  padding: 35px;
-  border-radius: 12px;
-  width: 100%;
-  max-width: 480px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+.box {
+  background:white;
+  padding:30px;
+  width:350px;
+  border-radius:10px;
 }
-
-h2 {
-  text-align: center;
-  color: #0d6efd;
-}
-
-.step { display: none; }
-.step.active { display: block; }
-
-input, select {
-  width: 100%;
-  padding: 12px;
-  margin: 12px 0;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  border: none;
-  border-radius: 8px;
-  background: #0d6efd;
-  color: #fff;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-button:hover { background: #084298; }
-
-.objectives button {
-  background: #e7f0ff;
-  color: #0d3c91;
-  margin: 6px 0;
-}
-
-.objectives button.active {
-  background: #0d6efd;
-  color: white;
-}
+button { width:100%; padding:12px; background:#0d6efd; color:white; border:none; margin-top:10px; }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-<h2>Cadastro do Aluno</h2>
-
-<!-- STEP 1 -->
-<div class="step active">
-  <input id="name" placeholder="Nome completo" required>
-  <input id="birthplace" placeholder="Local de nascimento">
-  <button onclick="next()">Próximo</button>
+<div class="box" id="content" style="display:none">
+  <h3>Cadastro do Aluno</h3>
+  <input id="name" placeholder="Nome">
+  <button onclick="finish()">Concluir</button>
 </div>
 
-<!-- STEP 2 -->
-<div class="step">
-  <input id="languages" placeholder="Idiomas que fala (ex: Inglês, Espanhol)">
-  <button onclick="next()">Próximo</button>
-</div>
-
-<!-- STEP 3 -->
-<div class="step">
-  <p><strong>Objetivos</strong></p>
-  <div class="objectives">
-    <button type="button" onclick="toggleObjective(this,'Trabalho')">Trabalho</button>
-    <button type="button" onclick="toggleObjective(this,'Negócios')">Negócios</button>
-    <button type="button" onclick="toggleObjective(this,'Viagens')">Viagens</button>
-    <button type="button" onclick="toggleObjective(this,'Hobbies')">Hobbies</button>
-    <button type="button" onclick="toggleObjective(this,'Exames')">Exames</button>
-  </div>
-  <button onclick="next()">Próximo</button>
-</div>
-
-<!-- STEP 4 -->
-<div class="step">
-  <select id="level" required>
-    <option value="">Nível de Português</option>
-    <option>Iniciante</option>
-    <option>Intermediário</option>
-    <option>Avançado</option>
-  </select>
-  <button onclick="next()">Próximo</button>
-</div>
-
-<!-- STEP 5 -->
-<div class="step">
-  <p><strong>Dias preferidos</strong></p>
-  <label><input type="checkbox" value="Segunda"> Segunda</label><br>
-  <label><input type="checkbox" value="Terça"> Terça</label><br>
-  <label><input type="checkbox" value="Quarta"> Quarta</label><br>
-  <label><input type="checkbox" value="Quinta"> Quinta</label><br>
-  <label><input type="checkbox" value="Sexta"> Sexta</label><br><br>
-  <button onclick="finish()">Finalizar</button>
-</div>
-
-</div>
+<p id="loading">A verificar sessão...</p>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-/* 🔥 FIREBASE CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
   authDomain: "portuguese-teacher-platf-68bc5.firebaseapp.com",
@@ -138,55 +49,28 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* 🔐 GARANTE UTILIZADOR AUTENTICADO */
-let currentUser = null;
+let userGlobal = null;
 
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    alert("Sessão expirada. Faça login novamente.");
-    window.location.href = "login.html";
+// 🔐 BLOQUEIA até o Firebase responder
+onAuthStateChanged(auth,(user)=>{
+  if(!user){
+    window.location.href="login.html";
     return;
   }
-  currentUser = user;
+
+  userGlobal = user;
+  loading.style.display="none";
+  content.style.display="block";
 });
 
-/* 🔄 STEPS */
-let step = 0;
-let objectives = [];
-const steps = document.querySelectorAll(".step");
-
-window.next = () => {
-  steps[step].classList.remove("active");
-  step++;
-  steps[step].classList.add("active");
-};
-
-window.toggleObjective = (btn, value) => {
-  btn.classList.toggle("active");
-  objectives.includes(value)
-    ? objectives = objectives.filter(o => o !== value)
-    : objectives.push(value);
-};
-
-/* ✅ FINALIZA CADASTRO */
-window.finish = async () => {
-  if (!currentUser) return alert("Utilizador não autenticado");
-
-  const days = [...document.querySelectorAll("input[type=checkbox]:checked")]
-    .map(c => c.value);
-
-  await setDoc(doc(db, "users", currentUser.uid), {
-    role: "student",
+window.finish = async ()=>{
+  await setDoc(doc(db,"users",userGlobal.uid),{
     name: name.value,
-    birthplace: birthplace.value,
-    languages: languages.value,
-    objectives: objectives,
-    level: level.value,
-    preferredDays: days,
-    createdAt: new Date()
-  }, { merge: true });
+    role: "student",
+    completedProfile: true
+  },{merge:true});
 
-  window.location.href = "dashboard-student-modern.html";
+  window.location.href="dashboard-student-modern.html";
 };
 </script>
 
