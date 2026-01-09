@@ -1,84 +1,38 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <title>Cadastro do Aluno</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Cadastro do Aluno</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
-      margin: 0;
-      padding: 20px;
-    }
-
-    .container {
-      max-width: 600px;
-      margin: auto;
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0,0,0,.1);
-    }
-
-    h2 {
-      text-align: center;
-      color: #0d6efd;
-    }
-
-    input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-
-    .days label {
-      display: block;
-      margin: 5px 0;
-    }
-
-    button {
-      width: 100%;
-      padding: 14px;
-      background: #0d6efd;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-      margin-top: 15px;
-    }
-
-    #loading {
-      text-align: center;
-      font-size: 18px;
-    }
-  </style>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background:#f4f6f8;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+.box {
+  background:white;
+  padding:30px;
+  width:350px;
+  border-radius:10px;
+}
+button { width:100%; padding:12px; background:#0d6efd; color:white; border:none; margin-top:10px; }
+</style>
 </head>
 
 <body>
 
-<div id="loading">A carregar sessão...</div>
-
-<div class="container" id="content" style="display:none;">
-  <h2>Cadastro do Aluno</h2>
-
-  <input type="text" id="name" placeholder="Nome completo" required>
-
-  <h3>Dias preferidos</h3>
-  <div class="days">
-    <label><input type="checkbox" value="Segunda"> Segunda</label>
-    <label><input type="checkbox" value="Terça"> Terça</label>
-    <label><input type="checkbox" value="Quarta"> Quarta</label>
-    <label><input type="checkbox" value="Quinta"> Quinta</label>
-    <label><input type="checkbox" value="Sexta"> Sexta</label>
-  </div>
-
-  <button onclick="finish()">Concluir Cadastro</button>
+<div class="box" id="content" style="display:none">
+  <h3>Cadastro do Aluno</h3>
+  <input id="name" placeholder="Nome">
+  <button onclick="finish()">Concluir</button>
 </div>
+
+<p id="loading">A verificar sessão...</p>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -95,49 +49,28 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let currentUser = null;
+let userGlobal = null;
 
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    window.location.href = "login.html";
+// 🔐 BLOQUEIA até o Firebase responder
+onAuthStateChanged(auth,(user)=>{
+  if(!user){
+    window.location.href="login.html";
     return;
   }
 
-  currentUser = user;
-  document.getElementById("loading").style.display = "none";
-  document.getElementById("content").style.display = "block";
+  userGlobal = user;
+  loading.style.display="none";
+  content.style.display="block";
 });
 
-window.finish = async () => {
-  try {
-    const name = document.getElementById("name").value.trim();
-    if (!name) {
-      alert("Preencha o nome");
-      return;
-    }
+window.finish = async ()=>{
+  await setDoc(doc(db,"users",userGlobal.uid),{
+    name: name.value,
+    role: "student",
+    completedProfile: true
+  },{merge:true});
 
-    const days = [];
-    document.querySelectorAll(".days input:checked").forEach(cb => {
-      days.push(cb.value);
-    });
-
-    await setDoc(
-      doc(db, "users", currentUser.uid),
-      {
-        name: name,
-        role: "student",
-        preferredDays: days,
-        completedProfile: true
-      },
-      { merge: true }
-    );
-
-    window.location.href = "dashboard-student.html";
-
-  } catch (err) {
-    alert("Erro ao concluir cadastro: " + err.message);
-    console.error(err);
-  }
+  window.location.href="dashboard-student-modern.html";
 };
 </script>
 
