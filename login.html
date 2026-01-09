@@ -1,78 +1,91 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<title>Cadastro do Aluno</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Login - Português Online</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background:#f4f6f8;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-}
-.box {
-  background:white;
-  padding:30px;
-  width:350px;
-  border-radius:10px;
-}
-button { width:100%; padding:12px; background:#0d6efd; color:white; border:none; margin-top:10px; }
-</style>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f4f6f8;
+      margin: 0;
+    }
+
+    .login-container {
+      background: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      width: 350px;
+      text-align: center;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button.login {
+      background: #0d6efd;
+      color: white;
+    }
+
+    button.signup {
+      background: #198754;
+      color: white;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="box" id="content" style="display:none">
-  <h3>Cadastro do Aluno</h3>
-  <input id="name" placeholder="Nome">
-  <button onclick="finish()">Concluir</button>
-</div>
+<div class="login-container">
+  <h2>Login / Criar Conta</h2>
 
-<p id="loading">A verificar sessão...</p>
+  <select id="roleSelect">
+    <option value="student">Aluno</option>
+    <option value="teacher">Professor</option>
+  </select>
+
+  <input type="email" id="email" placeholder="Email" required>
+  <input type="password" id="password" placeholder="Senha" required>
+
+  <button class="login" id="loginBtn">Entrar</button>
+  <button class="signup" id="signupBtn">Criar Conta</button>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { 
+  getAuth, 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword 
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { 
+  getFirestore, 
+  doc, 
+  setDoc, 
+  getDoc 
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
-  authDomain: "portuguese-teacher-platf-68bc5.firebaseapp.com",
-  projectId: "portuguese-teacher-platf-68bc5"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-let userGlobal = null;
-
-// 🔐 BLOQUEIA até o Firebase responder
-onAuthStateChanged(auth,(user)=>{
-  if(!user){
-    window.location.href="login.html";
-    return;
-  }
-
-  userGlobal = user;
-  loading.style.display="none";
-  content.style.display="block";
-});
-
-window.finish = async ()=>{
-  await setDoc(doc(db,"users",userGlobal.uid),{
-    name: name.value,
-    role: "student",
-    completedProfile: true
-  },{merge:true});
-
-  window.location.href="dashboard-student-modern.html";
-};
-</script>
-
-</body>
-</html>
+  authDomain: "portuguese-tea
