@@ -29,13 +29,8 @@ h2 {
   color: #0d6efd;
 }
 
-.step {
-  display: none;
-}
-
-.step.active {
-  display: block;
-}
+.step { display: none; }
+.step.active { display: block; }
 
 input, select {
   width: 100%;
@@ -57,9 +52,7 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  background: #084298;
-}
+button:hover { background: #084298; }
 
 .objectives button {
   background: #e7f0ff;
@@ -81,7 +74,7 @@ button:hover {
 
 <!-- STEP 1 -->
 <div class="step active">
-  <input id="name" placeholder="Nome completo">
+  <input id="name" placeholder="Nome completo" required>
   <input id="birthplace" placeholder="Local de nascimento">
   <button onclick="next()">Próximo</button>
 </div>
@@ -107,7 +100,7 @@ button:hover {
 
 <!-- STEP 4 -->
 <div class="step">
-  <select id="level">
+  <select id="level" required>
     <option value="">Nível de Português</option>
     <option>Iniciante</option>
     <option>Intermediário</option>
@@ -131,9 +124,10 @@ button:hover {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+/* 🔥 FIREBASE CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
   authDomain: "portuguese-teacher-platf-68bc5.firebaseapp.com",
@@ -144,9 +138,21 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+/* 🔐 GARANTE UTILIZADOR AUTENTICADO */
+let currentUser = null;
+
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    alert("Sessão expirada. Faça login novamente.");
+    window.location.href = "login.html";
+    return;
+  }
+  currentUser = user;
+});
+
+/* 🔄 STEPS */
 let step = 0;
 let objectives = [];
-
 const steps = document.querySelectorAll(".step");
 
 window.next = () => {
@@ -157,21 +163,19 @@ window.next = () => {
 
 window.toggleObjective = (btn, value) => {
   btn.classList.toggle("active");
-  if (objectives.includes(value)) {
-    objectives = objectives.filter(o => o !== value);
-  } else {
-    objectives.push(value);
-  }
+  objectives.includes(value)
+    ? objectives = objectives.filter(o => o !== value)
+    : objectives.push(value);
 };
 
+/* ✅ FINALIZA CADASTRO */
 window.finish = async () => {
+  if (!currentUser) return alert("Utilizador não autenticado");
+
   const days = [...document.querySelectorAll("input[type=checkbox]:checked")]
     .map(c => c.value);
 
-  const user = auth.currentUser;
-  if (!user) return alert("Utilizador não autenticado");
-
-  await setDoc(doc(db, "users", user.uid), {
+  await setDoc(doc(db, "users", currentUser.uid), {
     role: "student",
     name: name.value,
     birthplace: birthplace.value,
@@ -180,7 +184,7 @@ window.finish = async () => {
     level: level.value,
     preferredDays: days,
     createdAt: new Date()
-  });
+  }, { merge: true });
 
   window.location.href = "dashboard-student-modern.html";
 };
