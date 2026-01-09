@@ -2,52 +2,76 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Dashboard Aluno - Português Online</title>
+<title>Dashboard do Aluno</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- FullCalendar CSS & JS -->
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
 
 <style>
-  body { font-family: Arial,sans-serif; margin:0; background:#f4f6f8; }
-  header { background:#0d6efd; color:white; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; }
-  header h1 { margin:0; font-size:20px; }
-  header button { padding:6px 15px; border:none; border-radius:5px; cursor:pointer; background:red; color:white; }
-  .container { max-width:1200px; margin:auto; padding:20px; display:flex; flex-wrap:wrap; gap:20px; }
-  /* CARDS TOPO */
-  .top-cards { display:flex; flex-wrap:wrap; gap:20px; margin-bottom:20px; }
-  .card { background:white; flex:1 1 200px; padding:20px; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.1); text-align:center; }
-  .card h2 { margin:0 0 10px 0; font-size:16px; color:#0d6efd; }
-  .card p { margin:0; font-size:20px; font-weight:bold; }
-  /* MAIN PANELS */
-  .main { display:flex; flex-wrap:wrap; gap:20px; }
-  .left-panel { flex:1 1 350px; background:white; padding:20px; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.1); }
-  .left-panel img { width:120px; border-radius:50%; float:left; margin-right:15px; }
-  .left-panel h2 { margin:0; font-size:22px; color:#0d6efd; }
-  .experience, .description { clear:both; margin-top:20px; }
-  .experience ul, .description ul { padding-left:20px; }
-  .description p { margin:0 0 10px 0; }
-  .gallery { width:100%; display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
-  .gallery img { width:calc(33% - 10px); border-radius:10px; }
-  .right-panel { flex:2 1 600px; display:flex; flex-direction:column; gap:20px; }
-  .video-container iframe { width:100%; height:250px; border-radius:10px; }
-  #calendar { background:white; padding:10px; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.1); height:500px; }
-  .pay-button-container { text-align:center; margin-top:10px; }
-  .pay-button-container button { background:#0d6efd; color:white; border:none; padding:12px 20px; border-radius:5px; font-size:16px; cursor:pointer; }
-  .pay-button-container button:hover { background:#084298; }
-  @media(max-width:900px){ .main { flex-direction:column; } .top-cards { flex-direction:column; } }
+body { font-family: Arial,sans-serif; margin:0; background:#f4f6f8; }
+header {
+  background:#0d6efd;
+  color:white;
+  padding:15px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+header button {
+  background:red;
+  border:none;
+  color:white;
+  padding:6px 15px;
+  border-radius:5px;
+  cursor:pointer;
+}
+.container { max-width:1200px; margin:auto; padding:20px; }
+.top-cards {
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+.card {
+  background:white;
+  flex:1 1 200px;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+  text-align:center;
+}
+.card h2 { margin:0 0 10px; font-size:16px; color:#0d6efd; }
+.card p { margin:0; font-size:20px; font-weight:bold; }
+.main {
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+}
+.left, .right {
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+.left { flex:1 1 350px; }
+.right { flex:2 1 600px; }
+#calendar { margin-top:20px; }
+@media(max-width:900px){
+  .main { flex-direction:column; }
+}
 </style>
 </head>
+
 <body>
 
 <header>
-  <h1 id="welcome-header">Bem-vindo</h1>
+  <h2 id="welcome">Bem-vindo</h2>
   <button id="logout">Sair</button>
 </header>
 
 <div class="container">
-  <!-- TOP CARDS -->
+
   <div class="top-cards">
     <div class="card">
       <h2>Saldo</h2>
@@ -55,168 +79,111 @@
     </div>
     <div class="card">
       <h2>Próxima Aula</h2>
-      <p id="next-class">A definir</p>
+      <p id="nextClass">A definir</p>
     </div>
     <div class="card">
       <h2>Professor</h2>
-      <p id="teacher-name-card">Filipe Monteiro</p>
+      <p>Filipe Monteiro</p>
     </div>
   </div>
 
-  <!-- MAIN PANELS -->
   <div class="main">
-    <!-- LEFT PANEL: Professor info -->
-    <div class="left-panel">
-      <img src="filipe.jpg" alt="Filipe Monteiro">
-      <h2 id="professor-name">Filipe Monteiro</h2>
-
-      <div class="experience">
-        <h3>Experiência Profissional</h3>
-        <ul>
-          <li>Professor de Português Online</li>
-          <li>Aulas para estrangeiros de diferentes idades e níveis</li>
-          <li>Preparação para exames CIPLE, DIPLE, DEPLE</li>
-        </ul>
-      </div>
-
-      <div class="description">
-        <h3>Descrição</h3>
-        <p>
-          Experiência sólida no ensino de Língua Portuguesa para estrangeiros, com metodologia própria que ajuda o aluno a construir frases reais desde as primeiras aulas.
-        </p>
-        <ul>
-          <li>Explicações simples e diretas</li>
-          <li>Conversação guiada e prática constante</li>
-          <li>Material personalizado</li>
-          <li>Revisão estruturada e repetição inteligente</li>
-          <li>Exercícios focados em vocabulário do dia a dia</li>
-          <li>Acompanhamento do progresso</li>
-        </ul>
-      </div>
-
-      <div class="gallery">
-        <img src="filipe1.jpg" alt="Foto 1">
-        <img src="filipe2.jpg" alt="Foto 2">
-        <img src="filipe3.jpg" alt="Foto 3">
-      </div>
+    <div class="left">
+      <h3>Informações</h3>
+      <p>Aqui podes acompanhar as tuas aulas, saldo e progresso.</p>
     </div>
 
-    <!-- RIGHT PANEL: Video + Calendar + Botão -->
-    <div class="right-panel">
-      <div class="video-container">
-        <iframe src="https://www.youtube.com/embed/r2J0BiJPR-c" title="YouTube video" frameborder="0" allowfullscreen></iframe>
-      </div>
-
+    <div class="right">
+      <h3>Calendário de Aulas</h3>
       <div id="calendar"></div>
-
-      <div class="pay-button-container">
-        <button id="book-class">Marcar aula experimental</button>
-      </div>
     </div>
   </div>
+
 </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, query, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
-    authDomain: "portuguese-teacher-platf-68bc5.firebaseapp.com",
-    projectId: "portuguese-teacher-platf-68bc5",
-    storageBucket: "portuguese-teacher-platf-68bc5.appspot.com",
-    messagingSenderId: "653549982098",
-    appId: "1:653549982098:web:42bba4cc75ca56bc69314b"
-  };
+/* 🔥 FIREBASE */
+const firebaseConfig = {
+  apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
+  authDomain: "portuguese-teacher-platf-68bc5.firebaseapp.com",
+  projectId: "portuguese-teacher-platf-68bc5"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  let currentUser = null;
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-  onAuthStateChanged(auth, async (user)=>{
-    if(!user){ window.location.href="login.html"; return; }
-    currentUser = user;
+let calendar;
 
-    const userDocRef = doc(db,"users",user.uid);
-    const userDocSnap = await getDoc(userDocRef);
-    const data = userDocSnap.exists()? userDocSnap.data() : {};
-    document.getElementById("welcome-header").innerText = `Bem-vindo, ${data.name || user.email}`;
-    
-    loadClasses();
-    updateTopCards();
-  });
+/* 🔐 AUTH */
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
 
-  document.getElementById("logout").onclick = ()=>signOut(auth).then(()=>window.location.href="login.html");
+  const userDoc = await getDoc(doc(db, "users", user.uid));
+  const data = userDoc.exists() ? userDoc.data() : {};
 
-  let calendarEl = document.getElementById('calendar');
-  let calendar = new FullCalendar.Calendar(calendarEl,{
-    initialView: 'dayGridMonth',
+  document.getElementById("welcome").innerText =
+    `Bem-vindo, ${data.name || user.email}`;
+
+  document.getElementById("balance").innerText =
+    "$" + (data.balance || 0);
+
+  loadCalendar(user.uid);
+});
+
+/* 🚪 LOGOUT */
+document.getElementById("logout").onclick = () =>
+  signOut(auth).then(() => window.location.href = "login.html");
+
+/* 📅 CALENDAR */
+async function loadCalendar(studentId) {
+  const calendarEl = document.getElementById("calendar");
+
+  calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: "dayGridMonth",
     height: 500,
     events: []
   });
+
   calendar.render();
 
-  async function loadClasses(){
-    const classesRef = collection(db,"classes");
-    const q = query(classesRef, where("studentId","==",currentUser.uid), orderBy("date"));
-    const snapshot = await getDocs(q);
-    const events = [];
-    let nextClassText = "A definir";
+  const q = query(
+    collection(db, "classes"),
+    where("studentId", "==", studentId)
+  );
 
-    snapshot.forEach(docSnap=>{
-      const c = docSnap.data();
-      const startDate = c.date+"T"+c.start;
-      events.push({
-        title:`Aula com ${c.teacherEmail}`,
-        start:startDate,
-        end: c.date+"T"+c.end
-      });
+  const snap = await getDocs(q);
+  const events = [];
+  let nextClass = null;
+
+  snap.forEach(docSnap => {
+    const c = docSnap.data();
+    const start = `${c.date}T${c.start}`;
+    events.push({
+      title: "Aula de Português",
+      start: start,
+      end: `${c.date}T${c.end}`
     });
 
-    if(events.length>0){
-      events.sort((a,b)=> new Date(a.start)-new Date(b.start));
-      nextClassText = events[0].title + " em " + events[0].start.split('T')[0];
+    if (!nextClass || new Date(start) < new Date(nextClass)) {
+      nextClass = start;
     }
+  });
 
-    calendar.removeAllEvents();
-    calendar.addEventSource(events);
-    document.getElementById("next-class").innerText = nextClassText;
+  calendar.addEventSource(events);
+
+  if (nextClass) {
+    document.getElementById("nextClass").innerText =
+      new Date(nextClass).toLocaleString("pt-PT");
   }
-
-  function updateTopCards(){
-    const balance = currentUser.balance || 0;
-    document.getElementById("balance").innerText = "$" + balance;
-    document.getElementById("teacher-name-card").innerText = "Filipe Monteiro";
-  }
-
-  document.getElementById("book-class").onclick = async ()=>{
-    const date = prompt("Data da aula (YYYY-MM-DD):");
-    const start = prompt("Hora início (HH:MM)","08:00");
-    const end = prompt("Hora fim (HH:MM)","09:00");
-    const repeat = confirm("Deseja repetir semanalmente?");
-    const weeks = repeat?parseInt(prompt("Quantas semanas?","4")):1;
-
-    for(let i=0;i<weeks;i++){
-      const dt = new Date(date);
-      dt.setDate(dt.getDate()+i*7);
-      await addDoc(collection(db,"classes"),{
-        studentId: currentUser.uid,
-        studentEmail: currentUser.email,
-        teacherId: "teacherUIDhere",
-        teacherEmail: "professor@gmail.com",
-        date: dt.toISOString().split('T')[0],
-        start: start,
-        end: end,
-        status: "confirmed",
-        createdAt: new Date()
-      });
-    }
-
-    loadClasses();
-    alert("Aula marcada com sucesso!");
-  };
+}
 </script>
 
 </body>
