@@ -10,7 +10,6 @@
 
 <style>
 body { font-family: Arial,sans-serif; margin:0; background:#f4f6f8; }
-
 header {
   background:#0d6efd;
   color:white;
@@ -19,7 +18,6 @@ header {
   justify-content:space-between;
   align-items:center;
 }
-
 header button {
   background:red;
   border:none;
@@ -28,71 +26,27 @@ header button {
   border-radius:5px;
   cursor:pointer;
 }
-
 .container { max-width:1200px; margin:auto; padding:20px; }
-
-.top-cards {
-  display:flex;
-  gap:20px;
-  flex-wrap:wrap;
-  margin-bottom:20px;
-}
-
 .card {
   background:white;
-  flex:1 1 200px;
   padding:20px;
   border-radius:10px;
   box-shadow:0 5px 15px rgba(0,0,0,0.1);
-  text-align:center;
+  margin-bottom:20px;
 }
-
-.card h2 {
-  margin:0 0 10px;
-  font-size:16px;
-  color:#0d6efd;
-}
-
-.card p {
-  margin:0;
-  font-size:20px;
-  font-weight:bold;
-}
-
-.main {
-  display:flex;
-  gap:20px;
-  flex-wrap:wrap;
-}
-
-.left, .right {
-  background:white;
-  padding:20px;
-  border-radius:10px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.1);
-}
-
-.left { flex:1 1 350px; }
-.right { flex:2 1 600px; }
-
-#calendar { margin-top:20px; }
-
+label { display:block; margin-top:10px; }
 input, button {
-  width:100%;
   padding:10px;
-  margin-top:10px;
+  width:100%;
+  margin-top:5px;
 }
-
-button.primary {
+button {
   background:#0d6efd;
   color:white;
   border:none;
   cursor:pointer;
 }
-
-@media(max-width:900px){
-  .main { flex-direction:column; }
-}
+#calendar { margin-top:20px; }
 </style>
 </head>
 
@@ -105,53 +59,28 @@ button.primary {
 
 <div class="container">
 
-  <div class="top-cards">
-    <div class="card">
-      <h2>Saldo</h2>
-      <p id="balance">$0</p>
-    </div>
-    <div class="card">
-      <h2>Próxima Aula</h2>
-      <p id="nextClass">A definir</p>
-    </div>
-    <div class="card">
-      <h2>Professor</h2>
-      <p>Filipe Monteiro</p>
-    </div>
+  <div class="card">
+    <h3>Marcar Aula</h3>
+
+    <label>Data</label>
+    <input type="date" id="date">
+
+    <label>Hora de início</label>
+    <input type="time" id="start">
+
+    <button onclick="bookClass()">Confirmar Marcação</button>
   </div>
 
-  <div class="main">
-
-    <!-- 🔹 LADO ESQUERDO -->
-    <div class="left">
-      <h3>Marcar Aula</h3>
-
-      <input type="date" id="date">
-      <input type="time" id="start">
-      <input type="time" id="end">
-
-      <button class="primary" id="saveClass">
-        Confirmar Aula
-      </button>
-    </div>
-
-    <!-- 🔹 LADO DIREITO -->
-    <div class="right">
-      <h3>Calendário de Aulas</h3>
-      <div id="calendar"></div>
-    </div>
-
+  <div class="card">
+    <h3>Calendário de Aulas</h3>
+    <div id="calendar"></div>
   </div>
 
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getAuth,
-  onAuthStateChanged,
-  signOut
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import {
   getFirestore,
   collection,
@@ -175,35 +104,33 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let user;
+/* 🧑‍🏫 UID FIXO DO PROFESSOR */
+const TEACHER_ID = "3Oj4YuYGewO3O9DqPxWrjBln7MG3";
+
+let currentUser;
 let calendar;
 
 /* 🔐 AUTH */
-onAuthStateChanged(auth, async (u) => {
-  if (!u) {
-    location.href = "login.html";
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = "login.html";
     return;
   }
 
-  user = u;
+  currentUser = user;
 
-  const snap = await getDoc(doc(db, "users", user.uid));
-  if (!snap.exists() || snap.data().role !== "student") {
-    location.href = "login.html";
-    return;
-  }
+  const userDoc = await getDoc(doc(db, "users", user.uid));
+  const data = userDoc.data();
 
-  const data = snap.data();
-
-  welcome.innerText = `Bem-vindo, ${data.name || user.email}`;
-  balance.innerText = "$" + (data.balance || 0);
+  document.getElementById("welcome").innerText =
+    `Bem-vindo, ${data.name || user.email}`;
 
   loadCalendar();
 });
 
 /* 🚪 LOGOUT */
-logout.onclick = () =>
-  signOut(auth).then(() => location.href = "login.html");
+document.getElementById("logout").onclick = () =>
+  signOut(auth).then(() => window.location.href = "login.html");
 
 /* 📅 CALENDAR */
 async function loadCalendar() {
@@ -219,57 +146,48 @@ async function loadCalendar() {
 
   const q = query(
     collection(db, "classes"),
-    where("studentId", "==", user.uid)
+    where("studentId", "==", currentUser.uid)
   );
 
   const snap = await getDocs(q);
   const events = [];
-  let next = null;
 
   snap.forEach(docSnap => {
     const c = docSnap.data();
-    const start = `${c.date}T${c.start}`;
-
     events.push({
       title: "Aula de Português",
-      start: start,
+      start: `${c.date}T${c.start}`,
       end: `${c.date}T${c.end}`
     });
-
-    if (!next || new Date(start) < new Date(next)) {
-      next = start;
-    }
   });
 
   calendar.addEventSource(events);
-
-  if (next) {
-    nextClass.innerText =
-      new Date(next).toLocaleString("pt-PT");
-  }
 }
 
-/* ➕ MARCAR AULA */
-saveClass.onclick = async () => {
-  if (!date.value || !start.value || !end.value) {
-    alert("Preencha todos os campos");
+/* 📘 MARCAR AULA */
+window.bookClass = async () => {
+  const date = document.getElementById("date").value;
+  const start = document.getElementById("start").value;
+
+  if (!date || !start) {
+    alert("Seleciona data e hora");
     return;
   }
 
-  const TEACHER_ID = "3Oj4YuYGewO3O9DqPxWrjBln7MG3";
+  const endHour = String(Number(start.split(":")[0]) + 1).padStart(2, "0");
+  const end = `${endHour}:${start.split(":")[1]}`;
 
   await addDoc(collection(db, "classes"), {
-    studentId: user.uid,
-    studentEmail: user.email,
+    studentId: currentUser.uid,
+    studentEmail: currentUser.email,
     teacherId: TEACHER_ID,
-    date: date.value,
-    start: start.value,
-    end: end.value,
+    date: date,
+    start: start,
+    end: end,
     createdAt: serverTimestamp()
   });
 
   alert("Aula marcada com sucesso!");
-
   calendar.removeAllEvents();
   loadCalendar();
 };
