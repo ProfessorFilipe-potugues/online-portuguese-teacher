@@ -15,7 +15,6 @@
       background: #f4f6f8;
       margin: 0;
     }
-
     .login-container {
       background: white;
       padding: 40px;
@@ -24,7 +23,6 @@
       width: 350px;
       text-align: center;
     }
-
     input, select {
       width: 100%;
       padding: 12px;
@@ -32,7 +30,6 @@
       border-radius: 5px;
       border: 1px solid #ccc;
     }
-
     button {
       width: 100%;
       padding: 12px;
@@ -42,16 +39,8 @@
       font-size: 16px;
       cursor: pointer;
     }
-
-    button.login {
-      background: #0d6efd;
-      color: white;
-    }
-
-    button.signup {
-      background: #198754;
-      color: white;
-    }
+    button.login { background: #0d6efd; color: white; }
+    button.signup { background: #198754; color: white; }
   </style>
 </head>
 
@@ -74,18 +63,69 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { 
-  getAuth, 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword 
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { 
-  getFirestore, 
-  doc, 
-  setDoc, 
-  getDoc 
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
-  authDomain: "portuguese-tea
+  authDomain: "portuguese-teacher-platf-68bc5.firebaseapp.com",
+  projectId: "portuguese-teacher-platf-68bc5"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+loginBtn.onclick = async () => {
+  await signInWithEmailAndPassword(auth, email.value, password.value);
+};
+
+signupBtn.onclick = async () => {
+  const role = roleSelect.value;
+
+  const cred = await createUserWithEmailAndPassword(
+    auth,
+    email.value,
+    password.value
+  );
+
+  await setDoc(doc(db, "users", cred.user.uid), {
+    email: cred.user.email,
+    role: role,
+    completedProfile: false,
+    balance: 0
+  });
+};
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) return;
+
+  const snap = await getDoc(doc(db, "users", user.uid));
+  if (!snap.exists()) return;
+
+  const data = snap.data();
+
+  if (data.role === "student") {
+    window.location.href = data.completedProfile
+      ? "dashboard-student.html"
+      : "cadastro-aluno.html";
+  }
+
+  if (data.role === "teacher") {
+    window.location.href = "dashboard-professor.html";
+  }
+});
+</script>
+
+</body>
+</html>
