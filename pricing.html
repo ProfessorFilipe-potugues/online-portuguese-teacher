@@ -105,7 +105,8 @@
           const ref = doc(db, "users", user.uid);
           await setDoc(ref, { balance: increment(10) }, { merge: true });
 
-          window.location.href = "dashboard.html";
+         window.location.href = "dashboard-student.html";
+
         }
       }).render("#paypal-button-container");
     };
