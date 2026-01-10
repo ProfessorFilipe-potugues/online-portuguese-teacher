@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Cadastro do Aluno</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background:#f4f6f8;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+.box {
+  background:white;
+  padding:30px;
+  width:350px;
+  border-radius:10px;
+}
+button {
+  width:100%;
+  padding:12px;
+  background:#0d6efd;
+  color:white;
+  border:none;
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box" id="content" style="display:none">
+  <h3>Cadastro do Aluno</h3>
+  <input id="name" placeholder="Nome">
+  <button onclick="finish()">Concluir</button>
+</div>
+
+<p id="loading">A verificar sessão...</p>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
+  authDomain: "portuguese-teacher-platf-68bc5.firebaseapp.com",
+  projectId: "portuguese-teacher-platf-68bc5"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let userGlobal = null;
+
+onAuthStateChanged(auth,(user)=>{
+  if(!user){
+    window.location.href="login.html";
+    return;
+  }
+  userGlobal = user;
+  loading.style.display="none";
+  content.style.display="block";
+});
+
+window.finish = async ()=>{
+  if(!name.value.trim()){
+    alert("Digite o nome");
+    return;
+  }
+
+  await setDoc(doc(db,"users",userGlobal.uid),{
+    name: name.value,
+    completedProfile: true
+  },{merge:true});
+
+  window.location.href="dashboard-student.html";
+};
+</script>
+
+</body>
+</html>
