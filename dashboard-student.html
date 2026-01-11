@@ -2,95 +2,126 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Dashboard do Estudante</title>
+<title>Learn Portuguese - Dashboard do Aluno</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
 
 <style>
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background:#f4f6f8;
+  background: #f4f6f8;
 }
 
+/* HEADER */
 header {
-  background:#0d6efd;
-  color:white;
-  padding:15px 30px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+  background: #0d6efd;
+  color: white;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  font-size: 20px;
+  margin: 0;
 }
 
 header button {
-  background:#dc3545;
-  border:none;
-  color:white;
-  padding:6px 15px;
-  border-radius:5px;
-  cursor:pointer;
+  background: red;
+  border: none;
+  color: white;
+  padding: 6px 15px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
+/* CONTAINER */
 .container {
-  max-width:1100px;
-  margin:auto;
-  padding:25px;
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
 }
 
-.card {
-  background:white;
-  padding:25px;
-  border-radius:10px;
-  margin-bottom:25px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+/* GREETING */
+.greeting {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
 }
 
-.teacher {
-  display:flex;
-  gap:20px;
+/* MAIN LAYOUT */
+.profile-layout {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
-.teacher img {
-  width:90px;
-  height:90px;
-  border-radius:50%;
+/* LEFT */
+.profile-card {
+  background: white;
+  flex: 1 1 500px;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
-.badge {
-  display:inline-block;
-  background:#e7f1ff;
-  color:#0d6efd;
-  padding:5px 10px;
-  border-radius:15px;
-  font-size:13px;
-  margin:4px 4px 0 0;
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
-.grid {
-  display:flex;
-  gap:25px;
-  flex-wrap:wrap;
+.profile-header img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
-.left { flex:2; }
-.right { flex:1; }
-
-button.primary {
-  width:100%;
-  padding:14px;
-  background:#0d6efd;
-  color:white;
-  border:none;
-  border-radius:8px;
-  font-size:16px;
-  cursor:pointer;
-  margin-top:15px;
+.profile-header h2 {
+  margin: 0;
 }
 
-#calendar {
-  margin-top:20px;
+.badges span {
+  display: inline-block;
+  background: #e7f1ff;
+  color: #0d6efd;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  margin: 5px 5px 0 0;
+}
+
+/* RIGHT */
+.right-panel {
+  flex: 1 1 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.video-box, .calendar-box {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.calendar-box button {
+  margin-top: 15px;
+  width: 100%;
+  padding: 12px;
+  background: #0d6efd;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
 }
 </style>
 </head>
@@ -98,44 +129,73 @@ button.primary {
 <body>
 
 <header>
-  <h2 id="welcome">Olá!</h2>
+  <h1>Learn Portuguese</h1>
   <button id="logout">Sair</button>
 </header>
 
 <div class="container">
 
-  <div class="card grid">
+  <div class="greeting">
+    <h2 id="studentGreeting"></h2>
+    <p id="studentWish"></p>
+  </div>
 
-    <!-- ESQUERDA -->
-    <div class="left">
-      <div class="teacher">
-        <img src="filipe.jpg">
+  <div class="profile-layout">
 
+    <!-- LEFT -->
+    <div class="profile-card">
+      <div class="profile-header">
+        <img src="filipe.jpg" alt="Filipe Monteiro">
         <div>
-          <h3>Filipe Monteiro 🇲🇿</h3>
-          <p><strong>Professor de Português</strong></p>
-
-          <span class="badge">Aulas Personalizadas</span>
-          <span class="badge">Flexível</span>
-          <span class="badge">Experiência Internacional</span>
+          <h2>Filipe Monteiro 🇲🇿</h2>
+          <p>Professor de Português</p>
         </div>
       </div>
 
-      <h4>Sobre o professor</h4>
+      <div class="badges">
+        <span>Acessível</span>
+        <span>Flexível</span>
+        <span>Ideal para exames</span>
+        <span>Professor profissional</span>
+      </div>
+
+      <h3>Ensina</h3>
+      <p>Português</p>
+
+      <h3>Sobre mim</h3>
       <p>
-        Professor nativo de português, focado em aulas práticas,
-        conversação e preparação para exames.
+        Sou falante nativo de português e apaixonado por ajudar alunos a ganhar
+        confiança e fluência. As minhas aulas são personalizadas, práticas e
+        focadas nos teus objetivos — seja conversação, trabalho ou exames.
       </p>
 
-      <button class="primary" onclick="window.location.href='marcar-aula.html'">
-        Agendar Aula Experimental
-      </button>
+      <h3>Eu falo</h3>
+      <ul>
+        <li>Português — Nativo</li>
+        <li>Inglês — Avançado</li>
+        <li>Espanhol — Avançado</li>
+        <li>Francês — Intermediário</li>
+      </ul>
     </div>
 
-    <!-- DIREITA -->
-    <div class="right">
-      <h4>Minhas Aulas</h4>
-      <div id="calendar"></div>
+    <!-- RIGHT -->
+    <div class="right-panel">
+
+      <div class="video-box">
+        <h3>Apresentação</h3>
+        <iframe width="100%" height="220"
+          src="https://www.youtube.com/embed/r2J0BiJPR-c"
+          frameborder="0"
+          allowfullscreen>
+        </iframe>
+      </div>
+
+      <div class="calendar-box" id="trialBox" style="display:none">
+        <h3>Agendar aula experimental</h3>
+        <div id="calendar"></div>
+        <button>Agendar aula experimental</button>
+      </div>
+
     </div>
 
   </div>
@@ -145,9 +205,8 @@ button.primary {
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, getDocs, query, where, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-/* 🔥 FIREBASE CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
   authDomain: "portuguese-teacher-platf-68bc5.firebaseapp.com",
@@ -158,72 +217,39 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let calendar;
+document.getElementById("logout").onclick = () =>
+  signOut(auth).then(() => window.location.href = "login.html");
 
-/* 🔐 AUTENTICAÇÃO */
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "login.html";
     return;
   }
 
-  const userDoc = await getDoc(doc(db, "users", user.uid));
+  const snap = await getDoc(doc(db, "users", user.uid));
+  const data = snap.data();
 
-  if (!userDoc.exists() || userDoc.data().role !== "student") {
-    window.location.href = "login.html";
-    return;
+  const hour = new Date().getHours();
+  const greet =
+    hour < 12 ? "Bom dia" :
+    hour < 18 ? "Boa tarde" : "Boa noite";
+
+  document.getElementById("studentGreeting").innerText =
+    `Olá, ${data.name}!`;
+
+  document.getElementById("studentWish").innerText =
+    `${greet}. Desejo ótimas aulas para ti.`;
+
+  if (!data.subscribed) {
+    document.getElementById("trialBox").style.display = "block";
+
+    const calendar = new FullCalendar.Calendar(
+      document.getElementById("calendar"),
+      { initialView: "dayGridMonth", height: 400 }
+    );
+    calendar.render();
   }
-
-  document.getElementById("welcome").innerText =
-    `Olá, ${userDoc.data().name}!`;
-
-  loadMyClasses(user.uid);
 });
-
-/* 🚪 LOGOUT */
-document.getElementById("logout").onclick = () =>
-  signOut(auth).then(() => window.location.href = "login.html");
-
-/* 📚 AULAS DO ESTUDANTE */
-async function loadMyClasses(studentId) {
-
-  const snap = await getDocs(
-    query(
-      collection(db, "appointments"),
-      where("studentId", "==", studentId)
-    )
-  );
-
-  const events = [];
-
-  snap.forEach(docSnap => {
-    const a = docSnap.data();
-
-    events.push({
-      title:
-        a.type === "experimental"
-          ? "Aula Experimental"
-          : "Aula",
-      start: `${a.date}T${a.start}`,
-      end: `${a.date}T${a.end}`
-    });
-  });
-
-  renderCalendar(events);
-}
-
-/* 🗓️ CALENDÁRIO */
-function renderCalendar(events) {
-  const el = document.getElementById("calendar");
-
-  calendar = new FullCalendar.Calendar(el, {
-    initialView: "dayGridMonth",
-    height: 400,
-    events: events
-  });
-
-  calendar.render();
-}
 </script>
 
 </body>
