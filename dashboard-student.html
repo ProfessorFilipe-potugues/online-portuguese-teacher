@@ -2,78 +2,179 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Dashboard do Aluno</title>
+<title>Learn Portuguese | Dashboard do Aluno</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
-
 <style>
-body { font-family: Arial,sans-serif; margin:0; background:#f4f6f8; }
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f4f6f8;
+}
 header {
-  background:#0d6efd;
-  color:white;
-  padding:15px 30px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+  background: #0d6efd;
+  color: white;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 header button {
-  background:red;
-  border:none;
-  color:white;
-  padding:6px 15px;
-  border-radius:5px;
-  cursor:pointer;
+  background: red;
+  border: none;
+  color: white;
+  padding: 6px 15px;
+  border-radius: 5px;
+  cursor: pointer;
 }
-.container { max-width:1200px; margin:auto; padding:20px; }
-.card {
-  background:white;
-  padding:20px;
-  border-radius:10px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.1);
-  margin-bottom:20px;
+.container {
+  max-width: 1300px;
+  margin: auto;
+  padding: 20px;
 }
-label { display:block; margin-top:10px; }
-input, button {
-  padding:10px;
-  width:100%;
-  margin-top:5px;
+h1 {
+  margin-bottom: 5px;
 }
-button {
-  background:#0d6efd;
-  color:white;
-  border:none;
-  cursor:pointer;
+.subtitle {
+  color: #555;
+  margin-bottom: 20px;
 }
-#calendar { margin-top:20px; }
+
+/* FILTROS */
+.filters {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+.filters label {
+  font-size: 14px;
+  font-weight: bold;
+}
+.filters select,
+.filters input {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0 15px;
+}
+
+/* CARD PROFESSOR */
+.teacher-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+.teacher-card img {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.teacher-info {
+  flex: 1;
+}
+.teacher-info h3 {
+  margin: 0;
+  color: #0d6efd;
+}
+.badges span {
+  background: #e7f1ff;
+  color: #0d6efd;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  margin-right: 5px;
+}
+.teacher-meta {
+  font-size: 14px;
+  margin: 8px 0;
+}
+.teacher-price {
+  text-align: right;
+}
+.teacher-price strong {
+  font-size: 22px;
+}
+.teacher-price button {
+  background: #0d6efd;
+  border: none;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+.teacher-price button:hover {
+  background: #0b5ed7;
+}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h2 id="welcome">Bem-vindo</h2>
+  <h2>Learn Portuguese</h2>
   <button id="logout">Sair</button>
 </header>
 
 <div class="container">
 
-  <div class="card">
-    <h3>Marcar Aula</h3>
-
-    <label>Data</label>
-    <input type="date" id="date">
-
-    <label>Hora de início</label>
-    <input type="time" id="start">
-
-    <button onclick="bookClass()">Confirmar Marcação</button>
+  <h1>Learn Portuguese</h1>
+  <div class="subtitle">
+    Aulas de português online com professor particular
   </div>
 
-  <div class="card">
-    <h3>Calendário de Aulas</h3>
-    <div id="calendar"></div>
+  <!-- FILTROS (VISUAIS) -->
+  <div class="filters">
+    <label>Quero aprender</label>
+    <select>
+      <option>Português</option>
+    </select>
+
+    <label>Preço por aula</label>
+    <select>
+      <option>$ 3–40+</option>
+    </select>
+
+    <label>Disponibilidade</label>
+    <select>
+      <option>Qualquer horário</option>
+    </select>
+
+    <label>Pesquisar</label>
+    <input type="text" placeholder="Pesquisar por nome ou palavra-chave">
+  </div>
+
+  <!-- CARD DO PROFESSOR -->
+  <div class="teacher-card">
+    <img src="filipe.jpg" alt="Professor Filipe Monteiro">
+
+    <div class="teacher-info">
+      <h3 id="teacherName">---</h3>
+
+      <div class="badges">
+        <span>Professor profissional</span>
+        <span>Verificado</span>
+      </div>
+
+      <div class="teacher-meta">
+        📍 Moçambique<br>
+        🗣️ Português (Nativo), Inglês
+      </div>
+
+      <p id="teacherBio">
+        ---
+      </p>
+    </div>
+
+    <div class="teacher-price">
+      <strong>$ 10</strong>
+      <div>Aula de 50 minutos</div>
+      <button onclick="agendar()">Agendar aula</button>
+    </div>
   </div>
 
 </div>
@@ -81,19 +182,8 @@ button {
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  query,
-  where,
-  getDocs,
-  doc,
-  getDoc,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-/* 🔥 FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
   authDomain: "portuguese-teacher-platf-68bc5.firebaseapp.com",
@@ -104,92 +194,36 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* 🧑‍🏫 UID FIXO DO PROFESSOR */
+/* UID DO PROFESSOR */
 const TEACHER_ID = "3Oj4YuYGewO3O9DqPxWrjBln7MG3";
 
-let currentUser;
-let calendar;
-
-/* 🔐 AUTH */
+/* AUTH */
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "login.html";
     return;
   }
-
-  currentUser = user;
-
-  const userDoc = await getDoc(doc(db, "users", user.uid));
-  const data = userDoc.data();
-
-  document.getElementById("welcome").innerText =
-    `Bem-vindo, ${data.name || user.email}`;
-
-  loadCalendar();
+  loadTeacher();
 });
 
-/* 🚪 LOGOUT */
+/* LOGOUT */
 document.getElementById("logout").onclick = () =>
   signOut(auth).then(() => window.location.href = "login.html");
 
-/* 📅 CALENDAR */
-async function loadCalendar() {
-  const calendarEl = document.getElementById("calendar");
+/* CARREGAR PROFESSOR */
+async function loadTeacher() {
+  const snap = await getDoc(doc(db, "users", TEACHER_ID));
+  if (!snap.exists()) return;
 
-  calendar = new FullCalendar.Calendar(calendarEl, {
-    initialView: "dayGridMonth",
-    height: 500,
-    events: []
-  });
-
-  calendar.render();
-
-  const q = query(
-    collection(db, "classes"),
-    where("studentId", "==", currentUser.uid)
-  );
-
-  const snap = await getDocs(q);
-  const events = [];
-
-  snap.forEach(docSnap => {
-    const c = docSnap.data();
-    events.push({
-      title: "Aula de Português",
-      start: `${c.date}T${c.start}`,
-      end: `${c.date}T${c.end}`
-    });
-  });
-
-  calendar.addEventSource(events);
+  const t = snap.data();
+  document.getElementById("teacherName").innerText = t.name;
+  document.getElementById("teacherBio").innerText =
+    "Aprende português de forma clara, prática e confiante. Aulas personalizadas para conversação, gramática e objetivos profissionais.";
 }
 
-/* 📘 MARCAR AULA */
-window.bookClass = async () => {
-  const date = document.getElementById("date").value;
-  const start = document.getElementById("start").value;
-
-  if (!date || !start) {
-    alert("Seleciona data e hora");
-    return;
-  }
-
-  const endHour = String(Number(start.split(":")[0]) + 1).padStart(2, "0");
-  const end = `${endHour}:${start.split(":")[1]}`;
-
-  await addDoc(collection(db, "classes"), {
-    studentId: currentUser.uid,
-    studentEmail: currentUser.email,
-    teacherId: TEACHER_ID,
-    date: date,
-    start: start,
-    end: end,
-    createdAt: serverTimestamp()
-  });
-
-  alert("Aula marcada com sucesso!");
-  calendar.removeAllEvents();
-  loadCalendar();
+/* AGENDAR */
+window.agendar = () => {
+  window.location.href = "marcar-aula.html";
 };
 </script>
 
