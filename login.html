@@ -90,7 +90,8 @@ loginBtn.onclick = async () => {
 
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    window.location.href = "dashboard-student-modern.html";
+ window.location.href = "dashboard-student.html";
+
   } catch (e) {
     alert("Erro no login");
   }
