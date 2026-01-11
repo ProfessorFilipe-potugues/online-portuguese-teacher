@@ -2,15 +2,20 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Learn Portuguese | Aluno</title>
+<title>Learn Portuguese - Dashboard do Aluno</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
 
 <style>
 body {
-  font-family: Arial, sans-serif;
   margin: 0;
+  font-family: Arial, sans-serif;
   background: #f4f6f8;
 }
+
+/* HEADER */
 header {
   background: #0d6efd;
   color: white;
@@ -19,6 +24,12 @@ header {
   justify-content: space-between;
   align-items: center;
 }
+
+header h1 {
+  font-size: 20px;
+  margin: 0;
+}
+
 header button {
   background: red;
   border: none;
@@ -27,97 +38,90 @@ header button {
   border-radius: 5px;
   cursor: pointer;
 }
+
+/* CONTAINER */
 .container {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: auto;
-  padding: 25px;
+  padding: 20px;
 }
 
-/* SAUDAÇÃO */
-.greeting h1 {
-  margin: 0;
-}
-.greeting p {
-  margin: 5px 0 25px;
-  color: #555;
-}
-
-/* CARD PROFESSOR */
-.teacher-card {
+/* GREETING */
+.greeting {
   background: white;
-  border-radius: 14px;
-  padding: 25px;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+/* MAIN LAYOUT */
+.profile-layout {
   display: flex;
-  gap: 25px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* LEFT */
+.profile-card {
+  background: white;
+  flex: 1 1 500px;
+  padding: 25px;
+  border-radius: 10px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
-.teacher-photo {
-  position: relative;
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
-.teacher-photo img {
-  width: 160px;
-  height: 160px;
+
+.profile-header img {
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   object-fit: cover;
 }
-.flag {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  font-size: 26px;
-  background: white;
-  border-radius: 50%;
+
+.profile-header h2 {
+  margin: 0;
 }
 
-/* INFO */
-.teacher-info h2 {
-  margin: 0;
-  color: #0d6efd;
-}
-.teacher-info .role {
-  font-weight: bold;
-  margin: 5px 0;
-}
 .badges span {
+  display: inline-block;
   background: #e7f1ff;
   color: #0d6efd;
   padding: 5px 10px;
-  border-radius: 8px;
+  border-radius: 20px;
   font-size: 12px;
-  margin-right: 6px;
-  display: inline-block;
-  margin-top: 6px;
-}
-.section {
-  margin-top: 18px;
-}
-.section h4 {
-  margin-bottom: 5px;
-}
-.languages li {
-  list-style: none;
-  margin-bottom: 5px;
+  margin: 5px 5px 0 0;
 }
 
-/* PREÇO */
-.price-box {
-  margin-top: 20px;
+/* RIGHT */
+.right-panel {
+  flex: 1 1 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
-.price-box strong {
-  font-size: 22px;
+
+.video-box, .calendar-box {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
-.price-box button {
-  display: block;
-  margin-top: 10px;
+
+.calendar-box button {
+  margin-top: 15px;
+  width: 100%;
+  padding: 12px;
   background: #0d6efd;
   color: white;
   border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
+  border-radius: 5px;
+  font-size: 16px;
   cursor: pointer;
-}
-.price-box button:hover {
-  background: #0b5ed7;
 }
 </style>
 </head>
@@ -125,29 +129,28 @@ header button {
 <body>
 
 <header>
-  <div id="headerGreeting">Olá!</div>
+  <h1>Learn Portuguese</h1>
   <button id="logout">Sair</button>
 </header>
 
 <div class="container">
 
-  <!-- SAUDAÇÃO -->
   <div class="greeting">
-    <h1 id="studentName">Olá!</h1>
-    <p id="greetingText"></p>
+    <h2 id="studentGreeting"></h2>
+    <p id="studentWish"></p>
   </div>
 
-  <!-- PROFESSOR -->
-  <div class="teacher-card">
+  <div class="profile-layout">
 
-    <div class="teacher-photo">
-      <img src="filipe.jpg" alt="Professor Filipe">
-      <div class="flag">🇲🇿</div>
-    </div>
-
-    <div class="teacher-info">
-      <h2>Filipe Monteiro</h2>
-      <div class="role">Professor de Português</div>
+    <!-- LEFT -->
+    <div class="profile-card">
+      <div class="profile-header">
+        <img src="filipe.jpg" alt="Filipe Monteiro">
+        <div>
+          <h2>Filipe Monteiro 🇲🇿</h2>
+          <p>Professor de Português</p>
+        </div>
+      </div>
 
       <div class="badges">
         <span>Acessível</span>
@@ -156,40 +159,43 @@ header button {
         <span>Professor profissional</span>
       </div>
 
-      <div class="section">
-        <h4>Ensina</h4>
-        Português
+      <h3>Ensina</h3>
+      <p>Português</p>
+
+      <h3>Sobre mim</h3>
+      <p>
+        Sou falante nativo de português e apaixonado por ajudar alunos a ganhar
+        confiança e fluência. As minhas aulas são personalizadas, práticas e
+        focadas nos teus objetivos — seja conversação, trabalho ou exames.
+      </p>
+
+      <h3>Eu falo</h3>
+      <ul>
+        <li>Português — Nativo</li>
+        <li>Inglês — Avançado</li>
+        <li>Espanhol — Avançado</li>
+        <li>Francês — Intermediário</li>
+      </ul>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right-panel">
+
+      <div class="video-box">
+        <h3>Apresentação</h3>
+        <iframe width="100%" height="220"
+          src="https://www.youtube.com/embed/r2J0BiJPR-c"
+          frameborder="0"
+          allowfullscreen>
+        </iframe>
       </div>
 
-      <div class="section">
-        <h4>Sobre mim</h4>
-        <p>
-          Sou falante nativo de português e apaixonado por ajudar alunos a
-          ganhar confiança e fluência. As minhas aulas são personalizadas,
-          práticas e focadas nos teus objetivos — seja conversação,
-          trabalho ou exames.
-        </p>
-        <p>
-          Crio um ambiente leve e motivador, adaptando o ritmo ao aluno.
-          Aprender português comigo será uma jornada clara, eficiente
-          e agradável.
-        </p>
+      <div class="calendar-box" id="trialBox" style="display:none">
+        <h3>Agendar aula experimental</h3>
+        <div id="calendar"></div>
+        <button>Agendar aula experimental</button>
       </div>
 
-      <div class="section">
-        <h4>Eu falo</h4>
-        <ul class="languages">
-          <li>🇵🇹 Português — Nativo</li>
-          <li>🇬🇧 Inglês — Avançado</li>
-          <li>🇪🇸 Espanhol — Avançado</li>
-          <li>🇫🇷 Francês — Intermediário</li>
-        </ul>
-      </div>
-
-      <div class="price-box">
-        <strong>$10</strong> — Aula de 50 minutos
-        <button onclick="agendar()">Agendar aula</button>
-      </div>
     </div>
 
   </div>
@@ -211,7 +217,9 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* AUTH */
+document.getElementById("logout").onclick = () =>
+  signOut(auth).then(() => window.location.href = "login.html");
+
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "login.html";
@@ -219,31 +227,29 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   const snap = await getDoc(doc(db, "users", user.uid));
-  const name = snap.exists() ? snap.data().name : user.email;
-
-  document.getElementById("studentName").innerText =
-    `Olá, ${name}!`;
-
-  document.getElementById("headerGreeting").innerText =
-    `Olá, ${name}`;
+  const data = snap.data();
 
   const hour = new Date().getHours();
-  let greet = "Boa noite";
-  if (hour < 12) greet = "Bom dia";
-  else if (hour < 18) greet = "Boa tarde";
+  const greet =
+    hour < 12 ? "Bom dia" :
+    hour < 18 ? "Boa tarde" : "Boa noite";
 
-  document.getElementById("greetingText").innerText =
-    `${greet}. Desejo óptimas aulas para ti.`;
+  document.getElementById("studentGreeting").innerText =
+    `Olá, ${data.name}!`;
+
+  document.getElementById("studentWish").innerText =
+    `${greet}. Desejo ótimas aulas para ti.`;
+
+  if (!data.subscribed) {
+    document.getElementById("trialBox").style.display = "block";
+
+    const calendar = new FullCalendar.Calendar(
+      document.getElementById("calendar"),
+      { initialView: "dayGridMonth", height: 400 }
+    );
+    calendar.render();
+  }
 });
-
-/* LOGOUT */
-document.getElementById("logout").onclick = () =>
-  signOut(auth).then(() => window.location.href = "login.html");
-
-/* AGENDAR */
-window.agendar = () => {
-  window.location.href = "marcar-aula.html";
-};
 </script>
 
 </body>
