@@ -2,17 +2,17 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Dashboard Professor</title>
+<title>Dashboard do Professor</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
 <style>
 body {
+  margin: 0;
   font-family: Arial, sans-serif;
   background: #f4f6f8;
-  margin: 0;
 }
 
 header {
@@ -25,7 +25,7 @@ header {
 }
 
 header button {
-  background: red;
+  background: #dc3545;
   border: none;
   color: white;
   padding: 6px 15px;
@@ -75,13 +75,13 @@ header button {
 
   <div class="cards">
     <div class="card">
-      <h3>Total de Alunos</h3>
-      <p id="totalStudents">0</p>
+      <h3>Total de Aulas</h3>
+      <p id="totalClasses">0</p>
     </div>
 
     <div class="card">
-      <h3>Total de Aulas</h3>
-      <p id="totalClasses">0</p>
+      <h3>Aulas Pendentes</h3>
+      <p id="pendingClasses">0</p>
     </div>
   </div>
 
@@ -94,6 +94,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore, collection, getDocs, query, where, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+/* 🔥 FIREBASE CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
   authDomain: "portuguese-teacher-platf-68bc5.firebaseapp.com",
@@ -106,6 +107,7 @@ const db = getFirestore(app);
 
 let calendar;
 
+/* 🔐 AUTENTICAÇÃO + VERIFICA SE É PROFESSOR */
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "login.html";
@@ -113,61 +115,67 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   const userDoc = await getDoc(doc(db, "users", user.uid));
+
   if (!userDoc.exists() || userDoc.data().role !== "teacher") {
+    alert("Acesso negado.");
     window.location.href = "login.html";
     return;
   }
 
   document.getElementById("welcome").innerText =
-    `Bem-vindo, ${userDoc.data().name || user.email}`;
+    `Bem-vindo, ${userDoc.data().name}`;
 
-  loadStats(user.uid);
-  loadCalendar(user.uid);
+  loadAppointments(user.uid);
 });
 
+/* 🚪 LOGOUT */
 document.getElementById("logout").onclick = () =>
   signOut(auth).then(() => window.location.href = "login.html");
 
-async function loadStats(teacherId) {
-  const studentsSnap = await getDocs(
-    query(collection(db, "users"), where("role", "==", "student"))
+/* 📅 CARREGAR AULAS DO PROFESSOR */
+async function loadAppointments(teacherId) {
+
+  const snap = await getDocs(
+    query(
+      collection(db, "appointments"),
+      where("teacherId", "==", teacherId)
+    )
   );
 
-  document.getElementById("totalStudents").innerText = studentsSnap.size;
+  const events = [];
+  let pending = 0;
 
-  const classesSnap = await getDocs(
-    query(collection(db, "classes"), where("teacherId", "==", teacherId))
-  );
+  snap.forEach(docSnap => {
+    const a = docSnap.data();
 
-  document.getElementById("totalClasses").innerText = classesSnap.size;
+    if (a.status === "pending") pending++;
+
+    events.push({
+      title: a.type === "experimental"
+        ? "Aula Experimental"
+        : "Aula Normal",
+      start: `${a.date}T${a.start}`,
+      end: `${a.date}T${a.end}`
+    });
+  });
+
+  document.getElementById("totalClasses").innerText = snap.size;
+  document.getElementById("pendingClasses").innerText = pending;
+
+  renderCalendar(events);
 }
 
-async function loadCalendar(teacherId) {
+/* 🗓️ CALENDÁRIO */
+function renderCalendar(events) {
   const calendarEl = document.getElementById("calendar");
 
   calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: "dayGridMonth",
     height: 550,
-    events: []
+    events: events
   });
 
   calendar.render();
-
-  const classesSnap = await getDocs(
-    query(collection(db, "classes"), where("teacherId", "==", teacherId))
-  );
-
-  const events = [];
-  classesSnap.forEach(docSnap => {
-    const c = docSnap.data();
-    events.push({
-      title: `Aula com ${c.studentEmail}`,
-      start: `${c.date}T${c.start}`,
-      end: `${c.date}T${c.end}`
-    });
-  });
-
-  calendar.addEventSource(events);
 }
 </script>
 
