@@ -118,11 +118,11 @@ signupBtn.onclick = async () => {
     });
 
     /* 🔁 REDIRECIONA FORÇADO */
-    if (roleVal === "student") {
-      window.location.href = "cadastro-aluno.html";
-    } else {
-      window.location.href = "dashboard-professor.html";
-    }
+   if (roleVal === "student") {
+  window.location.href = "cadastro-aluno.html";
+} else {
+  window.location.href = "dashboard-teacher.html";
+}
 
   } catch (e) {
     alert("Erro ao criar conta: " + e.message);
