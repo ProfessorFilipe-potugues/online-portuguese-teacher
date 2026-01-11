@@ -1,99 +1,120 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<title>Learn Portuguese - Dashboard do Aluno</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<title>Learn Portuguese | Dashboard do Estudante</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+<!-- FullCalendar -->
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
 
 <style>
-body { margin:0; font-family:Arial,sans-serif; background:#f4f6f8; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+}
 
 header {
-  background:#0d6efd;
-  color:white;
-  padding:15px 30px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+  background: #0d6efd;
+  color: white;
+  padding: 15px 30px;
+  font-size: 20px;
+  font-weight: bold;
 }
 
-header h1 { margin:0; font-size:20px; }
-header button {
-  background:red;
-  border:none;
-  color:white;
-  padding:6px 15px;
-  border-radius:5px;
-  cursor:pointer;
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 25px;
 }
-
-.container { max-width:1200px; margin:auto; padding:20px; }
 
 .greeting {
-  background:white;
-  padding:20px;
-  border-radius:10px;
-  margin-bottom:20px;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 25px;
 }
 
-.profile-layout {
-  display:flex;
-  gap:20px;
-  flex-wrap:wrap;
+.main {
+  display: flex;
+  gap: 30px;
 }
 
-.profile-card, .video-box, .calendar-box {
-  background:white;
-  padding:25px;
-  border-radius:10px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+.left, .right {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
 }
 
-.profile-card { flex:1 1 500px; }
-
-.profile-header {
-  display:flex;
-  gap:15px;
-  align-items:center;
+.left {
+  flex: 2;
 }
 
-.profile-header img {
-  width:90px;
-  height:90px;
-  border-radius:50%;
-  object-fit:cover;
+.right {
+  flex: 1;
+}
+
+.teacher-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.teacher-header img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+}
+
+.flag {
+  width: 22px;
+  vertical-align: middle;
 }
 
 .badges span {
-  display:inline-block;
-  background:#e7f1ff;
-  color:#0d6efd;
-  padding:5px 10px;
-  border-radius:20px;
-  font-size:12px;
-  margin:5px 5px 0 0;
+  display: inline-block;
+  background: #e7f1ff;
+  color: #0d6efd;
+  padding: 5px 10px;
+  border-radius: 15px;
+  margin: 5px 5px 5px 0;
+  font-size: 13px;
 }
 
-.right-panel {
-  flex:1 1 400px;
-  display:flex;
-  flex-direction:column;
-  gap:20px;
+.section {
+  margin-top: 25px;
 }
 
-.calendar-box button {
-  margin-top:15px;
-  width:100%;
-  padding:12px;
-  background:#0d6efd;
-  color:white;
-  border:none;
-  border-radius:5px;
-  font-size:16px;
-  cursor:pointer;
+.section h3 {
+  margin-bottom: 10px;
+}
+
+.video iframe {
+  width: 100%;
+  height: 220px;
+  border-radius: 10px;
+}
+
+#calendar {
+  margin-top: 20px;
+}
+
+button {
+  background: #0d6efd;
+  color: white;
+  border: none;
+  padding: 14px;
+  width: 100%;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+button:hover {
+  background: #0b5ed7;
 }
 </style>
 </head>
@@ -101,26 +122,29 @@ header button {
 <body>
 
 <header>
-  <h1>Learn Portuguese</h1>
-  <button id="logout">Sair</button>
+  Learn Portuguese
 </header>
 
 <div class="container">
 
   <div class="greeting">
-    <h2 id="studentGreeting"></h2>
-    <p id="studentWish"></p>
+    <h2 id="studentGreeting">Olá!</h2>
+    <p>Desejo ótimas aulas para ti 📚✨</p>
   </div>
 
-  <div class="profile-layout">
+  <div class="main">
 
     <!-- ESQUERDA -->
-    <div class="profile-card">
-      <div class="profile-header">
-        <img src="filipe.jpg">
+    <div class="left">
+
+      <div class="teacher-header">
+        <img src="filipe.jpg" alt="Professor Filipe">
         <div>
-          <h2>Filipe Monteiro 🇲🇿</h2>
-          <p>Professor de Português</p>
+          <h2>
+            Filipe Monteiro
+            <img class="flag" src="https://flagcdn.com/w20/mz.png">
+          </h2>
+          <p><strong>Professor de Português</strong></p>
         </div>
       </div>
 
@@ -131,51 +155,66 @@ header button {
         <span>Professor profissional</span>
       </div>
 
-      <h3>Sobre mim</h3>
-      <p>
-        Sou falante nativo de português e apaixonado por ajudar alunos a ganhar
-        confiança e fluência. As aulas são personalizadas, práticas e focadas
-        nos teus objetivos.
-      </p>
+      <div class="section">
+        <h3>Ensina</h3>
+        <p>Português</p>
+      </div>
 
-      <h3>Eu falo</h3>
-      <ul>
-        <li>Português — Nativo</li>
-        <li>Inglês — Avançado</li>
-        <li>Espanhol — Avançado</li>
-        <li>Francês — Intermediário</li>
-      </ul>
+      <div class="section">
+        <h3>Sobre mim</h3>
+        <p>
+Olá! Sou o Filipe Monteiro, falante nativo de português e apaixonado por ensinar a língua de forma prática,
+natural e eficaz. As minhas aulas são adaptadas ao ritmo e aos objetivos de cada aluno, criando um ambiente
+leve, motivador e focado na fluência real.
+<br><br>
+Ao longo do tempo desenvolvi uma forte capacidade de comunicação, empatia e adaptação cultural, o que me
+permite compreender diferentes perfis de alunos. Acredito que aprender português deve ser uma experiência
+enriquecedora, divertida e orientada para resultados.
+<br><br>
+Aprender português comigo será uma jornada confiante, estruturada e motivadora. Vamos juntos!
+        </p>
+      </div>
+
+      <div class="section">
+        <h3>Eu falo</h3>
+        <ul>
+          <li>Português — Nativo</li>
+          <li>Inglês — Avançado</li>
+          <li>Espanhol — Avançado</li>
+          <li>Francês — Intermediário</li>
+        </ul>
+      </div>
+
     </div>
 
     <!-- DIREITA -->
-    <div class="right-panel">
+    <div class="right">
 
-      <div class="video-box">
-        <h3>Apresentação</h3>
-        <iframe width="100%" height="220"
+      <div class="video">
+        <iframe 
           src="https://www.youtube.com/embed/r2J0BiJPR-c"
           frameborder="0"
           allowfullscreen>
         </iframe>
       </div>
 
-      <div class="calendar-box" id="trialBox" style="display:none">
-        <h3>Agendar aula experimental</h3>
-        <div id="calendar"></div>
-        <button id="bookBtn">Agendar aula experimental</button>
-      </div>
+      <div id="calendar"></div>
+
+      <button id="bookBtn">
+        Agendar aula experimental
+      </button>
 
     </div>
 
   </div>
+
 </div>
 
+<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { 
-  getFirestore, doc, getDoc, collection, addDoc, serverTimestamp 
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
@@ -183,68 +222,58 @@ const firebaseConfig = {
   projectId: "portuguese-teacher-platf-68bc5"
 };
 
-const TEACHER_ID = "3Oj4YuYGewO3O9DqPxWrjBln7MG3";
-const TEACHER_NAME = "Filipe Monteiro";
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let selectedDate = null;
+let selectedSlot = null;
 
-document.getElementById("logout").onclick = () =>
-  signOut(auth).then(() => window.location.href="login.html");
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+  document.getElementById("studentGreeting").innerText =
+    `Olá, ${user.displayName || "Estudante"}!`;
+});
 
-onAuthStateChanged(auth, async (user)=>{
-  if(!user){ location.href="login.html"; return; }
-
-  const snap = await getDoc(doc(db,"users",user.uid));
-  const data = snap.data();
-
-  const hour = new Date().getHours();
-  const greet = hour<12?"Bom dia":hour<18?"Boa tarde":"Boa noite";
-
-  studentGreeting.innerText = `Olá, ${data.name}!`;
-  studentWish.innerText = `${greet}. Desejo ótimas aulas para ti.`;
-
-  if(!data.subscribed){
-    trialBox.style.display="block";
-
-    const calendar = new FullCalendar.Calendar(calendarEl,{
-      initialView:"dayGridMonth",
-      height:400,
-      selectable:true,
-      dateClick:(info)=>{
-        selectedDate = info.dateStr;
-        alert("Data selecionada: " + selectedDate);
-      }
-    });
-    calendar.render();
-
-    bookBtn.onclick = async ()=>{
-      if(!selectedDate){
-        alert("Seleciona uma data primeiro.");
-        return;
-      }
-
-      await addDoc(collection(db,"classes"),{
-        studentId:user.uid,
-        studentName:data.name,
-        studentEmail:user.email,
-        teacherId:TEACHER_ID,
-        teacherName:TEACHER_NAME,
-        date:selectedDate,
-        start:"14:00",
-        end:"15:00",
-        type:"trial",
-        createdAt:serverTimestamp()
-      });
-
-      alert("Aula experimental agendada com sucesso!");
-      location.reload();
-    };
+const calendar = new FullCalendar.Calendar(document.getElementById("calendar"), {
+  initialView: "timeGridWeek",
+  selectable: true,
+  height: 350,
+  events: [
+    { title: "Disponível", start: "2026-01-15T14:00", end: "2026-01-15T15:00" },
+    { title: "Disponível", start: "2026-01-16T10:00", end: "2026-01-16T11:00" }
+  ],
+  select(info) {
+    selectedSlot = info;
   }
 });
+
+calendar.render();
+
+document.getElementById("bookBtn").onclick = async () => {
+  if (!selectedSlot) {
+    alert("Selecione um horário no calendário.");
+    return;
+  }
+
+  const user = auth.currentUser;
+
+  await addDoc(collection(db, "appointments"), {
+    studentId: user.uid,
+    studentName: user.displayName || "",
+    teacherId: "3Oj4YuYGewO3O9DqPxWrjBln7MG3",
+    date: selectedSlot.startStr.split("T")[0],
+    start: selectedSlot.startStr.split("T")[1].slice(0,5),
+    end: selectedSlot.endStr.split("T")[1].slice(0,5),
+    type: "experimental",
+    status: "pending",
+    createdAt: serverTimestamp()
+  });
+
+  alert("Aula experimental marcada com sucesso!");
+};
 </script>
 
 </body>
