@@ -9,119 +9,91 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
-}
+body { margin:0; font-family:Arial,sans-serif; background:#f4f6f8; }
 
-/* HEADER */
 header {
-  background: #0d6efd;
-  color: white;
-  padding: 15px 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  background:#0d6efd;
+  color:white;
+  padding:15px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
-header h1 {
-  font-size: 20px;
-  margin: 0;
-}
-
+header h1 { margin:0; font-size:20px; }
 header button {
-  background: red;
-  border: none;
-  color: white;
-  padding: 6px 15px;
-  border-radius: 5px;
-  cursor: pointer;
+  background:red;
+  border:none;
+  color:white;
+  padding:6px 15px;
+  border-radius:5px;
+  cursor:pointer;
 }
 
-/* CONTAINER */
-.container {
-  max-width: 1200px;
-  margin: auto;
-  padding: 20px;
-}
+.container { max-width:1200px; margin:auto; padding:20px; }
 
-/* GREETING */
 .greeting {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 20px;
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  margin-bottom:20px;
 }
 
-/* MAIN LAYOUT */
 .profile-layout {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
 }
 
-/* LEFT */
-.profile-card {
-  background: white;
-  flex: 1 1 500px;
-  padding: 25px;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+.profile-card, .video-box, .calendar-box {
+  background:white;
+  padding:25px;
+  border-radius:10px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
+
+.profile-card { flex:1 1 500px; }
 
 .profile-header {
-  display: flex;
-  align-items: center;
-  gap: 15px;
+  display:flex;
+  gap:15px;
+  align-items:center;
 }
 
 .profile-header img {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.profile-header h2 {
-  margin: 0;
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  object-fit:cover;
 }
 
 .badges span {
-  display: inline-block;
-  background: #e7f1ff;
-  color: #0d6efd;
-  padding: 5px 10px;
-  border-radius: 20px;
-  font-size: 12px;
-  margin: 5px 5px 0 0;
+  display:inline-block;
+  background:#e7f1ff;
+  color:#0d6efd;
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:12px;
+  margin:5px 5px 0 0;
 }
 
-/* RIGHT */
 .right-panel {
-  flex: 1 1 400px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.video-box, .calendar-box {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  flex:1 1 400px;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
 }
 
 .calendar-box button {
-  margin-top: 15px;
-  width: 100%;
-  padding: 12px;
-  background: #0d6efd;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
+  margin-top:15px;
+  width:100%;
+  padding:12px;
+  background:#0d6efd;
+  color:white;
+  border:none;
+  border-radius:5px;
+  font-size:16px;
+  cursor:pointer;
 }
 </style>
 </head>
@@ -142,10 +114,10 @@ header button {
 
   <div class="profile-layout">
 
-    <!-- LEFT -->
+    <!-- ESQUERDA -->
     <div class="profile-card">
       <div class="profile-header">
-        <img src="filipe.jpg" alt="Filipe Monteiro">
+        <img src="filipe.jpg">
         <div>
           <h2>Filipe Monteiro 🇲🇿</h2>
           <p>Professor de Português</p>
@@ -159,14 +131,11 @@ header button {
         <span>Professor profissional</span>
       </div>
 
-      <h3>Ensina</h3>
-      <p>Português</p>
-
       <h3>Sobre mim</h3>
       <p>
         Sou falante nativo de português e apaixonado por ajudar alunos a ganhar
-        confiança e fluência. As minhas aulas são personalizadas, práticas e
-        focadas nos teus objetivos — seja conversação, trabalho ou exames.
+        confiança e fluência. As aulas são personalizadas, práticas e focadas
+        nos teus objetivos.
       </p>
 
       <h3>Eu falo</h3>
@@ -178,7 +147,7 @@ header button {
       </ul>
     </div>
 
-    <!-- RIGHT -->
+    <!-- DIREITA -->
     <div class="right-panel">
 
       <div class="video-box">
@@ -193,19 +162,20 @@ header button {
       <div class="calendar-box" id="trialBox" style="display:none">
         <h3>Agendar aula experimental</h3>
         <div id="calendar"></div>
-        <button>Agendar aula experimental</button>
+        <button id="bookBtn">Agendar aula experimental</button>
       </div>
 
     </div>
 
   </div>
-
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { 
+  getFirestore, doc, getDoc, collection, addDoc, serverTimestamp 
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
@@ -213,41 +183,66 @@ const firebaseConfig = {
   projectId: "portuguese-teacher-platf-68bc5"
 };
 
+const TEACHER_ID = "3Oj4YuYGewO3O9DqPxWrjBln7MG3";
+const TEACHER_NAME = "Filipe Monteiro";
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+let selectedDate = null;
+
 document.getElementById("logout").onclick = () =>
-  signOut(auth).then(() => window.location.href = "login.html");
+  signOut(auth).then(() => window.location.href="login.html");
 
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    window.location.href = "login.html";
-    return;
-  }
+onAuthStateChanged(auth, async (user)=>{
+  if(!user){ location.href="login.html"; return; }
 
-  const snap = await getDoc(doc(db, "users", user.uid));
+  const snap = await getDoc(doc(db,"users",user.uid));
   const data = snap.data();
 
   const hour = new Date().getHours();
-  const greet =
-    hour < 12 ? "Bom dia" :
-    hour < 18 ? "Boa tarde" : "Boa noite";
+  const greet = hour<12?"Bom dia":hour<18?"Boa tarde":"Boa noite";
 
-  document.getElementById("studentGreeting").innerText =
-    `Olá, ${data.name}!`;
+  studentGreeting.innerText = `Olá, ${data.name}!`;
+  studentWish.innerText = `${greet}. Desejo ótimas aulas para ti.`;
 
-  document.getElementById("studentWish").innerText =
-    `${greet}. Desejo ótimas aulas para ti.`;
+  if(!data.subscribed){
+    trialBox.style.display="block";
 
-  if (!data.subscribed) {
-    document.getElementById("trialBox").style.display = "block";
-
-    const calendar = new FullCalendar.Calendar(
-      document.getElementById("calendar"),
-      { initialView: "dayGridMonth", height: 400 }
-    );
+    const calendar = new FullCalendar.Calendar(calendarEl,{
+      initialView:"dayGridMonth",
+      height:400,
+      selectable:true,
+      dateClick:(info)=>{
+        selectedDate = info.dateStr;
+        alert("Data selecionada: " + selectedDate);
+      }
+    });
     calendar.render();
+
+    bookBtn.onclick = async ()=>{
+      if(!selectedDate){
+        alert("Seleciona uma data primeiro.");
+        return;
+      }
+
+      await addDoc(collection(db,"classes"),{
+        studentId:user.uid,
+        studentName:data.name,
+        studentEmail:user.email,
+        teacherId:TEACHER_ID,
+        teacherName:TEACHER_NAME,
+        date:selectedDate,
+        start:"14:00",
+        end:"15:00",
+        type:"trial",
+        createdAt:serverTimestamp()
+      });
+
+      alert("Aula experimental agendada com sucesso!");
+      location.reload();
+    };
   }
 });
 </script>
