@@ -1,47 +1,44 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <title>Login - Português Online</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Login - Português Online</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background: #f4f6f8;
-      margin: 0;
-    }
-    .login-container {
-      background: white;
-      padding: 40px;
-      border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-      width: 350px;
-      text-align: center;
-    }
-    input, select {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button.login { background: #0d6efd; color: white; }
-    button.signup { background: #198754; color: white; }
-  </style>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  background:#f4f6f8;
+  margin:0;
+}
+.login-container {
+  background:white;
+  padding:40px;
+  border-radius:10px;
+  box-shadow:0 5px 15px rgba(0,0,0,.2);
+  width:350px;
+  text-align:center;
+}
+input, select {
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+}
+button {
+  width:100%;
+  padding:12px;
+  margin-top:15px;
+  border:none;
+  cursor:pointer;
+  color:white;
+}
+.login { background:#0d6efd; }
+.signup { background:#198754; }
+</style>
 </head>
 
 <body>
@@ -49,13 +46,13 @@
 <div class="login-container">
   <h2>Login / Criar Conta</h2>
 
-  <select id="roleSelect">
+  <select id="role">
     <option value="student">Aluno</option>
     <option value="teacher">Professor</option>
   </select>
 
-  <input type="email" id="email" placeholder="Email" required>
-  <input type="password" id="password" placeholder="Senha" required>
+  <input id="email" type="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Senha">
 
   <button class="login" id="loginBtn">Entrar</button>
   <button class="signup" id="signupBtn">Criar Conta</button>
@@ -66,16 +63,16 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import {
   getAuth,
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  onAuthStateChanged
+  createUserWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import {
   getFirestore,
   doc,
   setDoc,
-  getDoc
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+/* 🔥 FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
   authDomain: "portuguese-teacher-platf-68bc5.firebaseapp.com",
@@ -86,45 +83,51 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+/* 🔐 LOGIN */
 loginBtn.onclick = async () => {
-  await signInWithEmailAndPassword(auth, email.value, password.value);
+  const email = email.value;
+  const password = password.value;
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    window.location.href = "dashboard-student-modern.html";
+  } catch (e) {
+    alert("Erro no login");
+  }
 };
 
+/* 🆕 SIGNUP */
 signupBtn.onclick = async () => {
-  const role = roleSelect.value;
+  const emailVal = email.value;
+  const passwordVal = password.value;
+  const roleVal = role.value;
 
-  const cred = await createUserWithEmailAndPassword(
-    auth,
-    email.value,
-    password.value
-  );
+  try {
+    const cred = await createUserWithEmailAndPassword(
+      auth,
+      emailVal,
+      passwordVal
+    );
 
-  await setDoc(doc(db, "users", cred.user.uid), {
-    email: cred.user.email,
-    role: role,
-    completedProfile: false,
-    balance: 0
-  });
+    /* 🔴 CRIA DOCUMENTO IMEDIATAMENTE */
+    await setDoc(doc(db, "users", cred.user.uid), {
+      email: emailVal,
+      role: roleVal,
+      completedProfile: false,
+      createdAt: serverTimestamp()
+    });
+
+    /* 🔁 REDIRECIONA FORÇADO */
+    if (roleVal === "student") {
+      window.location.href = "cadastro-aluno.html";
+    } else {
+      window.location.href = "dashboard-professor.html";
+    }
+
+  } catch (e) {
+    alert("Erro ao criar conta: " + e.message);
+  }
 };
-
-onAuthStateChanged(auth, async (user) => {
-  if (!user) return;
-
-  const snap = await getDoc(doc(db, "users", user.uid));
-  if (!snap.exists()) return;
-
-  const data = snap.data();
-
-  if (data.role === "student") {
-    window.location.href = data.completedProfile
-      ? "dashboard-student.html"
-      : "cadastro-aluno.html";
-  }
-
-  if (data.role === "teacher") {
-    window.location.href = "dashboard-professor.html";
-  }
-});
 </script>
 
 </body>
