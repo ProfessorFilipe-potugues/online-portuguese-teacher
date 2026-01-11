@@ -2,62 +2,77 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Marcar Aula</title>
+<title>Agendar Aula Experimental</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
 <style>
 body {
+  margin:0;
   font-family: Arial, sans-serif;
   background:#f4f6f8;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
 }
-.box {
+
+header {
+  background:#0d6efd;
+  color:white;
+  padding:15px 30px;
+  font-size:20px;
+}
+
+.container {
+  max-width:900px;
+  margin:auto;
+  padding:25px;
+}
+
+.card {
   background:white;
-  padding:30px;
-  width:350px;
+  padding:25px;
   border-radius:10px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
-input, button {
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-}
+
 button {
+  width:100%;
+  padding:14px;
   background:#0d6efd;
   color:white;
   border:none;
+  border-radius:8px;
+  font-size:16px;
   cursor:pointer;
+  margin-top:15px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="box">
-  <h3>Marcar Aula</h3>
+<header>Agendar Aula Experimental</header>
 
-  <input type="date" id="date">
-  <input type="time" id="start">
-  <input type="time" id="end">
+<div class="container">
+  <div class="card">
+    <p>Seleciona um horário disponível:</p>
+    <div id="calendar"></div>
 
-  <button id="save">Confirmar Aula</button>
+    <button id="confirm">Confirmar Aula Experimental</button>
+  </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { 
-  getFirestore, 
-  collection, 
-  addDoc, 
-  serverTimestamp,
-  doc,
-  getDoc
+import {
+  getFirestore,
+  addDoc,
+  collection,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+/* 🔥 FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
   authDomain: "portuguese-teacher-platf-68bc5.firebaseapp.com",
@@ -68,37 +83,69 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let user;
+/* 🔐 VARIÁVEIS */
+let currentUser = null;
+let selectedSlot = null;
 
-onAuthStateChanged(auth, async (u)=>{
-  if(!u){
-    location.href="login.html";
+/* 🔐 AUTENTICAÇÃO */
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    window.location.href = "login.html";
     return;
   }
-  user = u;
+  currentUser = user;
 });
 
-save.onclick = async ()=>{
-  if(!date.value || !start.value || !end.value){
-    alert("Preencha todos os campos");
+/* 🗓️ CALENDÁRIO */
+const calendar = new FullCalendar.Calendar(
+  document.getElementById("calendar"),
+  {
+    initialView: "timeGridWeek",
+    height: 450,
+    selectable: true,
+    allDaySlot: false,
+    slotMinTime: "08:00:00",
+    slotMaxTime: "20:00:00",
+
+    select(info) {
+      selectedSlot = info;
+      alert(
+        `Horário selecionado:\n${info.startStr} → ${info.endStr}`
+      );
+    }
+  }
+);
+
+calendar.render();
+
+/* ✅ CONFIRMAR */
+document.getElementById("confirm").onclick = async () => {
+
+  if (!selectedSlot) {
+    alert("Seleciona primeiro um horário no calendário.");
     return;
   }
 
-  // 🔎 BUSCA PROFESSOR (fixo por enquanto)
-  const teacherId = "UID_DO_PROFESSOR"; // ← substitui pelo teu UID
+  try {
+    await addDoc(collection(db, "appointments"), {
+      studentId: currentUser.uid,
+      studentEmail: currentUser.email,
+      teacherId: "3Oj4YuYGewO3O9DqPxWrjBln7MG3", // UID DO PROFESSOR
+      date: selectedSlot.startStr.split("T")[0],
+      start: selectedSlot.startStr.split("T")[1].slice(0,5),
+      end: selectedSlot.endStr.split("T")[1].slice(0,5),
+      type: "experimental",
+      status: "pending",
+      createdAt: serverTimestamp()
+    });
 
-  await addDoc(collection(db,"classes"),{
-    studentId: user.uid,
-    studentEmail: user.email,
-    teacherId: teacherId,
-    date: date.value,
-    start: start.value,
-    end: end.value,
-    createdAt: serverTimestamp()
-  });
+    alert("🎉 Aula experimental marcada com sucesso!");
+    window.location.href = "dashboard-student.html";
 
-  alert("Aula marcada com sucesso!");
-  location.href="dashboard-student.html";
+  } catch (err) {
+    console.error(err);
+    alert("Erro ao marcar a aula.");
+  }
 };
 </script>
 
