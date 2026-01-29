@@ -2,257 +2,172 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <title>Professor de Português Online | Filipe Monteiro</title>
+  <title>Professor de Português Online | Aulas Personalizadas</title>
+  <meta name="description" content="Aulas de português online com professor experiente. Conversação, exames oficiais, negócios e viagens. Aula experimental disponível.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --primary: #1f3a5f;
-      --accent: #f4a261;
-      --light: #f7f9fc;
-      --text: #333;
+      --primary:#0d6efd;
+      --secondary:#6610f2;
+      --success:#28a745;
+      --dark:#222;
+      --light:#f4f7fb;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing:border-box; }
 
     body {
-      font-family: 'Inter', sans-serif;
-      background: var(--light);
-      color: var(--text);
-      line-height: 1.6;
+      margin:0;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background:var(--light);
+      color:#333;
+      line-height:1.6;
     }
 
     h1, h2, h3 {
-      font-family: 'Poppins', sans-serif;
-      color: var(--primary);
+      margin-top:0;
+      color:#111;
     }
 
-    a { text-decoration: none; }
+    a { text-decoration:none; }
 
     /* HEADER */
     header {
-      background: var(--primary);
-      color: white;
-      padding: 80px 20px 120px;
-      text-align: center;
+      background:linear-gradient(90deg, var(--primary), var(--secondary));
+      color:#fff;
+      padding:70px 20px;
+      text-align:center;
     }
 
     header h1 {
-      font-size: 2.6em;
-      margin-bottom: 15px;
-      color: white;
+      font-size:2.8em;
+      margin-bottom:10px;
     }
 
     header p {
-      font-size: 1.2em;
-      opacity: 0.9;
+      font-size:1.2em;
+      max-width:700px;
+      margin:0 auto 30px;
+      opacity:0.95;
     }
 
-    /* CARD PRINCIPAL */
+    .cta {
+      display:inline-block;
+      padding:14px 30px;
+      background:#fff;
+      color:var(--primary);
+      border-radius:30px;
+      font-weight:bold;
+      transition:0.3s;
+    }
+
+    .cta:hover {
+      background:#eaeaea;
+      transform:translateY(-2px);
+    }
+
+    /* PROFESSOR */
     .teacher {
-      background: white;
-      max-width: 900px;
-      margin: -80px auto 60px;
-      padding: 50px 30px;
-      border-radius: 16px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.1);
-      text-align: center;
+      background:#fff;
+      max-width:900px;
+      margin:-60px auto 60px;
+      padding:40px 25px;
+      border-radius:20px;
+      text-align:center;
+      box-shadow:0 12px 30px rgba(0,0,0,0.12);
     }
 
     .teacher img {
-      width: 170px;
-      height: 170px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-bottom: 20px;
-      border: 4px solid var(--accent);
+      width:170px;
+      height:170px;
+      border-radius:50%;
+      object-fit:cover;
+      border:5px solid var(--primary);
+      margin-bottom:15px;
     }
 
     .teacher h2 {
-      font-size: 2em;
-      margin-bottom: 8px;
+      color:var(--primary);
+      font-size:2.1em;
     }
 
-    .teacher .subtitle {
-      color: #555;
-      margin-bottom: 25px;
-      font-size: 1.1em;
+    .teacher .role {
+      font-size:1.1em;
+      color:#666;
+      margin-bottom:20px;
     }
 
-    .price-old {
-      text-decoration: line-through;
-      color: #999;
-      margin-bottom: 5px;
+    .prices {
+      margin:25px 0;
     }
 
-    .price-new {
-      font-size: 1.6em;
-      font-weight: bold;
-      color: var(--accent);
-      margin-bottom: 25px;
+    .old-price {
+      color:#c0392b;
+      text-decoration:line-through;
+      font-size:1.1em;
+    }
+
+    .new-price {
+      color:var(--success);
+      font-size:1.8em;
+      font-weight:bold;
+    }
+
+    .actions a {
+      margin:10px;
     }
 
     .btn {
-      display: inline-block;
-      background: var(--primary);
-      color: white;
-      padding: 14px 32px;
-      border-radius: 8px;
-      font-weight: 600;
-      transition: 0.3s;
-      margin: 5px;
-    }
-
-    .btn:hover {
-      background: #162c47;
+      display:inline-block;
+      padding:12px 26px;
+      border-radius:8px;
+      background:var(--primary);
+      color:#fff;
+      font-weight:bold;
+      transition:0.3s;
     }
 
     .btn.secondary {
-      background: transparent;
-      color: var(--primary);
-      border: 2px solid var(--primary);
+      background:#555;
+    }
+
+    .btn:hover {
+      background:var(--secondary);
+      transform:translateY(-2px);
     }
 
     /* SEÇÕES */
     section {
-      max-width: 1100px;
-      margin: 60px auto;
-      padding: 0 20px;
+      padding:50px 20px;
+      max-width:1100px;
+      margin:auto;
     }
 
-    section h2 {
-      text-align: center;
-      margin-bottom: 40px;
-      font-size: 2em;
+    .section-title {
+      text-align:center;
+      margin-bottom:40px;
     }
 
     /* CARDS */
     .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 25px;
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
+      gap:25px;
     }
 
     .card {
-      background: white;
-      padding: 25px;
-      border-radius: 14px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      background:#fff;
+      padding:25px;
+      border-radius:16px;
+      box-shadow:0 8px 22px rgba(0,0,0,0.1);
+      transition:0.3s;
+    }
+
+    .card:hover {
+      transform:translateY(-6px);
+      box-shadow:0 14px 30px rgba(0,0,0,0.15);
     }
 
     .card h3 {
-      margin-bottom: 10px;
-      font-size: 1.2em;
-    }
-
-    .card ul {
-      padding-left: 18px;
-    }
-
-    .card li {
-      margin-bottom: 8px;
-    }
-
-    /* FOOTER */
-    footer {
-      background: #111;
-      color: #ccc;
-      text-align: center;
-      padding: 30px 15px;
-      margin-top: 80px;
-      font-size: 0.9em;
-    }
-
-    /* WHATSAPP */
-    .chat {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #25d366;
-      color: white;
-      padding: 16px 18px;
-      border-radius: 50%;
-      font-size: 22px;
-      transition: 0.3s;
-    }
-
-    .chat:hover {
-      transform: scale(1.1);
-    }
-  </style>
-</head>
-
-<body>
-
-<header>
-  <h1>Aprenda Português com Confiança</h1>
-  <p>Aulas online personalizadas para conversação, exames e uso profissional</p>
-</header>
-
-<section class="teacher">
-  <img src="filipe.jpg" alt="Professor Filipe Monteiro">
-  <h2>Filipe Monteiro</h2>
-  <p class="subtitle">Professor de Português • Conversação • Exames Oficiais</p>
-
-  <div class="price-old">Preço normal: 10 USD / hora</div>
-  <div class="price-new">Aula experimental: 5 USD</div>
-
-  <a href="agendar.html" class="btn">Agendar aula experimental</a>
-  <a href="login.html" class="btn secondary">Área do aluno</a>
-</section>
-
-<section>
-  <h2>Para quem são as aulas?</h2>
-  <div class="cards">
-
-    <div class="card">
-      <h3>Iniciantes</h3>
-      <ul>
-        <li>Português do zero</li>
-        <li>Vocabulário essencial</li>
-        <li>Frases simples e práticas</li>
-      </ul>
-    </div>
-
-    <div class="card">
-      <h3>Conversação</h3>
-      <ul>
-        <li>Fluência e pronúncia</li>
-        <li>Correção em tempo real</li>
-        <li>Confiança ao falar</li>
-      </ul>
-    </div>
-
-    <div class="card">
-      <h3>Profissional</h3>
-      <ul>
-        <li>Português para trabalho</li>
-        <li>E-mails e reuniões</li>
-        <li>Comunicação formal</li>
-      </ul>
-    </div>
-
-    <div class="card">
-      <h3>Exames Oficiais</h3>
-      <ul>
-        <li>CIPLE, DIPLE, DEPLE</li>
-        <li>Treino completo</li>
-        <li>Simulações reais</li>
-      </ul>
-    </div>
-
-  </div>
-</section>
-
-<footer>
-  © 2026 • Filipe Monteiro — Professor de Português Online  
-  <br>Contacto disponível via WhatsApp
-</footer>
-
-<a class="chat" href="https://wa.me/258000000000" target="_blank">💬</a>
-
-</body>
-</html>
+      color:var(--pri
