@@ -8,67 +8,107 @@
 <style>
 body {
   font-family: Arial, sans-serif;
-  background:#f4f6f8;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-  margin:0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
 }
 
 .box {
-  background:white;
-  padding:30px;
-  width:350px;
-  border-radius:10px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+  background: white;
+  padding: 35px;
+  width: 100%;
+  max-width: 550px;
+  border-radius: 15px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
 }
 
 h3 {
   color: #333;
   text-align: center;
+  margin-bottom: 10px;
+  font-size: 24px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+.form-group {
   margin-bottom: 20px;
 }
 
 label {
   display: block;
-  margin-top: 15px;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
   color: #555;
-  font-weight: 500;
-}
-
-input {
-  width:100%;
-  padding:12px;
-  margin-top:5px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  box-sizing: border-box;
+  font-weight: 600;
   font-size: 14px;
 }
 
-input:focus {
+label .required {
+  color: #dc3545;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+  transition: border-color 0.3s;
+}
+
+input:focus, select:focus, textarea:focus {
   outline: none;
-  border-color: #0d6efd;
+  border-color: #667eea;
+}
+
+select {
+  cursor: pointer;
+  background-color: white;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.info-box {
+  background: #e7f3ff;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: #004085;
+  border-left: 4px solid #0d6efd;
 }
 
 button {
-  width:100%;
-  padding:12px;
-  background:#0d6efd;
-  color:white;
-  border:none;
-  margin-top:20px;
-  cursor:pointer;
-  border-radius: 6px;
-  font-size: 15px;
-  font-weight: 500;
-  transition: 0.3s;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  margin-top: 10px;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 button:hover:not(:disabled) {
-  background:#0b5ed7;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
 }
 
 button:disabled {
@@ -78,7 +118,21 @@ button:disabled {
 
 .loading {
   text-align: center;
+  color: white;
+  font-size: 18px;
+}
+
+.level-info {
+  font-size: 12px;
   color: #666;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+@media (max-width: 600px) {
+  .box {
+    padding: 25px;
+  }
 }
 </style>
 </head>
@@ -86,13 +140,117 @@ button:disabled {
 <body>
 
 <div class="box" id="content" style="display:none">
-  <h3>Cadastro do Aluno</h3>
-  <p style="color: #666; font-size: 14px; text-align: center;">Complete seu perfil para continuar</p>
-  
-  <label for="name">Nome Completo:</label>
-  <input id="name" type="text" placeholder="Digite seu nome completo" required>
-  
-  <button id="finishBtn">Concluir Cadastro</button>
+  <h3>📝 Complete seu Perfil</h3>
+  <p class="subtitle">Ajude-nos a personalizar suas aulas de português</p>
+
+  <div class="info-box">
+    ℹ️ Estas informações ajudam o professor a preparar aulas adequadas ao seu nível e objetivos.
+  </div>
+
+  <form id="profileForm">
+    <!-- Nome Completo -->
+    <div class="form-group">
+      <label for="name">
+        Nome Completo <span class="required">*</span>
+      </label>
+      <input 
+        id="name" 
+        type="text" 
+        placeholder="Digite seu nome completo"
+        required
+      >
+    </div>
+
+    <!-- País -->
+    <div class="form-group">
+      <label for="country">
+        País <span class="required">*</span>
+      </label>
+      <select id="country" required>
+        <option value="">Selecione seu país</option>
+        <option value="Moçambique">Moçambique</option>
+        <option value="Angola">Angola</option>
+        <option value="Brasil">Brasil</option>
+        <option value="Portugal">Portugal</option>
+        <option value="Cabo Verde">Cabo Verde</option>
+        <option value="Guiné-Bissau">Guiné-Bissau</option>
+        <option value="São Tomé e Príncipe">São Tomé e Príncipe</option>
+        <option value="Timor-Leste">Timor-Leste</option>
+        <option value="Guiné Equatorial">Guiné Equatorial</option>
+        <option value="Macau">Macau</option>
+        <option value="---" disabled>───────────────</option>
+        <option value="Estados Unidos">Estados Unidos</option>
+        <option value="Reino Unido">Reino Unido</option>
+        <option value="Canadá">Canadá</option>
+        <option value="Austrália">Austrália</option>
+        <option value="França">França</option>
+        <option value="Alemanha">Alemanha</option>
+        <option value="Espanha">Espanha</option>
+        <option value="Itália">Itália</option>
+        <option value="Holanda">Holanda</option>
+        <option value="Suíça">Suíça</option>
+        <option value="África do Sul">África do Sul</option>
+        <option value="China">China</option>
+        <option value="Japão">Japão</option>
+        <option value="Índia">Índia</option>
+        <option value="Outro">Outro</option>
+      </select>
+    </div>
+
+    <!-- Nível de Português -->
+    <div class="form-group">
+      <label for="level">
+        Nível de Português <span class="required">*</span>
+      </label>
+      <select id="level" required>
+        <option value="">Selecione seu nível</option>
+        <option value="A1">A1 - Iniciante (compreendo palavras básicas)</option>
+        <option value="A2">A2 - Iniciante (compreendo frases simples)</option>
+        <option value="B1">B1 - Intermediário (consigo conversar sobre tópicos familiares)</option>
+        <option value="B2">B2 - Intermediário (consigo expressar opiniões e argumentar)</option>
+        <option value="C1">C1 - Avançado (falo fluentemente com poucos erros)</option>
+        <option value="C2">C2 - Avançado (domínio quase nativo)</option>
+      </select>
+      <div class="level-info">
+        💡 Não tem certeza? O professor avaliará seu nível na primeira aula.
+      </div>
+    </div>
+
+    <!-- Objetivo -->
+    <div class="form-group">
+      <label for="goal">
+        Objetivo das Aulas <span class="required">*</span>
+      </label>
+      <select id="goal" required>
+        <option value="">Selecione seu objetivo</option>
+        <option value="Conversação">🗣️ Melhorar conversação / fluência oral</option>
+        <option value="Exames">📚 Preparação para exames (CIPLE, DIPLE, DEPLE)</option>
+        <option value="Negócios">💼 Português para negócios / profissional</option>
+        <option value="Viagens">✈️ Português para viagens</option>
+        <option value="Estudos">🎓 Apoio escolar / universidade</option>
+        <option value="Cultura">🎭 Interesse cultural / literatura</option>
+        <option value="Mudança">🏠 Vou mudar para país lusófono</option>
+        <option value="Trabalho">💻 Preciso para trabalho remoto</option>
+        <option value="Família">👨‍👩‍👧 Comunicar com família</option>
+        <option value="Outro">Outro</option>
+      </select>
+    </div>
+
+    <!-- Observações (Opcional) -->
+    <div class="form-group">
+      <label for="notes">
+        Observações (Opcional)
+      </label>
+      <textarea 
+        id="notes" 
+        placeholder="Conte mais sobre suas necessidades, disponibilidade de horários, ou qualquer informação que ajude o professor..."
+      ></textarea>
+    </div>
+
+    <button type="submit" id="finishBtn">
+      Concluir Cadastro →
+    </button>
+  </form>
 </div>
 
 <p class="loading" id="loading">A verificar sessão...</p>
@@ -127,63 +285,81 @@ onAuthStateChanged(auth, (user) => {
   document.getElementById("content").style.display = "block";
 });
 
-/* ✅ CONCLUIR CADASTRO */
-document.getElementById("finishBtn").onclick = async () => {
-  const nameInput = document.getElementById("name");
+/* ✅ SUBMIT DO FORMULÁRIO */
+document.getElementById("profileForm").onsubmit = async (e) => {
+  e.preventDefault();
+  
   const finishBtn = document.getElementById("finishBtn");
-  const name = nameInput.value.trim();
+  const name = document.getElementById("name").value.trim();
+  const country = document.getElementById("country").value;
+  const level = document.getElementById("level").value;
+  const goal = document.getElementById("goal").value;
+  const notes = document.getElementById("notes").value.trim();
 
   // Validações
-  if (!name) {
-    alert("Por favor, escreve o teu nome");
-    nameInput.focus();
-    return;
-  }
-
-  if (name.length < 3) {
-    alert("O nome deve ter pelo menos 3 caracteres");
-    nameInput.focus();
+  if (!name || name.length < 3) {
+    alert("Por favor, insira um nome válido (mínimo 3 caracteres)");
+    document.getElementById("name").focus();
     return;
   }
 
   if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(name)) {
     alert("O nome contém caracteres inválidos");
-    nameInput.focus();
+    document.getElementById("name").focus();
+    return;
+  }
+
+  if (!country) {
+    alert("Por favor, selecione seu país");
+    document.getElementById("country").focus();
+    return;
+  }
+
+  if (!level) {
+    alert("Por favor, selecione seu nível de português");
+    document.getElementById("level").focus();
+    return;
+  }
+
+  if (!goal) {
+    alert("Por favor, selecione o objetivo das aulas");
+    document.getElementById("goal").focus();
     return;
   }
 
   // Loading state
   finishBtn.disabled = true;
-  finishBtn.textContent = "A guardar...";
+  finishBtn.textContent = "A guardar informações...";
 
   try {
+    // Salva os dados completos no Firestore
     await setDoc(
       doc(db, "users", currentUser.uid),
       {
         name: name,
         email: currentUser.email,
+        country: country,
+        level: level,
+        goal: goal,
+        notes: notes,
         role: "student",
         completedProfile: true,
-        createdAt: serverTimestamp()
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
       },
       { merge: true }
     );
 
+    alert("✅ Perfil completado com sucesso!\n\nBem-vindo à plataforma!");
     window.location.href = "dashboard-student.html";
+
   } catch (error) {
     console.error(error);
     alert("Erro ao guardar os dados. Tenta novamente.");
     finishBtn.disabled = false;
-    finishBtn.textContent = "Concluir Cadastro";
+    finishBtn.textContent = "Concluir Cadastro →";
   }
 };
-
-// Permitir Enter para submeter
-document.getElementById("name").addEventListener("keypress", (e) => {
-  if (e.key === "Enter") {
-    document.getElementById("finishBtn").click();
-  }
-});
 </script>
 
 </body>
