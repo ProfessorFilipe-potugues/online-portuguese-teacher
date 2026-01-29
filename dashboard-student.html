@@ -1,272 +1,100 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<title>Dashboard do Estudante</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Área do Aluno</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <style>
+    body {
+      margin:0;
+      font-family:'Segoe UI', sans-serif;
+      background:#f4f7fb;
+    }
 
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
-}
+    header {
+      background:#0d6efd;
+      color:#fff;
+      padding:20px;
+      text-align:center;
+    }
 
-/* HEADER */
-header {
-  background: #0d6efd;
-  color: white;
-  padding: 15px 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+    .container {
+      max-width:1100px;
+      margin:auto;
+      padding:30px 20px;
+    }
 
-header h1 {
-  font-size: 20px;
-  margin: 0;
-}
+    h2 {
+      margin-bottom:20px;
+    }
 
-header button {
-  background: #dc3545;
-  border: none;
-  color: white;
-  padding: 6px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-}
+    .cards {
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
+      gap:20px;
+    }
 
-/* CONTAINER */
-.container {
-  max-width: 1200px;
-  margin: auto;
-  padding: 20px;
-}
+    .card {
+      background:#fff;
+      padding:25px;
+      border-radius:16px;
+      box-shadow:0 8px 20px rgba(0,0,0,0.1);
+    }
 
-/* GREETING */
-.greeting {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-}
+    .card h3 {
+      color:#0d6efd;
+    }
 
-/* MAIN LAYOUT */
-.profile-layout {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-}
+    .btn {
+      display:inline-block;
+      margin-top:15px;
+      padding:10px 20px;
+      background:#0d6efd;
+      color:#fff;
+      border-radius:8px;
+      font-weight:bold;
+      text-decoration:none;
+    }
 
-/* LEFT CARD */
-.profile-card {
-  background: white;
-  flex: 1 1 500px;
-  padding: 25px;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-.profile-header {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.profile-header img {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-}
-
-.badges span {
-  display: inline-block;
-  background: #e7f1ff;
-  color: #0d6efd;
-  padding: 5px 10px;
-  border-radius: 20px;
-  font-size: 12px;
-  margin: 5px 5px 0 0;
-}
-
-/* RIGHT */
-.right-panel {
-  flex: 1 1 400px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.video-box, .calendar-box {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-.calendar-box button {
-  margin-top: 15px;
-  width: 100%;
-  padding: 12px;
-  background: #0d6efd;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-}
-</style>
+    .btn:hover {
+      background:#6610f2;
+    }
+  </style>
 </head>
 
 <body>
 
 <header>
-  <h1>Learn Portuguese</h1>
-  <button id="logout">Sair</button>
+  <h1>Área do Aluno</h1>
+  <p>Bem-vindo às suas aulas de Português</p>
 </header>
 
 <div class="container">
+  <h2>O que deseja fazer?</h2>
 
-  <div class="greeting">
-    <h2 id="studentGreeting"></h2>
-    <p id="studentWish"></p>
-  </div>
+  <div class="cards">
 
-  <div class="profile-layout">
-
-    <!-- LEFT -->
-    <div class="profile-card">
-      <div class="profile-header">
-        <img src="filipe.jpg">
-        <div>
-          <h2>Filipe Monteiro 🇲🇿</h2>
-          <p>Professor de Português</p>
-        </div>
-      </div>
-
-      <div class="badges">
-        <span>Aulas Personalizadas</span>
-        <span>Flexível</span>
-        <span>Experiência Internacional</span>
-      </div>
-
-      <h3>Sobre o professor</h3>
-      <p>
-        Professor nativo de português, focado em aulas práticas,
-        conversação e preparação para exames.
-      </p>
+    <div class="card">
+      <h3>📅 Próxima Aula</h3>
+      <p>Ainda não há aulas marcadas.</p>
+      <a class="btn" href="marcar-aula.html">Marcar Aula</a>
     </div>
 
-    <!-- RIGHT -->
-    <div class="right-panel">
+    <div class="card">
+      <h3>📚 Meu Plano</h3>
+      <p>Consulte seus planos e pagamentos.</p>
+      <a class="btn" href="pricing.html">Ver Planos</a>
+    </div>
 
-      <div class="video-box">
-        <h3>Apresentação</h3>
-        <iframe width="100%" height="220"
-          src="https://www.youtube.com/embed/r2J0BiJPR-c"
-          frameborder="0"
-          allowfullscreen>
-        </iframe>
-      </div>
-
-      <div class="calendar-box">
-        <h3>Minhas aulas</h3>
-        <div id="calendar"></div>
-
-        <button onclick="window.location.href='payment.html'">
-          Agendar Aula Experimental
-        </button>
-      </div>
-
+    <div class="card">
+      <h3>💬 Falar com o Professor</h3>
+      <p>Tire dúvidas e peça apoio.</p>
+      <a class="btn" href="https://wa.me/258000000000" target="_blank">WhatsApp</a>
     </div>
 
   </div>
-
 </div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, getDocs, query, where, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
-  authDomain: "portuguese-teacher-platf-68bc5.firebaseapp.com",
-  projectId: "portuguese-teacher-platf-68bc5"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-/* LOGOUT */
-document.getElementById("logout").onclick = () =>
-  signOut(auth).then(() => window.location.href = "login.html");
-
-/* AUTH */
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    window.location.href = "login.html";
-    return;
-  }
-
-  const snap = await getDoc(doc(db, "users", user.uid));
-  if (!snap.exists() || snap.data().role !== "student") {
-    window.location.href = "login.html";
-    return;
-  }
-
-  const data = snap.data();
-
-  const hour = new Date().getHours();
-  const greet =
-    hour < 12 ? "Bom dia" :
-    hour < 18 ? "Boa tarde" : "Boa noite";
-
-  document.getElementById("studentGreeting").innerText =
-    `Olá, ${data.name}!`;
-
-  document.getElementById("studentWish").innerText =
-    `${greet}. Desejo ótimas aulas para ti.`;
-
-  loadMyClasses(user.uid);
-});
-
-/* LOAD CLASSES */
-async function loadMyClasses(studentId) {
-  const snap = await getDocs(
-    query(
-      collection(db, "appointments"),
-      where("studentId", "==", studentId)
-    )
-  );
-
-  const events = [];
-
-  snap.forEach(d => {
-    const a = d.data();
-    events.push({
-      title: a.type === "experimental" ? "Aula Experimental" : "Aula",
-      start: `${a.date}T${a.start}`,
-      end: `${a.date}T${a.end}`
-    });
-  });
-
-  const calendar = new FullCalendar.Calendar(
-    document.getElementById("calendar"),
-    {
-      initialView: "dayGridMonth",
-      height: 400,
-      events
-    }
-  );
-
-  calendar.render();
-}
-</script>
 
 </body>
 </html>
