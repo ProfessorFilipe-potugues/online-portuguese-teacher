@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Professor Filipe Monteiro | Português Online</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #1a73e8;
+      --secondary: #34a853;
+      --accent: #fbbc04;
+      --text-dark: #1f1f1f;
+      --text-light: #5f6368;
+      --bg-light: #f8f9fa;
+      --border: #dadce0;
+      --white: #ffffff;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+
+    /* HEADER */
+    .header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--primary);
+    }
+
+    .header-btn {
+      padding: 10px 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .header-btn:hover {
+      background: #1557b0;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 1200px;
+      margin: 32px auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 32px;
+    }
+
+    /* LEFT SIDEBAR - TEACHER PROFILE */
+    .teacher-card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 100px;
+      height: fit-content;
+    }
+
+    .teacher-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--primary);
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .teacher-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .teacher-country {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+      color: var(--text-light);
+      background: var(--bg-light);
+      padding: 4px 10px;
+      border-radius: 12px;
+    }
+
+    .teacher-title {
+      color: var(--text-light);
+      font-size: 16px;
+      margin-bottom: 24px;
+    }
+
+    .rating {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .stars {
+      color: #fbbc04;
+      font-size: 18px;
+    }
+
+    .rating-text {
+      color: var(--text-light);
+      font-size: 14px;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+
+    .info-section {
+      margin-bottom: 24px;
+    }
+
+    .info-title {
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 12px;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-content {
+      font-size: 14px;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    .info-list {
+      list-style: none;
+    }
+
+    .info-list li {
+      padding: 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--text-light);
+    }
+
+    .info-list li::before {
+      content: "✓";
+      color: var(--secondary);
+      font-weight: bold;
+    }
+
+    .cta-button {
+      width: 100%;
+      padding: 16px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 24px;
+      transition: all 0.3s;
+    }
+
+    .cta-button:hover {
+      background: #1557b0;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(26, 115, 232, 0.4);
+    }
+
+    /* RIGHT CONTENT */
+    .content-area {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .section-card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    /* VIDEO */
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 12px;
+    }
+
+    /* PRICING TABS */
+    .pricing-tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .pricing-tab {
+      padding: 12px 24px;
+      background: none;
+      border: none;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text-light);
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s;
+    }
+
+    .pricing-tab.active {
+      color: var(--primary);
+    }
+
+    .pricing-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--primary);
+    }
+
+    .pricing-tab:hover {
+      color: var(--primary);
+    }
+
+    /* PACKAGES */
+    .packages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .package-card {
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .package-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(26, 115, 232, 0.15);
+    }
+
+    .package-card.selected {
+      border-color: var(--primary);
+      background: rgba(26, 115, 232, 0.05);
+    }
+
+    .package-badge {
+      position: absolute;
+      top: -10px;
+      right: 12px;
+      background: var(--accent);
+      color: var(--text-dark);
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .package-lessons {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+
+    .package-price {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .package-price span {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-light);
+    }
+
+    .package-save {
+      font-size: 12px;
+      color: var(--secondary);
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    /* CALENDAR */
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .calendar-month {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .calendar-nav {
+      display: flex;
+      gap: 8px;
+    }
+
+    .calendar-nav button {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.3s;
+    }
+
+    .calendar-nav button:hover {
+      background: var(--bg-light);
+      border-color: var(--primary);
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .calendar-day-header {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-light);
+      padding: 8px;
+    }
+
+    .calendar-day {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+
+    .calendar-day:hover:not(.disabled):not(.other-month) {
+      background: var(--bg-light);
+      border-color: var(--primary);
+    }
+
+    .calendar-day.selected {
+      background: var(--primary);
+      color: white;
+    }
+
+    .calendar-day.today {
+      border: 2px solid var(--primary);
+    }
+
+    .calendar-day.disabled {
+      color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .calendar-day.other-month {
+      color: #ccc;
+    }
+
+    /* TIME SLOTS */
+    .time-slots-title {
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--text-dark);
+    }
+
+    .time-slots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .time-slot {
+      padding: 12px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .time-slot:hover:not(.disabled) {
+      border-color: var(--primary);
+      background: rgba(26, 115, 232, 0.05);
+    }
+
+    .time-slot.selected {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .time-slot.disabled {
+      background: #f5f5f5;
+      color: #ccc;
+      cursor: not-allowed;
+      border-color: #eee;
+    }
+
+    .booking-summary {
+      background: var(--bg-light);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+
+    .booking-summary-title {
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .booking-detail {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .booking-detail-label {
+      color: var(--text-light);
+    }
+
+    .booking-detail-value {
+      font-weight: 600;
+    }
+
+    .total-price {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+      text-align: right;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 2px solid var(--border);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+
+      .teacher-card {
+        position: static;
+      }
+
+      .packages-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .time-slots-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .header-content {
+        flex-direction: column;
+        gap: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-content">
+      <div class="logo">🇵🇹 Português Online</div>
+      <a href="login.html" class="header-btn">Fazer Login</a>
+    </div>
+  </div>
+
+  <!-- CONTAINER -->
+  <div class="container">
+    
+    <!-- LEFT SIDEBAR - TEACHER PROFILE -->
+    <aside class="teacher-card">
+      <img 
+        src="https://ui-avatars.com/api/?name=Filipe+Monteiro&size=240&background=1a73e8&color=fff&bold=true" 
+        alt="Professor Filipe Monteiro" 
+        class="teacher-avatar"
+        id="teacherPhoto"
+      >
+      
+      <h1 class="teacher-name">
+        Filipe Monteiro
+        <span class="teacher-country">🇲🇿 Moçambique</span>
+      </h1>
+      
+      <p class="teacher-title">Professor Certificado de Português</p>
+      
+      <div class="rating">
+        <span class="stars">⭐⭐⭐⭐⭐</span>
+        <span class="rating-text">5.0 (48 avaliações)</span>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat">
+          <div class="stat-number">500+</div>
+          <div class="stat-label">Aulas</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">85</div>
+          <div class="stat-label">Alunos</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">3</div>
+          <div class="stat-label">Anos</div>
+        </div>
+      </div>
+
+      <div class="info-section">
+        <div class="info-title">📚 Metodologia</div>
+        <div class="info-content">
+          Abordagem comunicativa focada na conversação real. Uso de materiais autênticos, músicas, vídeos e situações do dia a dia para tornar o aprendizado natural e eficaz.
+        </div>
+      </div>
+
+      <div class="info-section">
+        <div class="info-title">🎯 Especialidades</div>
+        <ul class="info-list">
+          <li>Conversação fluente</li>
+          <li>Preparação para exames (CIPLE, DIPLE, DEPLE)</li>
+          <li>Português para negócios</li>
+          <li>Gramática avançada</li>
+        </ul>
+      </div>
+
+      <div class="info-section">
+        <div class="info-title">🏆 Experiência</div>
+        <div class="info-content">
+          3 anos ensinando português online para alunos de mais de 20 países. Certificado em Ensino de Português como Língua Estrangeira (PLE).
+        </div>
+      </div>
+
+      <button class="cta-button" onclick="scrollToBooking()">
+        Marcar Aula Experimental - $5
+      </button>
+    </aside>
+
+    <!-- RIGHT CONTENT -->
+    <main class="content-area">
+      
+      <!-- VIDEO SECTION -->
+      <section class="section-card">
+        <h2 class="section-title">📹 Conheça o Professor</h2>
+        <div class="video-container">
+          <iframe 
+            src="https://www.youtube.com/embed/r2J0BiJPR-c?si=l-27PbjlospKPUs3" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+          </iframe>
+        </div>
+      </section>
+
+      <!-- BOOKING SECTION -->
+      <section class="section-card" id="bookingSection">
+        <h2 class="section-title">📅 Agendar Aula</h2>
+
+        <!-- PRICING TABS -->
+        <div class="pricing-tabs">
+          <button class="pricing-tab active" onclick="switchPricingTab('trial')">
+            Aula Experimental
+          </button>
+          <button class="pricing-tab" onclick="switchPricingTab('packages')">
+            Pacotes Mensais
+          </button>
+        </div>
+
+        <!-- TRIAL LESSON -->
+        <div id="trialTab" class="pricing-content">
+          <div class="packages-grid">
+            <div class="package-card selected">
+              <div class="package-lessons">1 Aula de 60 minutos</div>
+              <div class="package-price">$5<span> USD</span></div>
+              <div class="package-save">Experimente sem compromisso</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MONTHLY PACKAGES -->
+        <div id="packagesTab" class="pricing-content" style="display: none;">
+          <div class="packages-grid">
+            <div class="package-card" onclick="selectPackage(4, 36)">
+              <div class="package-lessons">4 Aulas/Mês</div>
+              <div class="package-price">$36<span> USD</span></div>
+              <div class="package-save">$9 por aula</div>
+            </div>
+
+            <div class="package-card" onclick="selectPackage(8, 64)">
+              <div class="package-badge">Popular</div>
+              <div class="package-lessons">8 Aulas/Mês</div>
+              <div class="package-price">$64<span> USD</span></div>
+              <div class="package-save">$8 por aula • Economize $8</div>
+            </div>
+
+            <div class="package-card" onclick="selectPackage(12, 84)">
+              <div class="package-badge">Melhor Valor</div>
+              <div class="package-lessons">12 Aulas/Mês</div>
+              <div class="package-price">$84<span> USD</span></div>
+              <div class="package-save">$7 por aula • Economize $24</div>
+            </div>
+
+            <div class="package-card" onclick="selectPackage(20, 120)">
+              <div class="package-lessons">20 Aulas/Mês</div>
+              <div class="package-price">$120<span> USD</span></div>
+              <div class="package-save">$6 por aula • Economize $60</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CALENDAR -->
+        <div class="calendar-section">
+          <div class="calendar-header">
+            <div class="calendar-month" id="calendarMonth">Janeiro 2026</div>
+            <div class="calendar-nav">
+              <button onclick="previousMonth()">‹</button>
+              <button onclick="nextMonth()">›</button>
+            </div>
+          </div>
+
+          <div class="calendar-grid" id="calendarGrid">
+            <!-- Generated by JS -->
+          </div>
+        </div>
+
+        <!-- TIME SLOTS -->
+        <div id="timeSlotSection" style="display: none;">
+          <div class="time-slots-title">⏰ Horários Disponíveis</div>
+          <div class="time-slots-grid" id="timeSlotsGrid">
+            <!-- Generated by JS -->
+          </div>
+        </div>
+
+        <!-- BOOKING SUMMARY -->
+        <div id="bookingSummary" style="display: none;" class="booking-summary">
+          <div class="booking-summary-title">📝 Resumo da Reserva</div>
+          <div class="booking-detail">
+            <span class="booking-detail-label">Pacote:</span>
+            <span class="booking-detail-value" id="summaryPackage">-</span>
+          </div>
+          <div class="booking-detail">
+            <span class="booking-detail-label">Data:</span>
+            <span class="booking-detail-value" id="summaryDate">-</span>
+          </div>
+          <div class="booking-detail">
+            <span class="booking-detail-label">Horário:</span>
+            <span class="booking-detail-value" id="summaryTime">-</span>
+          </div>
+          <div class="total-price" id="summaryTotal">$0</div>
+        </div>
+
+        <button 
+          class="cta-button" 
+          id="confirmBookingBtn" 
+          style="display: none;"
+          onclick="confirmBooking()"
+        >
+          Continuar para Pagamento
+        </button>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // STATE
+    let currentDate = new Date();
+    let selectedDate = null;
+    let selectedTime = null;
+    let selectedPackage = { lessons: 1, price: 5, type: 'trial' };
+
+    // PRICING TABS
+    function switchPricingTab(tab) {
+      document.querySelectorAll('.pricing-tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+
+      if (tab === 'trial') {
+        document.getElementById('trialTab').style.display = 'block';
+        document.getElementById('packagesTab').style.display = 'none';
+        selectedPackage = { lessons: 1, price: 5, type: 'trial' };
+      } else {
+        document.getElementById('trialTab').style.display = 'none';
+        document.getElementById('packagesTab').style.display = 'block';
+        selectedPackage = { lessons: 4, price: 36, type: 'package' };
+      }
+      updateSummary();
+    }
+
+    // SELECT PACKAGE
+    function selectPackage(lessons, price) {
+      document.querySelectorAll('#packagesTab .package-card').forEach(c => 
+        c.classList.remove('selected')
+      );
+      event.currentTarget.classList.add('selected');
+      selectedPackage = { lessons, price, type: 'package' };
+      updateSummary();
+    }
+
+    // CALENDAR
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      
+      // Update header
+      const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                          'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+      document.getElementById('calendarMonth').textContent = `${monthNames[month]} ${year}`;
+
+      // Get first day and total days
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // Clear grid
+      const grid = document.getElementById('calendarGrid');
+      grid.innerHTML = '';
+
+      // Add day headers
+      ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].forEach(day => {
+        const header = document.createElement('div');
+        header.className = 'calendar-day-header';
+        header.textContent = day;
+        grid.appendChild(header);
+      });
+
+      // Add empty cells for days before month starts
+      for (let i = 0; i < firstDay; i++) {
+        const emptyDay = document.createElement('div');
+        emptyDay.className = 'calendar-day other-month';
+        grid.appendChild(emptyDay);
+      }
+
+      // Add days of month
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayElement = document.createElement('div');
+        dayElement.className = 'calendar-day';
+        dayElement.textContent = day;
+
+        const dayDate = new Date(year, month, day);
+        dayDate.setHours(0, 0, 0, 0);
+
+        // Disable past dates
+        if (dayDate < today) {
+          dayElement.classList.add('disabled');
+        }
+
+        // Mark today
+        if (dayDate.getTime() === today.getTime()) {
+          dayElement.classList.add('today');
+        }
+
+        // Mark selected
+        if (selectedDate && dayDate.getTime() === selectedDate.getTime()) {
+          dayElement.classList.add('selected');
+        }
+
+        dayElement.onclick = () => selectDate(dayDate);
+        grid.appendChild(dayElement);
+      }
+    }
+
+    function previousMonth() {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar();
+    }
+
+    function nextMonth() {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar();
+    }
+
+    function selectDate(date) {
+      selectedDate = date;
+      selectedTime = null;
+      renderCalendar();
+      showTimeSlots();
+      updateSummary();
+    }
+
+    // TIME SLOTS
+    function showTimeSlots() {
+      const section = document.getElementById('timeSlotSection');
+      const grid = document.getElementById('timeSlotsGrid');
+      
+      section.style.display = 'block';
+      grid.innerHTML = '';
+
+      // Generate time slots (8:00 - 20:00)
+      const slots = [
+        '08:00', '09:00', '10:00', '11:00', '12:00',
+        '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'
+      ];
+
+      slots.forEach(time => {
+        const slot = document.createElement('div');
+        slot.className = 'time-slot';
+        slot.textContent = time;
+        
+        // Randomly disable some slots for demo
+        if (Math.random() > 0.7) {
+          slot.classList.add('disabled');
+        } else {
+          slot.onclick = () => selectTime(time);
+        }
+
+        if (selectedTime === time) {
+          slot.classList.add('selected');
+        }
+
+        grid.appendChild(slot);
+      });
+
+      // Scroll to time slots
+      section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function selectTime(time) {
+      selectedTime = time;
+      showTimeSlots();
+      updateSummary();
+    }
+
+    // SUMMARY
+    function updateSummary() {
+      const summary = document.getElementById('bookingSummary');
+      const confirmBtn = document.getElementById('confirmBookingBtn');
+
+      if (selectedDate && selectedTime) {
+        summary.style.display = 'block';
+        confirmBtn.style.display = 'block';
+
+        const packageText = selectedPackage.type === 'trial' 
+          ? 'Aula Experimental (1 aula)' 
+          : `Pacote ${selectedPackage.lessons} Aulas/Mês`;
+
+        document.getElementById('summaryPackage').textContent = packageText;
+        document.getElementById('summaryDate').textContent = selectedDate.toLocaleDateString('pt-PT', {
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric'
+        });
+        document.getElementById('summaryTime').textContent = selectedTime;
+        document.getElementById('summaryTotal').textContent = `$${selectedPackage.price} USD`;
+      } else {
+        summary.style.display = 'none';
+        confirmBtn.style.display = 'none';
+      }
+    }
+
+    // CONFIRM BOOKING
+    function confirmBooking() {
+      if (!selectedDate || !selectedTime) {
+        alert('Por favor, selecione uma data e horário');
+        return;
+      }
+
+      const date = selectedDate.toISOString().split('T')[0];
+      const params = new URLSearchParams({
+        date: date,
+        start: selectedTime,
+        end: addHour(selectedTime),
+        package: selectedPackage.type,
+        lessons: selectedPackage.lessons,
+        price: selectedPackage.price
+      });
+
+      window.location.href = `login.html?${params.toString()}`;
+    }
+
+    function addHour(time) {
+      const [hour, min] = time.split(':');
+      const newHour = (parseInt(hour) + 1).toString().padStart(2, '0');
+      return `${newHour}:${min}`;
+    }
+
+    function scrollToBooking() {
+      document.getElementById('bookingSection').scrollIntoView({ 
+        behavior: 'smooth' 
+      });
+    }
+
+    // Initialize
+    renderCalendar();
+
+    // Load teacher photo if available
+    // Replace with: document.getElementById('teacherPhoto').src = 'filipe.jpg';
+  </script>
+
+</body>
+</html>
