@@ -3,783 +3,664 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preply Clone - Portal do Tutor</title>
+    <title>Portal do Professor | Português Online</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    
     <style>
-        :root {
-            --primary: #3b82f6;
-            --success: #22c55e;
-            --error: #ef4444;
-            --warning: #f59e0b;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: #f3f4f6;
         }
-        body { font-family: 'Inter', sans-serif; background: #0f172a; color: #e2e8f0; }
-        .glass { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        .hover-scale { transition: transform 0.2s; }
-        .hover-scale:hover { transform: scale(1.02); }
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 50; align-items: center; justify-content: center; }
-        .modal.active { display: flex; }
-        .slot { transition: all 0.2s; cursor: pointer; }
-        .slot:hover { transform: scale(1.05); }
-        .slot.booked { background: #3b82f6; color: white; }
-        .slot.available { background: #22c55e; color: white; }
-        .slot.blocked { background: #334155; opacity: 0.5; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-in { animation: slideIn 0.4s ease-out; }
-        .pulse { animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        
+        .sidebar {
+            background: linear-gradient(180deg, #1e1b4b 0%, #312e81 100%);
+        }
+        
+        .nav-item.active {
+            background: rgba(99, 102, 241, 0.3);
+            border-left: 4px solid #6366f1;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .lesson-row {
+            transition: all 0.2s;
+        }
+        
+        .lesson-row:hover {
+            background: #f9fafb;
+        }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-confirmed { background: #d1fae5; color: #065f46; }
+        .badge-pending { background: #fef3c7; color: #92400e; }
+        .badge-cancelled { background: #fee2e2; color: #991b1b; }
+        
+        .level-a1, .level-a2 { background: #fecaca; color: #991b1b; }
+        .level-b1, .level-b2 { background: #fde68a; color: #92400e; }
+        .level-c1, .level-c2 { background: #bbf7d0; color: #166534; }
+        
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse-slow 2s infinite;
+        }
     </style>
 </head>
-<body class="min-h-screen">
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside class="w-64 min-h-screen glass fixed left-0 top-0 z-40">
-            <div class="p-6">
-                <div class="flex items-center gap-3 mb-8">
-                    <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-xl">👨‍🏫</div>
-                    <span class="font-bold text-lg">Tutor Portal</span>
+<body class="text-gray-800">
+
+<!-- Loading -->
+<div id="loading" class="fixed inset-0 bg-gray-900 flex items-center justify-center z-50">
+    <div class="text-center">
+        <div class="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <p class="text-white">Carregando portal...</p>
+    </div>
+</div>
+
+<div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-72 sidebar text-white fixed h-full overflow-y-auto">
+        <div class="p-6">
+            <div class="flex items-center gap-3 mb-10">
+                <div class="w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center text-2xl shadow-lg">
+                    👨‍🏫
+                </div>
+                <div>
+                    <h1 class="font-bold text-xl">Portal do Professor</h1>
+                    <p class="text-xs text-indigo-300">Filipe Monteiro</p>
+                </div>
+            </div>
+            
+            <nav class="space-y-2">
+                <button onclick="showTab('dashboard')" class="nav-item active w-full flex items-center gap-4 px-4 py-4 rounded-lg transition-all hover:bg-white/10 text-left">
+                    <i class="fas fa-home w-6"></i>
+                    <span class="font-medium">Dashboard</span>
+                </button>
+                
+                <button onclick="showTab('alunos')" class="nav-item w-full flex items-center gap-4 px-4 py-4 rounded-lg transition-all hover:bg-white/10 text-left">
+                    <i class="fas fa-users w-6"></i>
+                    <span class="font-medium">Meus Alunos</span>
+                    <span id="badge-alunos" class="ml-auto bg-green-500 text-xs px-2 py-1 rounded-full hidden">0</span>
+                </button>
+                
+                <button onclick="showTab('aulas')" class="nav-item w-full flex items-center gap-4 px-4 py-4 rounded-lg transition-all hover:bg-white/10 text-left">
+                    <i class="fas fa-calendar-alt w-6"></i>
+                    <span class="font-medium">Agenda</span>
+                    <span id="badge-aulas" class="ml-auto bg-yellow-500 text-xs px-2 py-1 rounded-full hidden">0</span>
+                </button>
+                
+                <button onclick="showTab('mensagens')" class="nav-item w-full flex items-center gap-4 px-4 py-4 rounded-lg transition-all hover:bg-white/10 text-left">
+                    <i class="fas fa-comments w-6"></i>
+                    <span class="font-medium">Mensagens</span>
+                    <span id="badge-mensagens" class="ml-auto bg-red-500 text-xs px-2 py-1 rounded-full hidden">0</span>
+                </button>
+                
+                <button onclick="showTab('financeiro')" class="nav-item w-full flex items-center gap-4 px-4 py-4 rounded-lg transition-all hover:bg-white/10 text-left">
+                    <i class="fas fa-dollar-sign w-6"></i>
+                    <span class="font-medium">Financeiro</span>
+                </button>
+                
+                <button onclick="showTab('config')" class="nav-item w-full flex items-center gap-4 px-4 py-4 rounded-lg transition-all hover:bg-white/10 text-left">
+                    <i class="fas fa-cog w-6"></i>
+                    <span class="font-medium">Configurações</span>
+                </button>
+            </nav>
+            
+            <div class="mt-10 p-4 bg-white/10 rounded-xl">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm text-indigo-200">Seu status</span>
+                    <span class="flex items-center gap-1 text-green-400 text-sm">
+                        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse-slow"></span>
+                        Online
+                    </span>
+                </div>
+                <p class="text-xs text-indigo-300">Alunos podem ver você online</p>
+            </div>
+            
+            <button onclick="logout()" class="w-full mt-6 flex items-center gap-3 px-4 py-3 rounded-lg text-red-300 hover:bg-red-500/20 transition-all">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sair</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 ml-72">
+        <!-- Header -->
+        <header class="bg-white sticky top-0 z-30 px-8 py-4 flex items-center justify-between shadow-sm">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800" id="page-title">Dashboard</h2>
+                <p class="text-sm text-gray-500" id="page-subtitle">Visão geral da sua atividade</p>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <div class="text-right mr-4">
+                    <p class="text-2xl font-bold text-green-600" id="saldo-atual">$0</p>
+                    <p class="text-xs text-gray-500">Este mês</p>
                 </div>
                 
-                <nav class="space-y-2">
-                    <button onclick="showTab('dashboard')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-500 text-white transition-all">
-                        <i class="fas fa-home"></i> Dashboard
-                    </button>
-                    <button onclick="showTab('agenda')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition-all text-slate-300">
-                        <i class="fas fa-calendar-alt"></i> Agenda
-                    </button>
-                    <button onclick="showTab('alunos')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition-all text-slate-300">
-                        <i class="fas fa-user-graduate"></i> Alunos
-                    </button>
-                    <button onclick="showTab('mensagens')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition-all text-slate-300 relative">
-                        <i class="fas fa-comments"></i> Mensagens
-                        <span id="badge-mensagens" class="absolute right-4 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full hidden">0</span>
-                    </button>
-                    <button onclick="showTab('ganhos')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition-all text-slate-300">
-                        <i class="fas fa-dollar-sign"></i> Ganhos
-                    </button>
-                    <button onclick="showTab('avaliacoes')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition-all text-slate-300">
-                        <i class="fas fa-star"></i> Avaliações
-                    </button>
-                </nav>
+                <button class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-all relative">
+                    <i class="fas fa-bell text-gray-600 text-lg"></i>
+                    <span id="notif-badge" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-xs text-white flex items-center justify-center hidden">0</span>
+                </button>
                 
-                <div class="mt-8 p-4 rounded-xl bg-slate-800">
-                    <div class="flex items-center gap-2 mb-2">
-                        <i class="fas fa-star text-yellow-500"></i>
-                        <span class="font-bold text-2xl">4.9</span>
+                <div class="flex items-center gap-3 pl-4 border-l">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white font-bold">
+                        FM
                     </div>
-                    <p class="text-sm text-slate-400">Sua avaliação média</p>
-                    <div class="mt-3">
-                        <div class="flex justify-between text-xs mb-1">
-                            <span>Perfil completo</span>
-                            <span>95%</span>
-                        </div>
-                        <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
-                            <div class="h-full bg-green-500 rounded-full" style="width: 95%"></div>
-                        </div>
+                    <div class="hidden md:block">
+                        <p class="font-medium text-sm">Filipe Monteiro</p>
+                        <p class="text-xs text-gray-500">Professor</p>
                     </div>
                 </div>
             </div>
-        </aside>
+        </header>
 
-        <!-- Main Content -->
-        <main class="flex-1 ml-64">
-            <!-- Header -->
-            <header class="h-16 glass fixed right-0 left-64 top-0 z-30 flex items-center justify-between px-6">
-                <div class="flex items-center gap-2">
-                    <span class="px-3 py-1 rounded-full text-sm bg-green-500 text-white pulse">
-                        <i class="fas fa-circle text-xs mr-1"></i> Online
-                    </span>
-                    <span class="text-slate-400" id="proxima-aula-info">Próxima aula em --</span>
+        <!-- Content -->
+        <div class="p-8">
+            
+            <!-- DASHBOARD -->
+            <div id="dashboard" class="tab-content">
+                <!-- Stats -->
+                <div class="grid grid-cols-4 gap-6 mb-8">
+                    <div class="stat-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <p class="text-gray-500 text-sm">Total de Alunos</p>
+                                <p class="text-3xl font-bold text-gray-800" id="stat-total-alunos">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-users text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <p class="text-sm text-green-600"><i class="fas fa-arrow-up mr-1"></i> +3 este mês</p>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <p class="text-gray-500 text-sm">Aulas Esta Semana</p>
+                                <p class="text-3xl font-bold text-gray-800" id="stat-aulas-semana">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-calendar-check text-purple-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-500">Próxima: <span id="proxima-aula-horario">--</span></p>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <p class="text-gray-500 text-sm">Taxa de Ocupação</p>
+                                <p class="text-3xl font-bold text-gray-800" id="stat-ocupacao">0%</p>
+                            </div>
+                            <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-chart-pie text-yellow-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-500">Horários preenchidos</p>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <p class="text-gray-500 text-sm">Avaliação Média</p>
+                                <p class="text-3xl font-bold text-gray-800">4.9</p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-star text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <p class="text-sm text-green-600">Baseado em 48 reviews</p>
+                    </div>
                 </div>
-                <div class="flex items-center gap-4">
-                    <div class="text-right">
-                        <p class="text-sm font-bold text-green-400" id="saldo-tutor">$0.00</p>
-                        <p class="text-xs text-slate-400">Saldo disponível</p>
-                    </div>
-                    <button class="relative p-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition-all">
-                        <i class="fas fa-bell"></i>
-                        <span id="badge-notificacoes" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-xs flex items-center justify-center hidden">0</span>
-                    </button>
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center">👩‍🏫</div>
-                        <span class="font-medium">Sarah Johnson</span>
-                    </div>
-                </div>
-            </header>
 
-            <!-- Content -->
-            <div class="pt-16 p-6">
-                <!-- Dashboard Tab -->
-                <div id="dashboard" class="tab-content animate-in">
-                    <div class="flex justify-between items-center mb-6">
-                        <div>
-                            <h1 class="text-2xl font-bold">Olá, Sarah! 👋</h1>
-                            <p class="text-slate-400">Você tem <span id="total-aulas-hoje">0</span> aulas hoje</p>
-                        </div>
-                        <div class="flex gap-3">
-                            <button onclick="openModal('disponibilidadeModal')" class="px-4 py-2 rounded-lg font-medium flex items-center gap-2 bg-slate-700 hover:bg-slate-600 transition-all">
-                                <i class="fas fa-clock"></i> Disponibilidade
-                            </button>
-                            <button onclick="entrarSalaAula()" class="px-4 py-2 rounded-lg font-medium flex items-center gap-2 bg-blue-500 hover:bg-blue-600 transition-all">
-                                <i class="fas fa-video"></i> Sala de Aula
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Stats -->
-                    <div class="grid grid-cols-4 gap-4 mb-6">
-                        <div class="glass p-4 rounded-xl hover-scale">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-slate-400 text-sm">Ganhos (Mês)</span>
-                                <i class="fas fa-wallet text-green-500"></i>
-                            </div>
-                            <p class="text-2xl font-bold" id="ganhos-mes">$0</p>
-                            <p class="text-xs text-green-400 mt-1">+<span id="ganhos-variacao">0</span>%</p>
-                        </div>
-                        <div class="glass p-4 rounded-xl hover-scale">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-slate-400 text-sm">Aulas Dadas</span>
-                                <i class="fas fa-chalkboard-teacher text-blue-500"></i>
-                            </div>
-                            <p class="text-2xl font-bold" id="aulas-dadas">0</p>
-                            <p class="text-xs text-green-400 mt-1">+<span id="aulas-variacao">0</span>%</p>
-                        </div>
-                        <div class="glass p-4 rounded-xl hover-scale">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-slate-400 text-sm">Alunos Ativos</span>
-                                <i class="fas fa-users text-purple-500"></i>
-                            </div>
-                            <p class="text-2xl font-bold" id="alunos-ativos">0</p>
-                            <p class="text-xs text-blue-400 mt-1">+<span id="alunos-novos">0</span> novos</p>
-                        </div>
-                        <div class="glass p-4 rounded-xl hover-scale">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-slate-400 text-sm">Pendente</span>
-                                <i class="fas fa-clock text-orange-500"></i>
-                            </div>
-                            <p class="text-2xl font-bold" id="ganhos-pendentes">$0</p>
-                            <p class="text-xs text-slate-400 mt-1">Saque em 3 dias</p>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-3 gap-6">
-                        <!-- Agenda Semanal -->
-                        <div class="col-span-2 glass p-6 rounded-xl">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="font-semibold flex items-center gap-2">
-                                    <i class="fas fa-calendar-week text-blue-500"></i>
-                                    Sua Semana
-                                </h3>
-                                <div class="flex gap-2">
-                                    <button onclick="mudarSemana(-1)" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700">&lt;</button>
-                                    <span class="px-3 py-1" id="semana-atual">Agosto 2026</span>
-                                    <button onclick="mudarSemana(1)" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700">&gt;</button>
-                                </div>
-                            </div>
-                            
-                            <div class="grid grid-cols-7 gap-2" id="calendario-semanal">
-                                <!-- Preenchido via JS -->
-                            </div>
-                            
-                            <div class="flex gap-4 mt-4 text-xs">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-3 h-3 rounded bg-blue-500"></div>
-                                    <span class="text-slate-400">Reservado</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <div class="w-3 h-3 rounded bg-green-500"></div>
-                                    <span class="text-slate-400">Disponível</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <div class="w-3 h-3 rounded bg-slate-700"></div>
-                                    <span class="text-slate-400">Indisponível</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Alunos Recentes -->
-                        <div class="glass p-6 rounded-xl">
-                            <h3 class="font-semibold mb-4 flex items-center gap-2">
-                                <i class="fas fa-user-graduate text-green-500"></i>
-                                Alunos Recentes
+                <div class="grid grid-cols-3 gap-6">
+                    <!-- Próximas Aulas -->
+                    <div class="col-span-2 bg-white rounded-2xl p-6 shadow-sm">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-bold text-gray-800">
+                                <i class="fas fa-calendar-day text-indigo-600 mr-2"></i>
+                                Próximas Aulas
                             </h3>
-                            <div id="lista-alunos-recentes" class="space-y-3">
-                                <!-- Preenchido via JS -->
-                            </div>
-                            <button onclick="showTab('alunos')" class="w-full mt-4 py-2 rounded-lg text-sm bg-slate-700 hover:bg-slate-600 transition-all">
-                                Ver todos os alunos
+                            <button onclick="showTab('aulas')" class="text-indigo-600 hover:text-indigo-800 font-medium text-sm">
+                                Ver agenda completa <i class="fas fa-arrow-right ml-1"></i>
                             </button>
-                        </div>
-                    </div>
-
-                    <!-- Avaliações e Desempenho -->
-                    <div class="grid grid-cols-2 gap-6 mt-6">
-                        <div class="glass p-6 rounded-xl">
-                            <h3 class="font-semibold mb-4 flex items-center gap-2">
-                                <i class="fas fa-star text-yellow-500"></i>
-                                Últimas Avaliações
-                            </h3>
-                            <div id="lista-avaliacoes" class="space-y-4">
-                                <!-- Preenchido via JS -->
-                            </div>
                         </div>
                         
-                        <div class="glass p-6 rounded-xl">
-                            <h3 class="font-semibold mb-4 flex items-center gap-2">
-                                <i class="fas fa-chart-bar text-blue-500"></i>
-                                Desempenho
-                            </h3>
-                            <div class="space-y-4">
-                                <div>
-                                    <div class="flex justify-between mb-1">
-                                        <span class="text-sm">Taxa de resposta</span>
-                                        <span class="text-sm font-medium text-green-400">98%</span>
-                                    </div>
-                                    <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
-                                        <div class="h-full bg-green-500 rounded-full" style="width: 98%"></div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="flex justify-between mb-1">
-                                        <span class="text-sm">Taxa de confirmação</span>
-                                        <span class="text-sm font-medium text-blue-400">95%</span>
-                                    </div>
-                                    <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
-                                        <div class="h-full bg-blue-500 rounded-full" style="width: 95%"></div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="flex justify-between mb-1">
-                                        <span class="text-sm">Alunos recorrentes</span>
-                                        <span class="text-sm font-medium text-yellow-400">87%</span>
-                                    </div>
-                                    <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
-                                        <div class="h-full bg-yellow-500 rounded-full" style="width: 87%"></div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div id="proximas-aulas-list" class="space-y-3">
+                            <!-- Preenchido via JS -->
                         </div>
                     </div>
-                </div>
 
-                <!-- Outras tabs -->
-                <div id="agenda" class="tab-content hidden">
-                    <h1 class="text-2xl font-bold mb-6">Sua Agenda</h1>
-                    <div id="agenda-completa" class="glass p-6 rounded-xl">
+                    <!-- Alunos Recentes -->
+                    <div class="bg-white rounded-2xl p-6 shadow-sm">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6">
+                            <i class="fas fa-user-graduate text-green-600 mr-2"></i>
+                            Alunos Recentes
+                        </h3>
+                        
+                        <div id="alunos-recentes-list" class="space-y-4">
+                            <!-- Preenchido via JS -->
+                        </div>
+                        
+                        <button onclick="showTab('alunos')" class="w-full mt-6 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 transition-all font-medium text-sm">
+                            Ver todos os alunos
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ALUNOS -->
+            <div id="alunos" class="tab-content hidden">
+                <div class="bg-white rounded-2xl p-6 shadow-sm">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold">Todos os Alunos</h3>
+                        <div class="flex gap-2">
+                            <input type="text" placeholder="Buscar aluno..." class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+                            <select class="px-4 py-2 border rounded-lg">
+                                <option>Todos os níveis</option>
+                                <option>A1 - Iniciante</option>
+                                <option>A2 - Básico</option>
+                                <option>B1 - Intermediário</option>
+                                <option>B2 - Intermediário+</option>
+                                <option>C1 - Avançado</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="text-left p-4 font-medium text-gray-600">Aluno</th>
+                                    <th class="text-left p-4 font-medium text-gray-600">Nível</th>
+                                    <th class="text-left p-4 font-medium text-gray-600">Objetivo</th>
+                                    <th class="text-left p-4 font-medium text-gray-600">Aulas</th>
+                                    <th class="text-left p-4 font-medium text-gray-600">Próxima</th>
+                                    <th class="text-left p-4 font-medium text-gray-600">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-alunos">
+                                <!-- Preenchido via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AULAS -->
+            <div id="aulas" class="tab-content hidden">
+                <div class="bg-white rounded-2xl p-6 shadow-sm">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold">Agenda Completa</h3>
+                        <div class="flex gap-2">
+                            <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg">
+                                <i class="fas fa-calendar mr-2"></i> Hoje
+                            </button>
+                            <button class="px-4 py-2 border rounded-lg hover:bg-gray-50">Semana</button>
+                            <button class="px-4 py-2 border rounded-lg hover:bg-gray-50">Mês</button>
+                        </div>
+                    </div>
+                    
+                    <div id="agenda-completa" class="space-y-3">
                         <!-- Preenchido via JS -->
                     </div>
                 </div>
+            </div>
 
-                <div id="alunos" class="tab-content hidden">
-                    <h1 class="text-2xl font-bold mb-6">Seus Alunos</h1>
-                    <div id="todos-alunos" class="grid grid-cols-2 gap-4"></div>
-                </div>
-
-                <div id="mensagens" class="tab-content hidden">
-                    <h1 class="text-2xl font-bold mb-6">Mensagens</h1>
-                    <div id="lista-mensagens" class="glass p-6 rounded-xl space-y-4"></div>
-                </div>
-
-                <div id="ganhos" class="tab-content hidden">
-                    <h1 class="text-2xl font-bold mb-6">Seus Ganhos</h1>
-                    <div class="glass p-6 rounded-xl">
-                        <div class="grid grid-cols-3 gap-4 mb-6">
-                            <div class="p-4 bg-slate-800 rounded-xl text-center">
-                                <p class="text-slate-400 text-sm">Este Mês</p>
-                                <p class="text-2xl font-bold text-green-400" id="ganho-mes-detalhe">$0</p>
-                            </div>
-                            <div class="p-4 bg-slate-800 rounded-xl text-center">
-                                <p class="text-slate-400 text-sm">Pendente</p>
-                                <p class="text-2xl font-bold text-yellow-400" id="ganho-pendente-detalhe">$0</p>
-                            </div>
-                            <div class="p-4 bg-slate-800 rounded-xl text-center">
-                                <p class="text-slate-400 text-sm">Total Acumulado</p>
-                                <p class="text-2xl font-bold text-blue-400" id="ganho-total">$0</p>
-                            </div>
-                        </div>
-                        <button onclick="sacarGanhos()" class="w-full py-3 rounded-lg bg-green-500 hover:bg-green-600 transition-all font-medium">
-                            Sacar Ganhos
-                        </button>
-                    </div>
-                </div>
-
-                <div id="avaliacoes" class="tab-content hidden">
-                    <h1 class="text-2xl font-bold mb-6">Avaliações</h1>
-                    <div id="todas-avaliacoes" class="space-y-4"></div>
+            <!-- OUTRAS TABS -->
+            <div id="mensagens" class="tab-content hidden">
+                <div class="bg-white rounded-2xl p-6 shadow-sm text-center py-12">
+                    <i class="fas fa-comments text-6xl text-gray-300 mb-4"></i>
+                    <p class="text-gray-500">Sistema de mensagens em desenvolvimento</p>
                 </div>
             </div>
-        </main>
-    </div>
 
-    <!-- Modal Disponibilidade -->
-    <div id="disponibilidadeModal" class="modal">
-        <div class="glass rounded-2xl p-6 w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-bold">Configurar Disponibilidade</h2>
-                <button onclick="closeModal('disponibilidadeModal')" class="text-2xl hover:text-red-400">&times;</button>
-            </div>
-            
-            <p class="text-sm text-slate-400 mb-4">Clique nos horários para alternar entre disponível/indisponível</p>
-            
-            <div class="grid grid-cols-8 gap-2" id="grid-disponibilidade">
-                <!-- Preenchido via JS -->
-            </div>
-            
-            <div class="flex gap-3 mt-6">
-                <button onclick="closeModal('disponibilidadeModal')" class="flex-1 py-3 rounded-lg font-medium bg-slate-700 hover:bg-slate-600 transition-all">
-                    Cancelar
-                </button>
-                <button onclick="salvarDisponibilidade()" class="flex-1 py-3 rounded-lg font-medium bg-blue-500 hover:bg-blue-600 transition-all">
-                    Salvar Disponibilidade
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Detalhes Aula -->
-    <div id="aulaModal" class="modal">
-        <div class="glass rounded-2xl p-6 w-full max-w-lg mx-4">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-bold">Detalhes da Aula</h2>
-                <button onclick="closeModal('aulaModal')" class="text-2xl hover:text-red-400">&times;</button>
-            </div>
-            <div id="detalhes-aula-conteudo"></div>
-        </div>
-    </div>
-
-    <script>
-        // Dados compartilhados com o dashboard do estudante
-        // Estrutura: preply_dados = { aulas: [], mensagens: [], tutor: {}, ... }
-        
-        const dadosPadrao = {
-            aulas: [],
-            mensagens: [
-                { id: 1, from: 'João Silva', to: 'Sarah Johnson', text: 'Olá! Gostaria de agendar uma aula para amanhã.', time: '10:30', read: false },
-                { id: 2, from: 'Sarah Johnson', to: 'João Silva', text: 'Claro! Tenho disponibilidade às 15h.', time: '10:35', read: true }
-            ],
-            tutor: {
-                nome: 'Sarah Johnson',
-                saldo: 1240,
-                saldoPendente: 320,
-                ganhoTotal: 8560,
-                aulasDadas: 156,
-                alunosAtivos: 15,
-                avaliacao: 4.9,
-                disponibilidade: {} // horários disponíveis por dia
-            },
-            avaliacoes: [
-                { id: 1, aluno: 'João Silva', rating: 5, comment: 'Excelente professora! Muito paciente.', date: '2 dias atrás' },
-                { id: 2, aluno: 'Maria Santos', rating: 5, comment: 'Aulas muito produtivas!', date: '5 dias atrás' },
-                { id: 3, aluno: 'Ana Paula', rating: 4, comment: 'Ótima metodologia.', date: '1 semana atrás' }
-            ]
-        };
-
-        let dados = JSON.parse(localStorage.getItem('preply_dados')) || dadosPadrao;
-        
-        function salvarDados() {
-            localStorage.setItem('preply_dados', JSON.stringify(dados));
-        }
-
-        // Verificar se há aulas do estudante que são com este tutor
-        function sincronizarAulas() {
-            // Procurar aulas onde o tutor é Sarah Johnson
-            const minhasAulas = dados.aulas.filter(a => a.tutor === 'Sarah Johnson');
-            
-            // Agrupar por aluno
-            const alunosMap = {};
-            minhasAulas.forEach(aula => {
-                if (!alunosMap[aula.alunoId]) {
-                    alunosMap[aula.alunoId] = {
-                        nome: aula.alunoNome || 'Aluno',
-                        aulas: [],
-                        totalAulas: 0
-                    };
-                }
-                alunosMap[aula.alunoId].aulas.push(aula);
-                alunosMap[aula.alunoId].totalAulas++;
-            });
-            
-            return { minhasAulas, alunos: alunosMap };
-        }
-
-        function renderizarDashboard() {
-            const { minhasAulas, alunos } = sincronizarAulas();
-            
-            // Stats
-            const hoje = new Date().toISOString().split('T')[0];
-            const aulasHoje = minhasAulas.filter(a => a.date === hoje && !a.completed).length;
-            
-            document.getElementById('total-aulas-hoje').textContent = aulasHoje;
-            document.getElementById('saldo-tutor').textContent = `$${dados.tutor.saldo.toFixed(2)}`;
-            document.getElementById('ganhos-mes').textContent = `$${dados.tutor.saldo}`;
-            document.getElementById('ganhos-pendentes').textContent = `$${dados.tutor.saldoPendente}`;
-            document.getElementById('aulas-dadas').textContent = dados.tutor.aulasDadas;
-            document.getElementById('alunos-ativos').textContent = dados.tutor.alunosAtivos;
-            
-            // Agenda semanal
-            renderizarCalendario(minhasAulas);
-            
-            // Alunos recentes
-            renderizarAlunos(alunos);
-            
-            // Avaliações
-            renderizarAvaliacoes();
-            
-            // Próxima aula
-            const proxima = minhasAulas.filter(a => !a.completed).sort((a, b) => 
-                new Date(a.date + 'T' + a.time) - new Date(b.date + 'T' + b.time)
-            )[0];
-            
-            if (proxima) {
-                const dataAula = new Date(proxima.date + 'T' + proxima.time);
-                const agora = new Date();
-                const diff = Math.ceil((dataAula - agora) / (1000 * 60 * 60));
-                document.getElementById('proxima-aula-info').textContent = 
-                    diff < 1 ? 'Aula começando agora!' : `Próxima aula em ${diff}h`;
-            }
-            
-            // Badges
-            const naoLidas = dados.mensagens.filter(m => m.to === 'Sarah Johnson' && !m.read).length;
-            if (naoLidas > 0) {
-                document.getElementById('badge-mensagens').textContent = naoLidas;
-                document.getElementById('badge-mensagens').classList.remove('hidden');
-            }
-        }
-
-        function renderizarCalendario(minhasAulas) {
-            const dias = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-            const hoje = new Date();
-            const container = document.getElementById('calendario-semanal');
-            
-            let html = '';
-            
-            // Cabeçalho dos dias
-            for (let i = 0; i < 7; i++) {
-                const dia = new Date(hoje);
-                dia.setDate(hoje.getDate() + i);
-                const dataStr = dia.toISOString().split('T')[0];
-                const aulasDoDia = minhasAulas.filter(a => a.date === dataStr);
-                
-                html += `
-                    <div class="text-center">
-                        <p class="text-sm font-medium">${dias[dia.getDay()]}</p>
-                        <p class="text-xs text-slate-400">${dia.getDate()}</p>
-                        <div class="mt-2 space-y-1">
-                            ${aulasDoDia.map(aula => `
-                                <div onclick="verDetalhesAula(${aula.id})" 
-                                     class="slot booked text-xs py-1 px-1 rounded cursor-pointer truncate"
-                                     title="${aula.alunoNome || 'Aluno'} - ${aula.time}">
-                                    ${aula.time}
-                                </div>
-                            `).join('')}
-                            ${aulasDoDia.length === 0 ? `
-                                <div class="slot available text-xs py-1 px-1 rounded">Livre</div>
-                            ` : ''}
+            <div id="financeiro" class="tab-content hidden">
+                <div class="bg-white rounded-2xl p-6 shadow-sm">
+                    <h3 class="text-xl font-bold mb-6">Resumo Financeiro</h3>
+                    <div class="grid grid-cols-3 gap-4 mb-6">
+                        <div class="p-4 bg-green-50 rounded-xl text-center">
+                            <p class="text-sm text-gray-600 mb-1">Ganhos do Mês</p>
+                            <p class="text-2xl font-bold text-green-600" id="ganho-mes">$0</p>
+                        </div>
+                        <div class="p-4 bg-yellow-50 rounded-xl text-center">
+                            <p class="text-sm text-gray-600 mb-1">Pendentes</p>
+                            <p class="text-2xl font-bold text-yellow-600" id="ganho-pendente">$0</p>
+                        </div>
+                        <div class="p-4 bg-blue-50 rounded-xl text-center">
+                            <p class="text-sm text-gray-600 mb-1">Total Acumulado</p>
+                            <p class="text-2xl font-bold text-blue-600" id="ganho-total">$0</p>
                         </div>
                     </div>
-                `;
-            }
-            
-            container.innerHTML = html;
-        }
-
-        function renderizarAlunos(alunos) {
-            const container = document.getElementById('lista-alunos-recentes');
-            const todosContainer = document.getElementById('todos-alunos');
-            
-            const alunosArray = Object.entries(alunos).map(([id, data]) => ({ id, ...data }));
-            
-            const html = alunosArray.slice(0, 3).map(aluno => `
-                <div class="flex items-center gap-3 p-3 rounded-lg bg-slate-800 hover:bg-slate-700 transition-all cursor-pointer" onclick="verPerfilAluno('${aluno.id}')">
-                    <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center">👤</div>
-                    <div class="flex-1">
-                        <p class="font-medium">${aluno.nome}</p>
-                        <p class="text-xs text-slate-400">${aluno.totalAulas} aulas</p>
-                    </div>
-                    <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-xs font-bold">
-                        ${Math.floor(Math.random() * 30 + 70)}%
-                    </div>
-                </div>
-            `).join('');
-            
-            container.innerHTML = html || '<p class="text-slate-400 text-center">Nenhum aluno ainda</p>';
-            
-            // Todos os alunos
-            const todosHtml = alunosArray.map(aluno => `
-                <div class="glass p-4 rounded-xl">
-                    <div class="flex items-center gap-4 mb-4">
-                        <div class="w-14 h-14 rounded-full bg-blue-500 flex items-center justify-center text-2xl">👤</div>
-                        <div>
-                            <h3 class="font-bold">${aluno.nome}</h3>
-                            <p class="text-sm text-slate-400">Aluno desde ${new Date().toLocaleDateString('pt-BR')}</p>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-3 gap-2 text-center">
-                        <div class="p-2 bg-slate-800 rounded">
-                            <p class="text-lg font-bold">${aluno.totalAulas}</p>
-                            <p class="text-xs text-slate-400">Aulas</p>
-                        </div>
-                        <div class="p-2 bg-slate-800 rounded">
-                            <p class="text-lg font-bold">${Math.floor(Math.random() * 10 + 10)}h</p>
-                            <p class="text-xs text-slate-400">Horas</p>
-                        </div>
-                        <div class="p-2 bg-slate-800 rounded">
-                            <p class="text-lg font-bold text-green-400">Ativo</p>
-                            <p class="text-xs text-slate-400">Status</p>
-                        </div>
-                    </div>
-                    <button onclick="enviarMensagem('${aluno.nome}')" class="w-full mt-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 transition-all">
-                        Enviar Mensagem
+                    <button class="w-full py-3 bg-green-600 text-white rounded-xl font-medium hover:bg-green-700 transition-all">
+                        Solicitar Saque
                     </button>
                 </div>
-            `).join('');
-            
-            todosContainer.innerHTML = todosHtml || '<p class="text-slate-400 col-span-2 text-center">Nenhum aluno registrado</p>';
-        }
+            </div>
 
-        function renderizarAvaliacoes() {
-            const container = document.getElementById('lista-avaliacoes');
-            const todasContainer = document.getElementById('todas-avaliacoes');
-            
-            const html = dados.avaliacoes.map(av => `
-                <div class="p-4 rounded-lg bg-slate-800">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="flex items-center gap-2">
-                            <span class="font-medium">${av.aluno}</span>
-                            <div class="flex">
-                                ${Array(av.rating).fill('<i class="fas fa-star text-yellow-500 text-xs"></i>').join('')}
-                            </div>
-                        </div>
-                        <span class="text-xs text-slate-400">${av.date}</span>
-                    </div>
-                    <p class="text-sm text-slate-300">"${av.comment}"</p>
+            <div id="config" class="tab-content hidden">
+                <div class="bg-white rounded-2xl p-6 shadow-sm">
+                    <h3 class="text-xl font-bold mb-6">Configurações da Conta</h3>
+                    <p class="text-gray-500">Em desenvolvimento...</p>
                 </div>
-            `).join('');
-            
-            container.innerHTML = html;
-            todasContainer.innerHTML = html;
-        }
+            </div>
+        </div>
+    </main>
+</div>
 
-        function renderizarMensagens() {
-            const container = document.getElementById('lista-mensagens');
-            const minhasMensagens = dados.mensagens.filter(m => 
-                m.from === 'Sarah Johnson' || m.to === 'Sarah Johnson'
+<!-- Firebase -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { 
+        getFirestore, 
+        collection, 
+        query, 
+        where, 
+        getDocs,
+        orderBy,
+        doc,
+        getDoc
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
+        authDomain: "portuguese-teacher-platf-68bc5.firebaseapp.com",
+        projectId: "portuguese-teacher-platf-68bc5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    
+    const TEACHER_ID = "3Oj4YuYGewO3O9DqPxWrjBln7MG3";
+    
+    let currentUser = null;
+
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+        
+        // Verificar se é professor
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists() && userDoc.data().role !== "teacher") {
+            alert("Acesso restrito a professores!");
+            window.location.href = "estudante.html";
+            return;
+        }
+        
+        currentUser = user;
+        await loadDashboardData();
+        document.getElementById('loading').classList.add('hidden');
+    });
+
+    async function loadDashboardData() {
+        await Promise.all([
+            loadStudents(),
+            loadAppointments(),
+            loadFinancial()
+        ]);
+    }
+
+    async function loadStudents() {
+        try {
+            const q = query(
+                collection(db, "users"),
+                where("role", "==", "student")
             );
             
-            const html = minhasMensagens.map(msg => `
-                <div class="p-4 rounded-lg ${msg.to === 'Sarah Johnson' ? 'bg-slate-800' : 'bg-blue-900/30'}">
-                    <div class="flex justify-between mb-2">
-                        <span class="font-medium">${msg.from === 'Sarah Johnson' ? 'Você' : msg.from}</span>
-                        <span class="text-xs text-slate-400">${msg.time}</span>
+            const snapshot = await getDocs(q);
+            const students = [];
+            
+            snapshot.forEach(doc => {
+                students.push({ id: doc.id, ...doc.data() });
+            });
+
+            document.getElementById('stat-total-alunos').textContent = students.length;
+            
+            // Renderizar lista resumida
+            const recentes = students.slice(0, 3);
+            document.getElementById('alunos-recentes-list').innerHTML = recentes.map(s => `
+                <div class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-all cursor-pointer">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white font-bold text-sm">
+                        ${s.name ? s.name.charAt(0).toUpperCase() : 'A'}
                     </div>
-                    <p class="text-sm">${msg.text}</p>
+                    <div class="flex-1">
+                        <p class="font-medium text-sm">${s.name || 'Aluno'}</p>
+                        <p class="text-xs text-gray-500">${s.email}</p>
+                    </div>
+                    <span class="badge ${s.level ? 'level-' + s.level.toLowerCase() : 'level-a1'}">${s.level || 'A1'}</span>
                 </div>
             `).join('');
             
-            container.innerHTML = html || '<p class="text-slate-400 text-center">Nenhuma mensagem</p>';
-            
-            // Marcar como lidas
-            dados.mensagens.forEach(m => {
-                if (m.to === 'Sarah Johnson') m.read = true;
-            });
-            salvarDados();
-            document.getElementById('badge-mensagens').classList.add('hidden');
-        }
+            // Tabela completa
+            document.getElementById('tabela-alunos').innerHTML = students.map(s => `
+                <tr class="border-t">
+                    <td class="p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white font-bold">
+                                ${s.name ? s.name.charAt(0).toUpperCase() : 'A'}
+                            </div>
+                            <div>
+                                <p class="font-medium">${s.name || 'Aluno'}</p>
+                                <p class="text-xs text-gray-500">${s.email}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-4">
+                        <span class="badge ${s.level ? 'level-' + s.level.toLowerCase() : 'level-a1'}">${s.level || 'A1'}</span>
+                    </td>
+                    <td class="p-4 text-sm text-gray-600">${s.goal || 'Conversação'}</td>
+                    <td class="p-4 text-sm">--</td>
+                    <td class="p-4 text-sm text-gray-500">--</td>
+                    <td class="p-4">
+                        <button class="text-indigo-600 hover:text-indigo-800 mr-3"><i class="fas fa-eye"></i></button>
+                        <button class="text-green-600 hover:text-green-800"><i class="fas fa-comment"></i></button>
+                    </td>
+                </tr>
+            `).join('');
 
-        // Navegação
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(tabId).classList.remove('hidden');
+        } catch (error) {
+            console.error("Erro ao carregar alunos:", error);
+        }
+    }
+
+    async function loadAppointments() {
+        try {
+            const q = query(
+                collection(db, "appointments"),
+                where("teacherId", "==", TEACHER_ID),
+                orderBy("date", "asc")
+            );
             
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-500', 'text-white');
-                btn.classList.add('text-slate-300');
+            const snapshot = await getDocs(q);
+            const appointments = [];
+            let totalRevenue = 0;
+            
+            snapshot.forEach(doc => {
+                const apt = { id: doc.id, ...doc.data() };
+                appointments.push(apt);
+                if (apt.status === 'confirmed' || apt.status === 'completed') {
+                    totalRevenue += apt.price || 10;
+                }
             });
-            event.target.closest('button').classList.add('bg-blue-500', 'text-white');
-            event.target.closest('button').classList.remove('text-slate-300');
+
+            // Stats
+            const hoje = new Date().toISOString().split('T')[0];
+            const aulasHoje = appointments.filter(a => a.date === hoje).length;
+            const proximas = appointments.filter(a => a.date >= hoje && a.status !== 'cancelled');
             
-            if (tabId === 'mensagens') renderizarMensagens();
-            if (tabId === 'ganhos') {
-                document.getElementById('ganho-mes-detalhe').textContent = `$${dados.tutor.saldo}`;
-                document.getElementById('ganho-pendente-detalhe').textContent = `$${dados.tutor.saldoPendente}`;
-                document.getElementById('ganho-total').textContent = `$${dados.tutor.ganhoTotal}`;
+            document.getElementById('stat-aulas-semana').textContent = aulasHoje;
+            document.getElementById('saldo-atual').textContent = `$${totalRevenue}`;
+            
+            // Próxima aula
+            if (proximas.length > 0) {
+                const proxima = proximas[0];
+                document.getElementById('proxima-aula-horario').textContent = 
+                    `${proxima.date} às ${proxima.start}`;
             }
-        }
 
-        // Modais
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-            if (modalId === 'disponibilidadeModal') renderizarGridDisponibilidade();
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-
-        function renderizarGridDisponibilidade() {
-            const horas = Array.from({ length: 14 }, (_, i) => i + 8);
-            const dias = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
-            const grid = document.getElementById('grid-disponibilidade');
+            // Renderizar listas
+            renderAppointmentsList(proximas.slice(0, 5), 'proximas-aulas-list');
+            renderAppointmentsList(appointments, 'agenda-completa');
             
-            let html = '<div class="text-center text-sm text-slate-400 py-2">Hora</div>';
-            dias.forEach(dia => {
-                html += `<div class="text-center text-sm font-medium py-2">${dia}</div>`;
-            });
-            
-            horas.forEach(hora => {
-                html += `<div class="text-center text-sm text-slate-400 py-2">${hora}:00</div>`;
-                dias.forEach((dia, i) => {
-                    const key = `${dia}-${hora}`;
-                    const isAvailable = dados.tutor.disponibilidade[key] !== false;
-                    html += `
-                        <button onclick="toggleDisponibilidade(this, '${key}')" 
-                                class="py-2 rounded text-xs transition-all ${isAvailable ? 'bg-green-500 hover:bg-green-600' : 'bg-slate-700 hover:bg-slate-600'}">
-                            ${isAvailable ? '✓' : '—'}
-                        </button>
-                    `;
-                });
-            });
-            
-            grid.innerHTML = html;
-        }
-
-        function toggleDisponibilidade(btn, key) {
-            const isAvailable = btn.classList.contains('bg-green-500');
-            if (isAvailable) {
-                btn.classList.remove('bg-green-500', 'hover:bg-green-600');
-                btn.classList.add('bg-slate-700', 'hover:bg-slate-600');
-                btn.textContent = '—';
-                dados.tutor.disponibilidade[key] = false;
-            } else {
-                btn.classList.remove('bg-slate-700', 'hover:bg-slate-600');
-                btn.classList.add('bg-green-500', 'hover:bg-green-600');
-                btn.textContent = '✓';
-                dados.tutor.disponibilidade[key] = true;
+            // Badges
+            if (proximas.length > 0) {
+                document.getElementById('badge-aulas').textContent = proximas.length;
+                document.getElementById('badge-aulas').classList.remove('hidden');
             }
-        }
 
-        function salvarDisponibilidade() {
-            salvarDados();
-            closeModal('disponibilidadeModal');
-            alert('Disponibilidade salva!');
+        } catch (error) {
+            console.error("Erro ao carregar aulas:", error);
         }
+    }
 
-        function verDetalhesAula(aulaId) {
-            const aula = dados.aulas.find(a => a.id === aulaId);
-            if (!aula) return;
-            
-            document.getElementById('detalhes-aula-conteudo').innerHTML = `
-                <div class="text-center mb-6">
-                    <div class="w-20 h-20 rounded-full bg-blue-500 flex items-center justify-center text-4xl mx-auto mb-4">👤</div>
-                    <h3 class="text-xl font-bold">${aula.alunoNome || 'Aluno'}</h3>
-                    <p class="text-slate-400">${aula.subject}</p>
-                </div>
-                <div class="space-y-3 mb-6">
-                    <div class="flex justify-between p-3 bg-slate-800 rounded-lg">
-                        <span class="text-slate-400">Data</span>
-                        <span>${aula.date}</span>
-                    </div>
-                    <div class="flex justify-between p-3 bg-slate-800 rounded-lg">
-                        <span class="text-slate-400">Horário</span>
-                        <span>${aula.time}</span>
-                    </div>
-                    <div class="flex justify-between p-3 bg-slate-800 rounded-lg">
-                        <span class="text-slate-400">Duração</span>
-                        <span>${aula.duration}</span>
-                    </div>
-                    <div class="flex justify-between p-3 bg-slate-800 rounded-lg">
-                        <span class="text-slate-400">Valor</span>
-                        <span class="text-green-400">$25.00</span>
-                    </div>
-                </div>
-                <div class="flex gap-3">
-                    <button onclick="closeModal('aulaModal'); entrarSalaAula()" class="flex-1 py-3 rounded-lg bg-blue-500 hover:bg-blue-600 transition-all">
-                        Entrar na Aula
-                    </button>
-                    <button onclick="cancelarAula(${aula.id})" class="flex-1 py-3 rounded-lg bg-red-500 hover:bg-red-600 transition-all">
-                        Cancelar
-                    </button>
+    function renderAppointmentsList(appointments, containerId) {
+        const container = document.getElementById(containerId);
+        
+        if (appointments.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-8 text-gray-400">
+                    <i class="fas fa-calendar-times text-4xl mb-3"></i>
+                    <p>Nenhuma aula agendada</p>
                 </div>
             `;
-            openModal('aulaModal');
+            return;
         }
 
-        function cancelarAula(aulaId) {
-            if (!confirm('Tem certeza que deseja cancelar esta aula?')) return;
+        container.innerHTML = appointments.map(apt => {
+            const isHoje = apt.date === new Date().toISOString().split('T')[0];
+            const statusClass = apt.status === 'confirmed' ? 'badge-confirmed' : 
+                               apt.status === 'pending' ? 'badge-pending' : 'badge-cancelled';
+            const statusText = apt.status === 'confirmed' ? 'Confirmada' : 
+                              apt.status === 'pending' ? 'Pendente' : 'Cancelada';
             
-            dados.aulas = dados.aulas.filter(a => a.id !== aulaId);
-            salvarDados();
-            closeModal('aulaModal');
-            renderizarDashboard();
-            alert('Aula cancelada. O aluno será notificado.');
-        }
+            return `
+                <div class="lesson-row flex items-center justify-between p-4 rounded-xl border border-gray-100">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl ${isHoje ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600'} flex items-center justify-center">
+                            <i class="fas fa-video text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-800">
+                                ${apt.studentName || apt.studentEmail}
+                                ${isHoje ? '<span class="ml-2 px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded-full text-xs">Hoje</span>' : ''}
+                            </p>
+                            <p class="text-sm text-gray-500">
+                                <i class="far fa-calendar mr-1"></i> ${apt.date} 
+                                <i class="far fa-clock ml-2 mr-1"></i> ${apt.start} - ${apt.end}
+                            </p>
+                            <p class="text-xs text-gray-400 mt-1">
+                                ${apt.type === 'experimental' ? 'Aula Experimental' : 'Aula Regular'} • $${apt.price || 10}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="badge ${statusClass}">${statusText}</span>
+                        <button onclick="enterClass('${apt.id}')" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all ${apt.status === 'cancelled' ? 'opacity-50 cursor-not-allowed' : ''}">
+                            Entrar
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
 
-        function entrarSalaAula() {
-            alert('🎥 Iniciando sala de aula virtual...\n\nEm um sistema real, isso abriria:\n- Videochamada WebRTC\n- Quadro branco compartilhado\n- Compartilhamento de tela\n- Chat em tempo real');
-        }
-
-        function sacarGanhos() {
-            if (dados.tutor.saldo <= 0) {
-                alert('Você não tem saldo disponível para saque.');
-                return;
-            }
+    async function loadFinancial() {
+        // Calcular ganhos
+        try {
+            const q = query(
+                collection(db, "appointments"),
+                where("teacherId", "==", TEACHER_ID),
+                where("status", "in", ["confirmed", "completed"])
+            );
             
-            const valor = dados.tutor.saldo;
-            dados.tutor.saldo = 0;
-            dados.tutor.saldoPendente += valor;
-            salvarDados();
+            const snapshot = await getDocs(q);
+            let total = 0;
+            snapshot.forEach(doc => {
+                total += doc.data().price || 10;
+            });
             
-            document.getElementById('saldo-tutor').textContent = '$0.00';
-            renderizarDashboard();
+            document.getElementById('ganho-mes').textContent = `$${total}`;
+            document.getElementById('ganho-total').textContent = `$${total * 3}`; // Simulado
             
-            alert(`Saque de $${valor} solicitado! O valor será transferido em 3 dias úteis.`);
+        } catch (error) {
+            console.error("Erro ao carregar financeiro:", error);
         }
+    }
 
-        function enviarMensagem(alunoNome) {
-            const texto = prompt(`Enviar mensagem para ${alunoNome}:`);
-            if (texto) {
-                dados.mensagens.push({
-                    id: Date.now(),
-                    from: 'Sarah Johnson',
-                    to: alunoNome,
-                    text: texto,
-                    time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-                    read: false
-                });
-                salvarDados();
-                alert('Mensagem enviada!');
-            }
-        }
-
-        function verPerfilAluno(alunoId) {
-            alert('Perfil completo do aluno seria exibido aqui');
-        }
-
-        function mudarSemana(direcao) {
-            // Simulação de mudança de semana
-            alert('Navegação entre semanas (simulação)');
-        }
-
-        // Inicialização
-        document.addEventListener('DOMContentLoaded', () => {
-            renderizarDashboard();
-            
-            // Atualizar a cada 5 segundos para simular tempo real
-            setInterval(() => {
-                const novosDados = JSON.parse(localStorage.getItem('preply_dados'));
-                if (novosDados && JSON.stringify(novosDados) !== JSON.stringify(dados)) {
-                    dados = novosDados;
-                    renderizarDashboard();
-                }
-            }, 5000);
+    // Funções globais
+    window.showTab = function(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.nav-item').forEach(el => {
+            el.classList.remove('active');
+            el.classList.remove('bg-white/10');
         });
+        
+        document.getElementById(tabId).classList.remove('hidden');
+        
+        const titulos = {
+            'dashboard': 'Dashboard',
+            'alunos': 'Meus Alunos',
+            'aulas': 'Agenda',
+            'mensagens': 'Mensagens',
+            'financeiro': 'Financeiro',
+            'config': 'Configurações'
+        };
+        document.getElementById('page-title').textContent = titulos[tabId];
+        document.getElementById('page-subtitle').textContent = 
+            tabId === 'dashboard' ? 'Visão geral da sua atividade' : 
+            tabId === 'alunos' ? 'Gerencie seus alunos' : 
+            tabId === 'aulas' ? 'Sua agenda de aulas' : '';
+        
+        event.currentTarget.classList.add('active');
+    };
 
-        // Fechar modal ao clicar fora
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.classList.remove('active');
-            }
+    window.enterClass = function(appointmentId) {
+        alert('🎥 Iniciando sala de aula virtual...\n\nVideochamada em desenvolvimento');
+    };
+
+    window.logout = async function() {
+        if (!confirm('Deseja sair?')) return;
+        
+        try {
+            await signOut(auth);
+            window.location.href = "login.html";
+        } catch (error) {
+            console.error("Erro ao sair:", error);
         }
-    </script>
+    };
+</script>
+
 </body>
 </html>
