@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preply Clone - Área do Aluno</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --success: #22c55e;
+            --error: #ef4444;
+            --warning: #f59e0b;
+        }
+        body { font-family: 'Inter', sans-serif; background: #0f172a; color: #e2e8f0; }
+        .glass { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .hover-scale { transition: transform 0.2s; }
+        .hover-scale:hover { transform: scale(1.02); }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 50; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .progress-bar { height: 8px; border-radius: 4px; background: #334155; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+        /* Animações */
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-in { animation: slideIn 0.4s ease-out; }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="w-64 min-h-screen glass fixed left-0 top-0 z-40">
+            <div class="p-6">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-xl">🎓</div>
+                    <span class="font-bold text-lg">Preply Clone</span>
+                </div>
+                
+                <nav class="space-y-2">
+                    <button onclick="showTab('dashboard')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-500 text-white transition-all">
+                        <i class="fas fa-home"></i> Dashboard
+                    </button>
+                    <button onclick="showTab('aulas')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition-all text-slate-300">
+                        <i class="fas fa-calendar"></i> Minhas Aulas
+                    </button>
+                    <button onclick="showTab('tutores')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition-all text-slate-300">
+                        <i class="fas fa-users"></i> Encontrar Tutores
+                    </button>
+                    <button onclick="showTab('mensagens')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition-all text-slate-300 relative">
+                        <i class="fas fa-comments"></i> Mensagens
+                        <span class="absolute right-4 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">3</span>
+                    </button>
+                    <button onclick="showTab('progresso')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition-all text-slate-300">
+                        <i class="fas fa-chart-line"></i> Progresso
+                    </button>
+                </nav>
+                
+                <div class="mt-8 p-4 rounded-xl bg-slate-800">
+                    <p class="text-sm text-slate-400 mb-2">Créditos disponíveis</p>
+                    <p class="text-2xl font-bold" id="creditos">4 aulas</p>
+                    <button onclick="openModal('bookingModal')" class="w-full mt-3 py-2 rounded-lg text-sm font-medium bg-green-500 hover:bg-green-600 transition-all">
+                        Comprar mais
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 ml-64">
+            <!-- Header -->
+            <header class="h-16 glass fixed right-0 left-64 top-0 z-30 flex items-center justify-between px-6">
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" placeholder="Buscar tutores..." class="pl-10 pr-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white w-80 focus:outline-none focus:border-blue-500">
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="relative p-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition-all">
+                        <i class="fas fa-bell"></i>
+                        <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-xs flex items-center justify-center">2</span>
+                    </button>
+                    <div class="flex items-center gap-3 cursor-pointer" onclick="toggleProfileMenu()">
+                        <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center">👨‍🎓</div>
+                        <span class="font-medium">João Silva</span>
+                        <i class="fas fa-chevron-down text-slate-400"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="pt-16 p-6">
+                <!-- Dashboard Tab -->
+                <div id="dashboard" class="tab-content animate-in">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h1 class="text-2xl font-bold">Bem-vindo de volta, João! 👋</h1>
+                            <p class="text-slate-400">Você tem <span id="proximas-aulas">2</span> aulas esta semana</p>
+                        </div>
+                        <button onclick="openModal('bookingModal')" class="px-6 py-3 rounded-lg font-medium flex items-center gap-2 bg-blue-500 hover:bg-blue-600 transition-all">
+                            <i class="fas fa-plus"></i> Agendar Aula
+                        </button>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="grid grid-cols-4 gap-4 mb-6">
+                        <div class="glass p-4 rounded-xl hover-scale cursor-pointer" onclick="showTab('aulas')">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-slate-400 text-sm">Aulas Completadas</span>
+                                <i class="fas fa-check-circle text-green-500"></i>
+                            </div>
+                            <p class="text-2xl font-bold" id="aulas-completadas">24</p>
+                        </div>
+                        <div class="glass p-4 rounded-xl hover-scale">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-slate-400 text-sm">Horas de Estudo</span>
+                                <i class="fas fa-clock text-blue-500"></i>
+                            </div>
+                            <p class="text-2xl font-bold">36h</p>
+                        </div>
+                        <div class="glass p-4 rounded-xl hover-scale" onclick="showTab('tutores')">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-slate-400 text-sm">Tutores</span>
+                                <i class="fas fa-users text-purple-500"></i>
+                            </div>
+                            <p class="text-2xl font-bold">3</p>
+                        </div>
+                        <div class="glass p-4 rounded-xl hover-scale">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-slate-400 text-sm">Sequência</span>
+                                <i class="fas fa-fire text-orange-500"></i>
+                            </div>
+                            <p class="text-2xl font-bold">5 dias 🔥</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-6">
+                        <!-- Próximas Aulas -->
+                        <div class="glass p-6 rounded-xl">
+                            <h3 class="font-semibold mb-4 flex items-center gap-2">
+                                <i class="fas fa-calendar-check text-blue-500"></i>
+                                Próximas Aulas
+                            </h3>
+                            <div id="lista-aulas" class="space-y-3">
+                                <!-- Preenchido via JS -->
+                            </div>
+                        </div>
+
+                        <!-- Progresso -->
+                        <div class="glass p-6 rounded-xl">
+                            <h3 class="font-semibold mb-4 flex items-center gap-2">
+                                <i class="fas fa-chart-line text-green-500"></i>
+                                Seu Progresso
+                            </h3>
+                            <div id="lista-progresso" class="space-y-4">
+                                <!-- Preenchido via JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tutores Recomendados -->
+                    <div class="glass p-6 rounded-xl mt-6">
+                        <h3 class="font-semibold mb-4">Tutores Recomendados</h3>
+                        <div id="lista-tutores" class="grid grid-cols-4 gap-4">
+                            <!-- Preenchido via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Outras tabs (simplificadas para exemplo) -->
+                <div id="aulas" class="tab-content hidden">
+                    <h1 class="text-2xl font-bold mb-6">Minhas Aulas</h1>
+                    <div id="todas-aulas" class="space-y-4"></div>
+                </div>
+
+                <div id="tutores" class="tab-content hidden">
+                    <h1 class="text-2xl font-bold mb-6">Encontrar Tutores</h1>
+                    <div class="grid grid-cols-3 gap-4" id="grid-tutores"></div>
+                </div>
+
+                <div id="mensagens" class="tab-content hidden">
+                    <h1 class="text-2xl font-bold mb-6">Mensagens</h1>
+                    <div class="glass p-8 rounded-xl text-center text-slate-400">
+                        <i class="fas fa-comments text-4xl mb-4"></i>
+                        <p>Nenhuma mensagem nova</p>
+                    </div>
+                </div>
+
+                <div id="progresso" class="tab-content hidden">
+                    <h1 class="text-2xl font-bold mb-6">Meu Progresso</h1>
+                    <div id="detalhes-progresso" class="glass p-6 rounded-xl"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Agendamento -->
+    <div id="bookingModal" class="modal">
+        <div class="glass rounded-2xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold">Agendar Nova Aula</h2>
+                <button onclick="closeModal('bookingModal')" class="text-2xl hover:text-red-400">&times;</button>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm text-slate-400 mb-2">Selecionar Tutor</label>
+                    <select id="select-tutor" class="w-full p-3 rounded-lg bg-slate-800 border border-slate-700 text-white">
+                        <!-- Preenchido via JS -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm text-slate-400 mb-2">Data</label>
+                    <input type="date" id="data-aula" class="w-full p-3 rounded-lg bg-slate-800 border border-slate-700 text-white">
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-sm text-slate-400 mb-2">Horários Disponíveis</label>
+                <div id="horarios-disponiveis" class="flex gap-2 flex-wrap">
+                    <!-- Preenchido via JS -->
+                </div>
+            </div>
+            
+            <div class="flex gap-3 mt-6">
+                <button onclick="closeModal('bookingModal')" class="flex-1 py-3 rounded-lg font-medium bg-slate-700 hover:bg-slate-600 transition-all">
+                    Cancelar
+                </button>
+                <button onclick="confirmarAgendamento()" class="flex-1 py-3 rounded-lg font-medium bg-blue-500 hover:bg-blue-600 transition-all">
+                    Confirmar Agendamento
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados persistentes no localStorage
+        const dadosPadrao = {
+            aulas: [
+                { id: 1, tutor: 'Sarah Johnson', subject: 'Inglês', date: '2026-08-08', time: '15:00', duration: '60 min', status: 'confirmed', completed: false },
+                { id: 2, tutor: 'Carlos Mendez', subject: 'Espanhol', date: '2026-08-09', time: '10:00', duration: '45 min', status: 'pending', completed: false }
+            ],
+            progresso: [
+                { subject: 'Inglês', level: 'B2', progress: 75, hours: 24 },
+                { subject: 'Espanhol', level: 'A2', progress: 45, hours: 12 }
+            ],
+            tutores: [
+                { id: 1, name: 'Sarah Johnson', subject: 'Inglês', rating: 4.9, price: 25, image: '👩‍🏫', country: '🇺🇸' },
+                { id: 2, name: 'Carlos Mendez', subject: 'Espanhol', rating: 4.8, price: 20, image: '👨‍🏫', country: '🇪🇸' },
+                { id: 3, name: 'Marie Dubois', subject: 'Francês', rating: 4.9, price: 28, image: '👩‍🏫', country: '🇫🇷' },
+                { id: 4, name: 'Yuki Tanaka', subject: 'Japonês', rating: 5.0, price: 30, image: '👨‍🏫', country: '🇯🇵' }
+            ],
+            creditos: 4
+        };
+
+        // Carregar dados do localStorage ou usar padrão
+        let dados = JSON.parse(localStorage.getItem('preply_dados')) || dadosPadrao;
+        
+        function salvarDados() {
+            localStorage.setItem('preply_dados', JSON.stringify(dados));
+        }
+
+        // Navegação entre tabs
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-500', 'text-white');
+                btn.classList.add('text-slate-300');
+            });
+            event.target.closest('button').classList.add('bg-blue-500', 'text-white');
+            event.target.closest('button').classList.remove('text-slate-300');
+        }
+
+        // Modais
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            if (modalId === 'bookingModal') carregarOpcoesAgendamento();
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Renderizar conteúdo
+        function renderizarAulas() {
+            const container = document.getElementById('lista-aulas');
+            const todasContainer = document.getElementById('todas-aulas');
+            
+            const html = dados.aulas.map(aula => `
+                <div class="flex items-center justify-between p-3 rounded-lg bg-slate-800 hover:bg-slate-700 transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center">👤</div>
+                        <div>
+                            <p class="font-medium">${aula.tutor}</p>
+                            <p class="text-sm text-slate-400">${aula.subject} • ${formatarData(aula.date)}, ${aula.time}</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="entrarAula(${aula.id})" class="px-3 py-1.5 rounded-lg text-sm bg-green-500 hover:bg-green-600 transition-all">
+                            <i class="fas fa-video mr-1"></i> Entrar
+                        </button>
+                        <button class="px-3 py-1.5 rounded-lg text-sm bg-slate-700 hover:bg-slate-600">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
+            todasContainer.innerHTML = html;
+            
+            // Atualizar contador
+            document.getElementById('proximas-aulas').textContent = dados.aulas.filter(a => !a.completed).length;
+        }
+
+        function renderizarProgresso() {
+            const container = document.getElementById('lista-progresso');
+            const detalhes = document.getElementById('detalhes-progresso');
+            
+            const html = dados.progresso.map(item => `
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <span>${item.subject}</span>
+                        <span class="text-sm text-slate-400">${item.level} • ${item.hours}h</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill bg-blue-500" style="width: ${item.progress}%"></div>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
+            detalhes.innerHTML = html;
+        }
+
+        function renderizarTutores() {
+            const container = document.getElementById('lista-tutores');
+            const grid = document.getElementById('grid-tutores');
+            
+            const html = dados.tutores.map(tutor => `
+                <div class="p-4 rounded-xl bg-slate-800 hover:bg-slate-700 transition-all cursor-pointer hover-scale text-center" onclick="selecionarTutor(${tutor.id})">
+                    <div class="text-4xl mb-2">${tutor.image}</div>
+                    <p class="font-medium">${tutor.name}</p>
+                    <p class="text-sm text-slate-400">${tutor.country} ${tutor.subject}</p>
+                    <div class="flex items-center justify-center gap-1 my-2">
+                        <i class="fas fa-star text-yellow-500 text-xs"></i>
+                        <span class="text-sm">${tutor.rating}</span>
+                    </div>
+                    <p class="font-bold text-blue-400">$${tutor.price}/h</p>
+                    <button onclick="event.stopPropagation(); openModal('bookingModal')" class="w-full mt-3 py-2 rounded-lg text-sm bg-blue-500 hover:bg-blue-600">
+                        Reservar
+                    </button>
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
+            grid.innerHTML = html;
+        }
+
+        function carregarOpcoesAgendamento() {
+            const select = document.getElementById('select-tutor');
+            select.innerHTML = dados.tutores.map(t => `<option value="${t.id}">${t.name} - ${t.subject}</option>`).join('');
+            
+            // Horários
+            const horariosDiv = document.getElementById('horarios-disponiveis');
+            const horarios = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
+            horariosDiv.innerHTML = horarios.map(h => `
+                <button onclick="selecionarHorario(this)" class="horario-btn px-4 py-2 rounded-lg text-sm bg-slate-800 border border-slate-700 hover:border-blue-500 transition-all" data-hora="${h}">
+                    ${h}
+                </button>
+            `).join('');
+            
+            // Data mínima = hoje
+            document.getElementById('data-aula').min = new Date().toISOString().split('T')[0];
+        }
+
+        let horarioSelecionado = null;
+        function selecionarHorario(btn) {
+            document.querySelectorAll('.horario-btn').forEach(b => b.classList.remove('bg-blue-500', 'border-blue-500'));
+            btn.classList.add('bg-blue-500', 'border-blue-500');
+            horarioSelecionado = btn.dataset.hora;
+        }
+
+        function confirmarAgendamento() {
+            const tutorId = document.getElementById('select-tutor').value;
+            const data = document.getElementById('data-aula').value;
+            const tutor = dados.tutores.find(t => t.id == tutorId);
+            
+            if (!data || !horarioSelecionado) {
+                alert('Selecione uma data e horário!');
+                return;
+            }
+            
+            if (dados.creditos <= 0) {
+                alert('Você não tem créditos suficientes!');
+                return;
+            }
+            
+            const novaAula = {
+                id: Date.now(),
+                tutor: tutor.name,
+                subject: tutor.subject,
+                date: data,
+                time: horarioSelecionado,
+                duration: '60 min',
+                status: 'confirmed',
+                completed: false
+            };
+            
+            dados.aulas.push(novaAula);
+            dados.creditos--;
+            salvarDados();
+            
+            document.getElementById('creditos').textContent = dados.creditos + ' aulas';
+            renderizarAulas();
+            closeModal('bookingModal');
+            
+            alert('Aula agendada com sucesso!');
+        }
+
+        function entrarAula(aulaId) {
+            alert('Iniciando videochamada... (simulação)');
+        }
+
+        function formatarData(dataStr) {
+            const data = new Date(dataStr);
+            const hoje = new Date();
+            const amanha = new Date(hoje);
+            amanha.setDate(amanha.getDate() + 1);
+            
+            if (data.toDateString() === hoje.toDateString()) return 'Hoje';
+            if (data.toDateString() === amanha.toDateString()) return 'Amanhã';
+            return data.toLocaleDateString('pt-BR');
+        }
+
+        function toggleProfileMenu() {
+            // Implementar dropdown de perfil
+            alert('Menu de perfil');
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('creditos').textContent = dados.creditos + ' aulas';
+            renderizarAulas();
+            renderizarProgresso();
+            renderizarTutores();
+        });
+
+        // Fechar modal ao clicar fora
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>
