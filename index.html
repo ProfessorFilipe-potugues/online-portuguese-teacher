@@ -939,7 +939,7 @@
   <h2><i class="fas fa-rocket"></i> Comece hoje mesmo</h2>
   <p>Entre na plataforma e agende sua aula experimental em menos de 1 minuto</p>
   
-  <form class="quick-book-form" onsubmit="handleQuickBook(event)">
+  <form class="quick-book-form" id="quickBookForm">
     <input type="text" id="quickNome" placeholder="Seu nome" required>
     <input type="email" id="quickEmail" placeholder="Seu melhor email" required>
     <select id="quickTipo" required>
@@ -972,26 +972,45 @@
   <i class="fab fa-whatsapp"></i>
 </a>
 
-<!-- Firebase -->
+<!-- Firebase & Scripts Modulares -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  // Importa o auth e o db do seu arquivo centralizado local
+  import { auth, db } from './firebase-config.js';
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
-    authDomain: "portuguese-teacher-platf-68bc5.firebaseapp.com",
-    projectId: "portuguese-teacher-platf-68bc5"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+  // Importações específicas do Firebase Web SDK do CDN correto (v10.7.1)
+  import { 
+    onAuthStateChanged, 
+    signInWithEmailAndPassword, 
+    createUserWithEmailAndPassword 
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  
+  import { 
+    doc, 
+    setDoc, 
+    serverTimestamp 
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
   let currentUser = null;
-  let userData = null;
 
-  // Verificar se usuário está logado
+  // Função Auxiliar de Notificação interna
+  function showNotification(message, type = 'success') {
+    const notif = document.getElementById('notification');
+    const notifText = document.getElementById('notif-text');
+    notifText.textContent = message;
+    
+    if (type === 'error') {
+      notif.classList.add('error');
+    } else {
+      notif.classList.remove('error');
+    }
+    
+    notif.classList.add('show');
+    setTimeout(() => {
+      notif.classList.remove('show');
+    }, 4000);
+  }
+
+  // Verificar estado de autenticação do usuário
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       currentUser = user;
@@ -1003,7 +1022,7 @@
     }
   });
 
-  // Login
+  // Evento de Login
   document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
@@ -1018,15 +1037,10 @@
     
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, senha);
-      const user = userCredential.user;
-      
-      // Buscar dados do usuário para redirecionar
-      // Por enquanto redireciona baseado no email ou pergunta na criação
       closeModal('loginModal');
       showNotification('Bem-vindo de volta!');
       
       setTimeout(() => {
-        // Redirecionar para área apropriada
         if (email.includes('filipe') || email.includes('professor')) {
           window.location.href = 'tutor.html';
         } else {
@@ -1039,7 +1053,7 @@
       let mensagem = 'Erro ao entrar. Tente novamente.';
       
       if (error.code === 'auth/user-not-found') mensagem = 'Usuário não encontrado.';
-      else if (error.code === 'auth/wrong-password') mensagem = 'Senha incorreta.';
+      else if (error.code === 'auth/wrong-password') message = 'Senha incorreta.';
       else if (error.code === 'auth/invalid-email') mensagem = 'Email inválido.';
       else if (error.code === 'auth/invalid-credential') mensagem = 'Email ou senha incorretos.';
       
@@ -1051,7 +1065,7 @@
     }
   });
 
-  // Registro
+  // Evento de Registro
   document.getElementById('registerForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
@@ -1076,7 +1090,7 @@
       const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
       const user = userCredential.user;
       
-      // Salvar dados no Firestore
+      // Salvar dados adicionais no Firestore
       await setDoc(doc(db, "users", user.uid), {
         name: nome,
         email: email,
@@ -1113,14 +1127,42 @@
     }
   });
 
-  // Funções globais
+  // Ouvinte do Agendamento Rápido
+  document.getElementById('quickBookForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const nome = document.getElementById('quickNome').value;
+    const email = document.getElementById('quickEmail').value;
+    const tipo = document.getElementById('quickTipo').value;
+    
+    if (!tipo) {
+      showNotification('Selecione o tipo de aula!', 'error');
+      return;
+    }
+    
+    sessionStorage.setItem('quickBooking', JSON.stringify({
+      nome: nome,
+      email: email,
+      tipo: tipo
+    }));
+    
+    if (currentUser) {
+      window.location.href = 'estudante.html';
+    } else {
+      openModal('registerModal');
+      document.getElementById('regNome').value = nome;
+      document.getElementById('regEmail').value = email;
+      showNotification('Complete seu cadastro para finalizar o agendamento!');
+    }
+  });
+
+  /* Mapeamento das Funções Globais no objeto window para manter os atributos onclick do HTML ativos */
   window.openModal = function(modalId) {
     document.getElementById(modalId).classList.add('active');
   };
 
   window.closeModal = function(modalId) {
     document.getElementById(modalId).classList.remove('active');
-    // Limpar erros
     document.querySelectorAll('.error-message').forEach(el => el.classList.remove('show'));
   };
 
@@ -1143,8 +1185,6 @@
       return;
     }
     
-    // Redirecionar baseado no tipo de usuário
-    // Na prática, você buscaria o role do Firestore
     const email = currentUser.email;
     if (email.includes('filipe') || email.includes('professor') || email.includes('teacher')) {
       window.location.href = 'tutor.html';
@@ -1155,7 +1195,6 @@
 
   window.openTutorArea = function() {
     openModal('loginModal');
-    // Preenche o email com sugestão
     document.getElementById('loginEmail').placeholder = 'professor@email.com';
   };
 
@@ -1175,55 +1214,6 @@
     } else {
       openModal('registerModal');
       showNotification('Crie uma conta para começar!');
-    }
-  };
-
-  window.handleQuickBook = function(e) {
-    e.preventDefault();
-    
-    const nome = document.getElementById('quickNome').value;
-    const email = document.getElementById('quickEmail').value;
-    const tipo = document.getElementById('quickTipo').value;
-    
-    if (!tipo) {
-      showNotification('Selecione o tipo de aula!', 'error');
-      return;
-    }
-    
-    // Salvar dados temporários
-    sessionStorage.setItem('quickBooking', JSON.stringify({
-      nome: nome,
-      email: email,
-      tipo: tipo
-    }));
-    
-    if (currentUser) {
-      window.location.href = 'estudante.html';
-    } else {
-      openModal('registerModal');
-      document.getElementById('regNome').value = nome;
-      document.getElementById('regEmail').value = email;
-      showNotification('Complete seu cadastro para finalizar o agendamento!');
-    }
-  };
-
-  window.showNotification = function(text, type = 'success') {
-    const notif = document.getElementById('notification');
-    const notifText = document.getElementById('notif-text');
-    
-    notifText.textContent = text;
-    notif.className = 'notification' + (type === 'error' ? ' error' : '');
-    notif.classList.add('show');
-    
-    setTimeout(() => {
-      notif.classList.remove('show');
-    }, 4000);
-  };
-
-  // Fechar modal ao clicar fora
-  window.onclick = function(e) {
-    if (e.target.classList.contains('modal-overlay')) {
-      e.target.classList.remove('active');
     }
   };
 </script>
