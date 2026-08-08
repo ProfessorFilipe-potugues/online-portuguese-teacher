@@ -1,656 +1,785 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard do Professor</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #f4f7fb;
-    }
-
-    /* HEADER */
-    header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: #fff;
-      padding: 20px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 24px;
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .logout-btn {
-      background: rgba(255,255,255,0.2);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.3);
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: 0.3s;
-    }
-
-    .logout-btn:hover {
-      background: rgba(255,255,255,0.3);
-    }
-
-    /* CONTAINER */
-    .container {
-      max-width: 1400px;
-      margin: 30px auto;
-      padding: 0 20px;
-    }
-
-    /* STATS CARDS */
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-
-    .stat-card {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-
-    .stat-card .icon {
-      font-size: 32px;
-      margin-bottom: 10px;
-    }
-
-    .stat-card .number {
-      font-size: 28px;
-      font-weight: bold;
-      color: #667eea;
-    }
-
-    .stat-card .label {
-      font-size: 14px;
-      color: #666;
-      margin-top: 5px;
-    }
-
-    /* TABS */
-    .tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      border-bottom: 2px solid #e0e0e0;
-    }
-
-    .tab {
-      padding: 12px 24px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-      color: #666;
-      border-bottom: 3px solid transparent;
-      transition: 0.3s;
-    }
-
-    .tab.active {
-      color: #667eea;
-      border-bottom-color: #667eea;
-      font-weight: 600;
-    }
-
-    .tab:hover {
-      color: #667eea;
-    }
-
-    /* TAB CONTENT */
-    .tab-content {
-      display: none;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    /* TABLE */
-    .table-container {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th {
-      text-align: left;
-      padding: 12px;
-      background: #f8f9fa;
-      font-weight: 600;
-      color: #333;
-      border-bottom: 2px solid #e0e0e0;
-    }
-
-    td {
-      padding: 12px;
-      border-bottom: 1px solid #f0f0f0;
-    }
-
-    tr:hover {
-      background: #f8f9fa;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    .badge.level-a1, .badge.level-a2 {
-      background: #ffd6d6;
-      color: #c41e3a;
-    }
-
-    .badge.level-b1, .badge.level-b2 {
-      background: #fff4cc;
-      color: #b8860b;
-    }
-
-    .badge.level-c1, .badge.level-c2 {
-      background: #d4edda;
-      color: #155724;
-    }
-
-    .badge.confirmed {
-      background: #d4edda;
-      color: #155724;
-    }
-
-    .badge.pending {
-      background: #fff4cc;
-      color: #b8860b;
-    }
-
-    .btn-small {
-      padding: 6px 12px;
-      background: #667eea;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 13px;
-      transition: 0.3s;
-    }
-
-    .btn-small:hover {
-      background: #5568d3;
-    }
-
-    .btn-chat {
-      background: #25d366;
-    }
-
-    .btn-chat:hover {
-      background: #1da851;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: #999;
-    }
-
-    .empty-state .icon {
-      font-size: 64px;
-      margin-bottom: 20px;
-      opacity: 0.3;
-    }
-
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: #666;
-    }
-
-    /* RESPONSIVE */
-    @media (max-width: 768px) {
-      header {
-        flex-direction: column;
-        gap: 10px;
-      }
-
-      .stats {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .tabs {
-        overflow-x: auto;
-      }
-
-      table {
-        font-size: 14px;
-      }
-
-      th, td {
-        padding: 8px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preply Clone - Portal do Tutor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --success: #22c55e;
+            --error: #ef4444;
+            --warning: #f59e0b;
+        }
+        body { font-family: 'Inter', sans-serif; background: #0f172a; color: #e2e8f0; }
+        .glass { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .hover-scale { transition: transform 0.2s; }
+        .hover-scale:hover { transform: scale(1.02); }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 50; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .slot { transition: all 0.2s; cursor: pointer; }
+        .slot:hover { transform: scale(1.05); }
+        .slot.booked { background: #3b82f6; color: white; }
+        .slot.available { background: #22c55e; color: white; }
+        .slot.blocked { background: #334155; opacity: 0.5; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-in { animation: slideIn 0.4s ease-out; }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+    </style>
 </head>
+<body class="min-h-screen">
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="w-64 min-h-screen glass fixed left-0 top-0 z-40">
+            <div class="p-6">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-xl">👨‍🏫</div>
+                    <span class="font-bold text-lg">Tutor Portal</span>
+                </div>
+                
+                <nav class="space-y-2">
+                    <button onclick="showTab('dashboard')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-500 text-white transition-all">
+                        <i class="fas fa-home"></i> Dashboard
+                    </button>
+                    <button onclick="showTab('agenda')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition-all text-slate-300">
+                        <i class="fas fa-calendar-alt"></i> Agenda
+                    </button>
+                    <button onclick="showTab('alunos')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition-all text-slate-300">
+                        <i class="fas fa-user-graduate"></i> Alunos
+                    </button>
+                    <button onclick="showTab('mensagens')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition-all text-slate-300 relative">
+                        <i class="fas fa-comments"></i> Mensagens
+                        <span id="badge-mensagens" class="absolute right-4 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full hidden">0</span>
+                    </button>
+                    <button onclick="showTab('ganhos')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition-all text-slate-300">
+                        <i class="fas fa-dollar-sign"></i> Ganhos
+                    </button>
+                    <button onclick="showTab('avaliacoes')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-700 transition-all text-slate-300">
+                        <i class="fas fa-star"></i> Avaliações
+                    </button>
+                </nav>
+                
+                <div class="mt-8 p-4 rounded-xl bg-slate-800">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-star text-yellow-500"></i>
+                        <span class="font-bold text-2xl">4.9</span>
+                    </div>
+                    <p class="text-sm text-slate-400">Sua avaliação média</p>
+                    <div class="mt-3">
+                        <div class="flex justify-between text-xs mb-1">
+                            <span>Perfil completo</span>
+                            <span>95%</span>
+                        </div>
+                        <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
+                            <div class="h-full bg-green-500 rounded-full" style="width: 95%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
 
-<body>
+        <!-- Main Content -->
+        <main class="flex-1 ml-64">
+            <!-- Header -->
+            <header class="h-16 glass fixed right-0 left-64 top-0 z-30 flex items-center justify-between px-6">
+                <div class="flex items-center gap-2">
+                    <span class="px-3 py-1 rounded-full text-sm bg-green-500 text-white pulse">
+                        <i class="fas fa-circle text-xs mr-1"></i> Online
+                    </span>
+                    <span class="text-slate-400" id="proxima-aula-info">Próxima aula em --</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <p class="text-sm font-bold text-green-400" id="saldo-tutor">$0.00</p>
+                        <p class="text-xs text-slate-400">Saldo disponível</p>
+                    </div>
+                    <button class="relative p-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition-all">
+                        <i class="fas fa-bell"></i>
+                        <span id="badge-notificacoes" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-xs flex items-center justify-center hidden">0</span>
+                    </button>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center">👩‍🏫</div>
+                        <span class="font-medium">Sarah Johnson</span>
+                    </div>
+                </div>
+            </header>
 
-<header>
-  <h1>👨‍🏫 Dashboard do Professor</h1>
-  <div class="header-actions">
-    <button class="logout-btn" onclick="logout()">Sair</button>
-  </div>
-</header>
+            <!-- Content -->
+            <div class="pt-16 p-6">
+                <!-- Dashboard Tab -->
+                <div id="dashboard" class="tab-content animate-in">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h1 class="text-2xl font-bold">Olá, Sarah! 👋</h1>
+                            <p class="text-slate-400">Você tem <span id="total-aulas-hoje">0</span> aulas hoje</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <button onclick="openModal('disponibilidadeModal')" class="px-4 py-2 rounded-lg font-medium flex items-center gap-2 bg-slate-700 hover:bg-slate-600 transition-all">
+                                <i class="fas fa-clock"></i> Disponibilidade
+                            </button>
+                            <button onclick="entrarSalaAula()" class="px-4 py-2 rounded-lg font-medium flex items-center gap-2 bg-blue-500 hover:bg-blue-600 transition-all">
+                                <i class="fas fa-video"></i> Sala de Aula
+                            </button>
+                        </div>
+                    </div>
 
-<div class="container">
-  <!-- ESTATÍSTICAS -->
-  <div class="stats">
-    <div class="stat-card">
-      <div class="icon">👥</div>
-      <div class="number" id="totalStudents">0</div>
-      <div class="label">Total de Alunos</div>
+                    <!-- Stats -->
+                    <div class="grid grid-cols-4 gap-4 mb-6">
+                        <div class="glass p-4 rounded-xl hover-scale">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-slate-400 text-sm">Ganhos (Mês)</span>
+                                <i class="fas fa-wallet text-green-500"></i>
+                            </div>
+                            <p class="text-2xl font-bold" id="ganhos-mes">$0</p>
+                            <p class="text-xs text-green-400 mt-1">+<span id="ganhos-variacao">0</span>%</p>
+                        </div>
+                        <div class="glass p-4 rounded-xl hover-scale">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-slate-400 text-sm">Aulas Dadas</span>
+                                <i class="fas fa-chalkboard-teacher text-blue-500"></i>
+                            </div>
+                            <p class="text-2xl font-bold" id="aulas-dadas">0</p>
+                            <p class="text-xs text-green-400 mt-1">+<span id="aulas-variacao">0</span>%</p>
+                        </div>
+                        <div class="glass p-4 rounded-xl hover-scale">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-slate-400 text-sm">Alunos Ativos</span>
+                                <i class="fas fa-users text-purple-500"></i>
+                            </div>
+                            <p class="text-2xl font-bold" id="alunos-ativos">0</p>
+                            <p class="text-xs text-blue-400 mt-1">+<span id="alunos-novos">0</span> novos</p>
+                        </div>
+                        <div class="glass p-4 rounded-xl hover-scale">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-slate-400 text-sm">Pendente</span>
+                                <i class="fas fa-clock text-orange-500"></i>
+                            </div>
+                            <p class="text-2xl font-bold" id="ganhos-pendentes">$0</p>
+                            <p class="text-xs text-slate-400 mt-1">Saque em 3 dias</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-6">
+                        <!-- Agenda Semanal -->
+                        <div class="col-span-2 glass p-6 rounded-xl">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-semibold flex items-center gap-2">
+                                    <i class="fas fa-calendar-week text-blue-500"></i>
+                                    Sua Semana
+                                </h3>
+                                <div class="flex gap-2">
+                                    <button onclick="mudarSemana(-1)" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700">&lt;</button>
+                                    <span class="px-3 py-1" id="semana-atual">Agosto 2026</span>
+                                    <button onclick="mudarSemana(1)" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700">&gt;</button>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-7 gap-2" id="calendario-semanal">
+                                <!-- Preenchido via JS -->
+                            </div>
+                            
+                            <div class="flex gap-4 mt-4 text-xs">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded bg-blue-500"></div>
+                                    <span class="text-slate-400">Reservado</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded bg-green-500"></div>
+                                    <span class="text-slate-400">Disponível</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded bg-slate-700"></div>
+                                    <span class="text-slate-400">Indisponível</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Alunos Recentes -->
+                        <div class="glass p-6 rounded-xl">
+                            <h3 class="font-semibold mb-4 flex items-center gap-2">
+                                <i class="fas fa-user-graduate text-green-500"></i>
+                                Alunos Recentes
+                            </h3>
+                            <div id="lista-alunos-recentes" class="space-y-3">
+                                <!-- Preenchido via JS -->
+                            </div>
+                            <button onclick="showTab('alunos')" class="w-full mt-4 py-2 rounded-lg text-sm bg-slate-700 hover:bg-slate-600 transition-all">
+                                Ver todos os alunos
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Avaliações e Desempenho -->
+                    <div class="grid grid-cols-2 gap-6 mt-6">
+                        <div class="glass p-6 rounded-xl">
+                            <h3 class="font-semibold mb-4 flex items-center gap-2">
+                                <i class="fas fa-star text-yellow-500"></i>
+                                Últimas Avaliações
+                            </h3>
+                            <div id="lista-avaliacoes" class="space-y-4">
+                                <!-- Preenchido via JS -->
+                            </div>
+                        </div>
+                        
+                        <div class="glass p-6 rounded-xl">
+                            <h3 class="font-semibold mb-4 flex items-center gap-2">
+                                <i class="fas fa-chart-bar text-blue-500"></i>
+                                Desempenho
+                            </h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-sm">Taxa de resposta</span>
+                                        <span class="text-sm font-medium text-green-400">98%</span>
+                                    </div>
+                                    <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
+                                        <div class="h-full bg-green-500 rounded-full" style="width: 98%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-sm">Taxa de confirmação</span>
+                                        <span class="text-sm font-medium text-blue-400">95%</span>
+                                    </div>
+                                    <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
+                                        <div class="h-full bg-blue-500 rounded-full" style="width: 95%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-sm">Alunos recorrentes</span>
+                                        <span class="text-sm font-medium text-yellow-400">87%</span>
+                                    </div>
+                                    <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
+                                        <div class="h-full bg-yellow-500 rounded-full" style="width: 87%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Outras tabs -->
+                <div id="agenda" class="tab-content hidden">
+                    <h1 class="text-2xl font-bold mb-6">Sua Agenda</h1>
+                    <div id="agenda-completa" class="glass p-6 rounded-xl">
+                        <!-- Preenchido via JS -->
+                    </div>
+                </div>
+
+                <div id="alunos" class="tab-content hidden">
+                    <h1 class="text-2xl font-bold mb-6">Seus Alunos</h1>
+                    <div id="todos-alunos" class="grid grid-cols-2 gap-4"></div>
+                </div>
+
+                <div id="mensagens" class="tab-content hidden">
+                    <h1 class="text-2xl font-bold mb-6">Mensagens</h1>
+                    <div id="lista-mensagens" class="glass p-6 rounded-xl space-y-4"></div>
+                </div>
+
+                <div id="ganhos" class="tab-content hidden">
+                    <h1 class="text-2xl font-bold mb-6">Seus Ganhos</h1>
+                    <div class="glass p-6 rounded-xl">
+                        <div class="grid grid-cols-3 gap-4 mb-6">
+                            <div class="p-4 bg-slate-800 rounded-xl text-center">
+                                <p class="text-slate-400 text-sm">Este Mês</p>
+                                <p class="text-2xl font-bold text-green-400" id="ganho-mes-detalhe">$0</p>
+                            </div>
+                            <div class="p-4 bg-slate-800 rounded-xl text-center">
+                                <p class="text-slate-400 text-sm">Pendente</p>
+                                <p class="text-2xl font-bold text-yellow-400" id="ganho-pendente-detalhe">$0</p>
+                            </div>
+                            <div class="p-4 bg-slate-800 rounded-xl text-center">
+                                <p class="text-slate-400 text-sm">Total Acumulado</p>
+                                <p class="text-2xl font-bold text-blue-400" id="ganho-total">$0</p>
+                            </div>
+                        </div>
+                        <button onclick="sacarGanhos()" class="w-full py-3 rounded-lg bg-green-500 hover:bg-green-600 transition-all font-medium">
+                            Sacar Ganhos
+                        </button>
+                    </div>
+                </div>
+
+                <div id="avaliacoes" class="tab-content hidden">
+                    <h1 class="text-2xl font-bold mb-6">Avaliações</h1>
+                    <div id="todas-avaliacoes" class="space-y-4"></div>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <div class="stat-card">
-      <div class="icon">📅</div>
-      <div class="number" id="totalClasses">0</div>
-      <div class="label">Aulas Agendadas</div>
-    </div>
-
-    <div class="stat-card">
-      <div class="icon">✅</div>
-      <div class="number" id="confirmedClasses">0</div>
-      <div class="label">Aulas Confirmadas</div>
-    </div>
-
-    <div class="stat-card">
-      <div class="icon">💰</div>
-      <div class="number" id="totalRevenue">$0</div>
-      <div class="label">Receita Total</div>
-    </div>
-  </div>
-
-  <!-- TABS -->
-  <div class="tabs">
-    <button class="tab active" onclick="switchTab('students')">👥 Alunos</button>
-    <button class="tab" onclick="switchTab('appointments')">📅 Aulas Agendadas</button>
-    <button class="tab" onclick="switchTab('payments')">💰 Pagamentos</button>
-  </div>
-
-  <!-- TAB: ALUNOS -->
-  <div id="students-tab" class="tab-content active">
-    <div class="table-container">
-      <h2 style="margin-top: 0;">Lista de Alunos</h2>
-      <div id="studentsTable">
-        <div class="loading">Carregando alunos...</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- TAB: AULAS AGENDADAS -->
-  <div id="appointments-tab" class="tab-content">
-    <div class="table-container">
-      <h2 style="margin-top: 0;">Aulas Agendadas</h2>
-      <div id="appointmentsTable">
-        <div class="loading">Carregando aulas...</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- TAB: PAGAMENTOS -->
-  <div id="payments-tab" class="tab-content">
-    <div class="table-container">
-      <h2 style="margin-top: 0;">Histórico de Pagamentos</h2>
-      <div id="paymentsTable">
-        <div class="loading">Carregando pagamentos...</div>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { 
-    getFirestore, 
-    collection, 
-    query, 
-    where, 
-    getDocs,
-    orderBy 
-  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBpCB1ePW49VgUvON9LSNEBsTQcKXoAg40",
-    authDomain: "portuguese-teacher-platf-68bc5.firebaseapp.com",
-    projectId: "portuguese-teacher-platf-68bc5"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const TEACHER_ID = "3Oj4YuYGewO3O9DqPxWrjBln7MG3";
-
-  let currentUser = null;
-
-  // Verifica autenticação
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      window.location.href = "login.html";
-      return;
-    }
-    currentUser = user;
-    
-    // Carrega os dados
-    await loadDashboardData();
-  });
-
-  // Carrega todos os dados do dashboard
-  async function loadDashboardData() {
-    await Promise.all([
-      loadStudents(),
-      loadAppointments(),
-      loadPayments()
-    ]);
-  }
-
-  // Carrega lista de alunos
-  async function loadStudents() {
-    try {
-      const q = query(
-        collection(db, "users"),
-        where("role", "==", "student")
-      );
-      
-      const snapshot = await getDocs(q);
-      const students = [];
-      
-      snapshot.forEach(doc => {
-        students.push({ id: doc.id, ...doc.data() });
-      });
-
-      // Atualiza estatística
-      document.getElementById("totalStudents").textContent = students.length;
-
-      // Renderiza tabela
-      if (students.length === 0) {
-        document.getElementById("studentsTable").innerHTML = `
-          <div class="empty-state">
-            <div class="icon">👥</div>
-            <p>Nenhum aluno cadastrado ainda</p>
-          </div>
-        `;
-        return;
-      }
-
-      let html = `
-        <table>
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Email</th>
-              <th>País</th>
-              <th>Nível</th>
-              <th>Objetivo</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
-
-      students.forEach(student => {
-        const levelClass = student.level ? `level-${student.level.toLowerCase()}` : '';
-        html += `
-          <tr>
-            <td><strong>${student.name || 'N/A'}</strong></td>
-            <td>${student.email}</td>
-            <td>${student.country || 'N/A'}</td>
-            <td><span class="badge ${levelClass}">${student.level || 'N/A'}</span></td>
-            <td>${student.goal || 'N/A'}</td>
-            <td>
-              <button class="btn-small" onclick="viewStudentDetails('${student.id}')">Ver Detalhes</button>
-              <button class="btn-small btn-chat" onclick="openChat('${student.id}')">Chat</button>
-            </td>
-          </tr>
-        `;
-      });
-
-      html += `</tbody></table>`;
-      document.getElementById("studentsTable").innerHTML = html;
-
-    } catch (error) {
-      console.error(error);
-      document.getElementById("studentsTable").innerHTML = `
-        <div class="empty-state">
-          <p style="color: #dc3545;">Erro ao carregar alunos</p>
+    <!-- Modal Disponibilidade -->
+    <div id="disponibilidadeModal" class="modal">
+        <div class="glass rounded-2xl p-6 w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold">Configurar Disponibilidade</h2>
+                <button onclick="closeModal('disponibilidadeModal')" class="text-2xl hover:text-red-400">&times;</button>
+            </div>
+            
+            <p class="text-sm text-slate-400 mb-4">Clique nos horários para alternar entre disponível/indisponível</p>
+            
+            <div class="grid grid-cols-8 gap-2" id="grid-disponibilidade">
+                <!-- Preenchido via JS -->
+            </div>
+            
+            <div class="flex gap-3 mt-6">
+                <button onclick="closeModal('disponibilidadeModal')" class="flex-1 py-3 rounded-lg font-medium bg-slate-700 hover:bg-slate-600 transition-all">
+                    Cancelar
+                </button>
+                <button onclick="salvarDisponibilidade()" class="flex-1 py-3 rounded-lg font-medium bg-blue-500 hover:bg-blue-600 transition-all">
+                    Salvar Disponibilidade
+                </button>
+            </div>
         </div>
-      `;
-    }
-  }
+    </div>
 
-  // Carrega aulas agendadas
-  async function loadAppointments() {
-    try {
-      const q = query(
-        collection(db, "appointments"),
-        where("teacherId", "==", TEACHER_ID),
-        orderBy("createdAt", "desc")
-      );
-      
-      const snapshot = await getDocs(q);
-      const appointments = [];
-      
-      snapshot.forEach(doc => {
-        appointments.push({ id: doc.id, ...doc.data() });
-      });
+    <!-- Modal Detalhes Aula -->
+    <div id="aulaModal" class="modal">
+        <div class="glass rounded-2xl p-6 w-full max-w-lg mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold">Detalhes da Aula</h2>
+                <button onclick="closeModal('aulaModal')" class="text-2xl hover:text-red-400">&times;</button>
+            </div>
+            <div id="detalhes-aula-conteudo"></div>
+        </div>
+    </div>
 
-      // Atualiza estatísticas
-      document.getElementById("totalClasses").textContent = appointments.length;
-      const confirmed = appointments.filter(a => a.status === "confirmed").length;
-      document.getElementById("confirmedClasses").textContent = confirmed;
-
-      // Renderiza tabela
-      if (appointments.length === 0) {
-        document.getElementById("appointmentsTable").innerHTML = `
-          <div class="empty-state">
-            <div class="icon">📅</div>
-            <p>Nenhuma aula agendada ainda</p>
-          </div>
-        `;
-        return;
-      }
-
-      let html = `
-        <table>
-          <thead>
-            <tr>
-              <th>Aluno</th>
-              <th>Data</th>
-              <th>Horário</th>
-              <th>Tipo</th>
-              <th>Status</th>
-              <th>Preço</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
-
-      appointments.forEach(apt => {
-        const statusClass = apt.status === "confirmed" ? "confirmed" : "pending";
-        const date = apt.date || 'N/A';
-        const time = apt.start && apt.end ? `${apt.start} - ${apt.end}` : 'N/A';
-        const type = apt.type === "experimental" ? "Experimental" : "Regular";
+    <script>
+        // Dados compartilhados com o dashboard do estudante
+        // Estrutura: preply_dados = { aulas: [], mensagens: [], tutor: {}, ... }
         
-        html += `
-          <tr>
-            <td>${apt.studentEmail || 'N/A'}</td>
-            <td>${date}</td>
-            <td>${time}</td>
-            <td>${type}</td>
-            <td><span class="badge ${statusClass}">${apt.status || 'pending'}</span></td>
-            <td>$${apt.price || 0}</td>
-            <td>
-              <button class="btn-small btn-chat" onclick="openChat('${apt.studentId}')">Chat</button>
-            </td>
-          </tr>
-        `;
-      });
+        const dadosPadrao = {
+            aulas: [],
+            mensagens: [
+                { id: 1, from: 'João Silva', to: 'Sarah Johnson', text: 'Olá! Gostaria de agendar uma aula para amanhã.', time: '10:30', read: false },
+                { id: 2, from: 'Sarah Johnson', to: 'João Silva', text: 'Claro! Tenho disponibilidade às 15h.', time: '10:35', read: true }
+            ],
+            tutor: {
+                nome: 'Sarah Johnson',
+                saldo: 1240,
+                saldoPendente: 320,
+                ganhoTotal: 8560,
+                aulasDadas: 156,
+                alunosAtivos: 15,
+                avaliacao: 4.9,
+                disponibilidade: {} // horários disponíveis por dia
+            },
+            avaliacoes: [
+                { id: 1, aluno: 'João Silva', rating: 5, comment: 'Excelente professora! Muito paciente.', date: '2 dias atrás' },
+                { id: 2, aluno: 'Maria Santos', rating: 5, comment: 'Aulas muito produtivas!', date: '5 dias atrás' },
+                { id: 3, aluno: 'Ana Paula', rating: 4, comment: 'Ótima metodologia.', date: '1 semana atrás' }
+            ]
+        };
 
-      html += `</tbody></table>`;
-      document.getElementById("appointmentsTable").innerHTML = html;
-
-    } catch (error) {
-      console.error(error);
-      document.getElementById("appointmentsTable").innerHTML = `
-        <div class="empty-state">
-          <p style="color: #dc3545;">Erro ao carregar aulas</p>
-        </div>
-      `;
-    }
-  }
-
-  // Carrega histórico de pagamentos
-  async function loadPayments() {
-    try {
-      const q = query(
-        collection(db, "appointments"),
-        where("teacherId", "==", TEACHER_ID),
-        where("status", "==", "confirmed")
-      );
-      
-      const snapshot = await getDocs(q);
-      let totalRevenue = 0;
-      const payments = [];
-      
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        totalRevenue += data.price || 0;
-        payments.push({ id: doc.id, ...data });
-      });
-
-      // Atualiza estatística
-      document.getElementById("totalRevenue").textContent = `$${totalRevenue}`;
-
-      // Renderiza tabela
-      if (payments.length === 0) {
-        document.getElementById("paymentsTable").innerHTML = `
-          <div class="empty-state">
-            <div class="icon">💰</div>
-            <p>Nenhum pagamento recebido ainda</p>
-          </div>
-        `;
-        return;
-      }
-
-      let html = `
-        <table>
-          <thead>
-            <tr>
-              <th>Aluno</th>
-              <th>Data</th>
-              <th>Tipo</th>
-              <th>Método</th>
-              <th>Valor</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
-
-      payments.forEach(payment => {
-        const type = payment.type === "experimental" ? "Aula Experimental" : "Aula Regular";
-        const method = payment.paidVia || "N/A";
+        let dados = JSON.parse(localStorage.getItem('preply_dados')) || dadosPadrao;
         
-        html += `
-          <tr>
-            <td>${payment.studentEmail || 'N/A'}</td>
-            <td>${payment.date || 'N/A'}</td>
-            <td>${type}</td>
-            <td>${method}</td>
-            <td><strong>$${payment.price || 0}</strong></td>
-          </tr>
-        `;
-      });
+        function salvarDados() {
+            localStorage.setItem('preply_dados', JSON.stringify(dados));
+        }
 
-      html += `</tbody></table>`;
-      document.getElementById("paymentsTable").innerHTML = html;
+        // Verificar se há aulas do estudante que são com este tutor
+        function sincronizarAulas() {
+            // Procurar aulas onde o tutor é Sarah Johnson
+            const minhasAulas = dados.aulas.filter(a => a.tutor === 'Sarah Johnson');
+            
+            // Agrupar por aluno
+            const alunosMap = {};
+            minhasAulas.forEach(aula => {
+                if (!alunosMap[aula.alunoId]) {
+                    alunosMap[aula.alunoId] = {
+                        nome: aula.alunoNome || 'Aluno',
+                        aulas: [],
+                        totalAulas: 0
+                    };
+                }
+                alunosMap[aula.alunoId].aulas.push(aula);
+                alunosMap[aula.alunoId].totalAulas++;
+            });
+            
+            return { minhasAulas, alunos: alunosMap };
+        }
 
-    } catch (error) {
-      console.error(error);
-      document.getElementById("paymentsTable").innerHTML = `
-        <div class="empty-state">
-          <p style="color: #dc3545;">Erro ao carregar pagamentos</p>
-        </div>
-      `;
-    }
-  }
+        function renderizarDashboard() {
+            const { minhasAulas, alunos } = sincronizarAulas();
+            
+            // Stats
+            const hoje = new Date().toISOString().split('T')[0];
+            const aulasHoje = minhasAulas.filter(a => a.date === hoje && !a.completed).length;
+            
+            document.getElementById('total-aulas-hoje').textContent = aulasHoje;
+            document.getElementById('saldo-tutor').textContent = `$${dados.tutor.saldo.toFixed(2)}`;
+            document.getElementById('ganhos-mes').textContent = `$${dados.tutor.saldo}`;
+            document.getElementById('ganhos-pendentes').textContent = `$${dados.tutor.saldoPendente}`;
+            document.getElementById('aulas-dadas').textContent = dados.tutor.aulasDadas;
+            document.getElementById('alunos-ativos').textContent = dados.tutor.alunosAtivos;
+            
+            // Agenda semanal
+            renderizarCalendario(minhasAulas);
+            
+            // Alunos recentes
+            renderizarAlunos(alunos);
+            
+            // Avaliações
+            renderizarAvaliacoes();
+            
+            // Próxima aula
+            const proxima = minhasAulas.filter(a => !a.completed).sort((a, b) => 
+                new Date(a.date + 'T' + a.time) - new Date(b.date + 'T' + b.time)
+            )[0];
+            
+            if (proxima) {
+                const dataAula = new Date(proxima.date + 'T' + proxima.time);
+                const agora = new Date();
+                const diff = Math.ceil((dataAula - agora) / (1000 * 60 * 60));
+                document.getElementById('proxima-aula-info').textContent = 
+                    diff < 1 ? 'Aula começando agora!' : `Próxima aula em ${diff}h`;
+            }
+            
+            // Badges
+            const naoLidas = dados.mensagens.filter(m => m.to === 'Sarah Johnson' && !m.read).length;
+            if (naoLidas > 0) {
+                document.getElementById('badge-mensagens').textContent = naoLidas;
+                document.getElementById('badge-mensagens').classList.remove('hidden');
+            }
+        }
 
-  // Troca entre tabs
-  window.switchTab = function(tabName) {
-    // Remove active de todos
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        function renderizarCalendario(minhasAulas) {
+            const dias = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+            const hoje = new Date();
+            const container = document.getElementById('calendario-semanal');
+            
+            let html = '';
+            
+            // Cabeçalho dos dias
+            for (let i = 0; i < 7; i++) {
+                const dia = new Date(hoje);
+                dia.setDate(hoje.getDate() + i);
+                const dataStr = dia.toISOString().split('T')[0];
+                const aulasDoDia = minhasAulas.filter(a => a.date === dataStr);
+                
+                html += `
+                    <div class="text-center">
+                        <p class="text-sm font-medium">${dias[dia.getDay()]}</p>
+                        <p class="text-xs text-slate-400">${dia.getDate()}</p>
+                        <div class="mt-2 space-y-1">
+                            ${aulasDoDia.map(aula => `
+                                <div onclick="verDetalhesAula(${aula.id})" 
+                                     class="slot booked text-xs py-1 px-1 rounded cursor-pointer truncate"
+                                     title="${aula.alunoNome || 'Aluno'} - ${aula.time}">
+                                    ${aula.time}
+                                </div>
+                            `).join('')}
+                            ${aulasDoDia.length === 0 ? `
+                                <div class="slot available text-xs py-1 px-1 rounded">Livre</div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
 
-    // Adiciona active no selecionado
-    event.target.classList.add('active');
-    document.getElementById(`${tabName}-tab`).classList.add('active');
-  };
+        function renderizarAlunos(alunos) {
+            const container = document.getElementById('lista-alunos-recentes');
+            const todosContainer = document.getElementById('todos-alunos');
+            
+            const alunosArray = Object.entries(alunos).map(([id, data]) => ({ id, ...data }));
+            
+            const html = alunosArray.slice(0, 3).map(aluno => `
+                <div class="flex items-center gap-3 p-3 rounded-lg bg-slate-800 hover:bg-slate-700 transition-all cursor-pointer" onclick="verPerfilAluno('${aluno.id}')">
+                    <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center">👤</div>
+                    <div class="flex-1">
+                        <p class="font-medium">${aluno.nome}</p>
+                        <p class="text-xs text-slate-400">${aluno.totalAulas} aulas</p>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-xs font-bold">
+                        ${Math.floor(Math.random() * 30 + 70)}%
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = html || '<p class="text-slate-400 text-center">Nenhum aluno ainda</p>';
+            
+            // Todos os alunos
+            const todosHtml = alunosArray.map(aluno => `
+                <div class="glass p-4 rounded-xl">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-14 h-14 rounded-full bg-blue-500 flex items-center justify-center text-2xl">👤</div>
+                        <div>
+                            <h3 class="font-bold">${aluno.nome}</h3>
+                            <p class="text-sm text-slate-400">Aluno desde ${new Date().toLocaleDateString('pt-BR')}</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                        <div class="p-2 bg-slate-800 rounded">
+                            <p class="text-lg font-bold">${aluno.totalAulas}</p>
+                            <p class="text-xs text-slate-400">Aulas</p>
+                        </div>
+                        <div class="p-2 bg-slate-800 rounded">
+                            <p class="text-lg font-bold">${Math.floor(Math.random() * 10 + 10)}h</p>
+                            <p class="text-xs text-slate-400">Horas</p>
+                        </div>
+                        <div class="p-2 bg-slate-800 rounded">
+                            <p class="text-lg font-bold text-green-400">Ativo</p>
+                            <p class="text-xs text-slate-400">Status</p>
+                        </div>
+                    </div>
+                    <button onclick="enviarMensagem('${aluno.nome}')" class="w-full mt-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 transition-all">
+                        Enviar Mensagem
+                    </button>
+                </div>
+            `).join('');
+            
+            todosContainer.innerHTML = todosHtml || '<p class="text-slate-400 col-span-2 text-center">Nenhum aluno registrado</p>';
+        }
 
-  // Ver detalhes do aluno
-  window.viewStudentDetails = function(studentId) {
-    // Por enquanto só mostra alert, mas pode expandir para modal
-    alert(`Detalhes do aluno: ${studentId}\n\nEm breve: visualização completa do perfil`);
-  };
+        function renderizarAvaliacoes() {
+            const container = document.getElementById('lista-avaliacoes');
+            const todasContainer = document.getElementById('todas-avaliacoes');
+            
+            const html = dados.avaliacoes.map(av => `
+                <div class="p-4 rounded-lg bg-slate-800">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="font-medium">${av.aluno}</span>
+                            <div class="flex">
+                                ${Array(av.rating).fill('<i class="fas fa-star text-yellow-500 text-xs"></i>').join('')}
+                            </div>
+                        </div>
+                        <span class="text-xs text-slate-400">${av.date}</span>
+                    </div>
+                    <p class="text-sm text-slate-300">"${av.comment}"</p>
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
+            todasContainer.innerHTML = html;
+        }
 
-  // Abrir chat
-  window.openChat = function(studentId) {
-    window.location.href = `chat.html?userId=${studentId}`;
-  };
+        function renderizarMensagens() {
+            const container = document.getElementById('lista-mensagens');
+            const minhasMensagens = dados.mensagens.filter(m => 
+                m.from === 'Sarah Johnson' || m.to === 'Sarah Johnson'
+            );
+            
+            const html = minhasMensagens.map(msg => `
+                <div class="p-4 rounded-lg ${msg.to === 'Sarah Johnson' ? 'bg-slate-800' : 'bg-blue-900/30'}">
+                    <div class="flex justify-between mb-2">
+                        <span class="font-medium">${msg.from === 'Sarah Johnson' ? 'Você' : msg.from}</span>
+                        <span class="text-xs text-slate-400">${msg.time}</span>
+                    </div>
+                    <p class="text-sm">${msg.text}</p>
+                </div>
+            `).join('');
+            
+            container.innerHTML = html || '<p class="text-slate-400 text-center">Nenhuma mensagem</p>';
+            
+            // Marcar como lidas
+            dados.mensagens.forEach(m => {
+                if (m.to === 'Sarah Johnson') m.read = true;
+            });
+            salvarDados();
+            document.getElementById('badge-mensagens').classList.add('hidden');
+        }
 
-  // Logout
-  window.logout = async function() {
-    if (confirm("Tem certeza que deseja sair?")) {
-      try {
-        await signOut(auth);
-        window.location.href = "index.html";
-      } catch (error) {
-        console.error(error);
-        alert("Erro ao sair");
-      }
-    }
-  };
-</script>
+        // Navegação
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-500', 'text-white');
+                btn.classList.add('text-slate-300');
+            });
+            event.target.closest('button').classList.add('bg-blue-500', 'text-white');
+            event.target.closest('button').classList.remove('text-slate-300');
+            
+            if (tabId === 'mensagens') renderizarMensagens();
+            if (tabId === 'ganhos') {
+                document.getElementById('ganho-mes-detalhe').textContent = `$${dados.tutor.saldo}`;
+                document.getElementById('ganho-pendente-detalhe').textContent = `$${dados.tutor.saldoPendente}`;
+                document.getElementById('ganho-total').textContent = `$${dados.tutor.ganhoTotal}`;
+            }
+        }
 
+        // Modais
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            if (modalId === 'disponibilidadeModal') renderizarGridDisponibilidade();
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function renderizarGridDisponibilidade() {
+            const horas = Array.from({ length: 14 }, (_, i) => i + 8);
+            const dias = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+            const grid = document.getElementById('grid-disponibilidade');
+            
+            let html = '<div class="text-center text-sm text-slate-400 py-2">Hora</div>';
+            dias.forEach(dia => {
+                html += `<div class="text-center text-sm font-medium py-2">${dia}</div>`;
+            });
+            
+            horas.forEach(hora => {
+                html += `<div class="text-center text-sm text-slate-400 py-2">${hora}:00</div>`;
+                dias.forEach((dia, i) => {
+                    const key = `${dia}-${hora}`;
+                    const isAvailable = dados.tutor.disponibilidade[key] !== false;
+                    html += `
+                        <button onclick="toggleDisponibilidade(this, '${key}')" 
+                                class="py-2 rounded text-xs transition-all ${isAvailable ? 'bg-green-500 hover:bg-green-600' : 'bg-slate-700 hover:bg-slate-600'}">
+                            ${isAvailable ? '✓' : '—'}
+                        </button>
+                    `;
+                });
+            });
+            
+            grid.innerHTML = html;
+        }
+
+        function toggleDisponibilidade(btn, key) {
+            const isAvailable = btn.classList.contains('bg-green-500');
+            if (isAvailable) {
+                btn.classList.remove('bg-green-500', 'hover:bg-green-600');
+                btn.classList.add('bg-slate-700', 'hover:bg-slate-600');
+                btn.textContent = '—';
+                dados.tutor.disponibilidade[key] = false;
+            } else {
+                btn.classList.remove('bg-slate-700', 'hover:bg-slate-600');
+                btn.classList.add('bg-green-500', 'hover:bg-green-600');
+                btn.textContent = '✓';
+                dados.tutor.disponibilidade[key] = true;
+            }
+        }
+
+        function salvarDisponibilidade() {
+            salvarDados();
+            closeModal('disponibilidadeModal');
+            alert('Disponibilidade salva!');
+        }
+
+        function verDetalhesAula(aulaId) {
+            const aula = dados.aulas.find(a => a.id === aulaId);
+            if (!aula) return;
+            
+            document.getElementById('detalhes-aula-conteudo').innerHTML = `
+                <div class="text-center mb-6">
+                    <div class="w-20 h-20 rounded-full bg-blue-500 flex items-center justify-center text-4xl mx-auto mb-4">👤</div>
+                    <h3 class="text-xl font-bold">${aula.alunoNome || 'Aluno'}</h3>
+                    <p class="text-slate-400">${aula.subject}</p>
+                </div>
+                <div class="space-y-3 mb-6">
+                    <div class="flex justify-between p-3 bg-slate-800 rounded-lg">
+                        <span class="text-slate-400">Data</span>
+                        <span>${aula.date}</span>
+                    </div>
+                    <div class="flex justify-between p-3 bg-slate-800 rounded-lg">
+                        <span class="text-slate-400">Horário</span>
+                        <span>${aula.time}</span>
+                    </div>
+                    <div class="flex justify-between p-3 bg-slate-800 rounded-lg">
+                        <span class="text-slate-400">Duração</span>
+                        <span>${aula.duration}</span>
+                    </div>
+                    <div class="flex justify-between p-3 bg-slate-800 rounded-lg">
+                        <span class="text-slate-400">Valor</span>
+                        <span class="text-green-400">$25.00</span>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="closeModal('aulaModal'); entrarSalaAula()" class="flex-1 py-3 rounded-lg bg-blue-500 hover:bg-blue-600 transition-all">
+                        Entrar na Aula
+                    </button>
+                    <button onclick="cancelarAula(${aula.id})" class="flex-1 py-3 rounded-lg bg-red-500 hover:bg-red-600 transition-all">
+                        Cancelar
+                    </button>
+                </div>
+            `;
+            openModal('aulaModal');
+        }
+
+        function cancelarAula(aulaId) {
+            if (!confirm('Tem certeza que deseja cancelar esta aula?')) return;
+            
+            dados.aulas = dados.aulas.filter(a => a.id !== aulaId);
+            salvarDados();
+            closeModal('aulaModal');
+            renderizarDashboard();
+            alert('Aula cancelada. O aluno será notificado.');
+        }
+
+        function entrarSalaAula() {
+            alert('🎥 Iniciando sala de aula virtual...\n\nEm um sistema real, isso abriria:\n- Videochamada WebRTC\n- Quadro branco compartilhado\n- Compartilhamento de tela\n- Chat em tempo real');
+        }
+
+        function sacarGanhos() {
+            if (dados.tutor.saldo <= 0) {
+                alert('Você não tem saldo disponível para saque.');
+                return;
+            }
+            
+            const valor = dados.tutor.saldo;
+            dados.tutor.saldo = 0;
+            dados.tutor.saldoPendente += valor;
+            salvarDados();
+            
+            document.getElementById('saldo-tutor').textContent = '$0.00';
+            renderizarDashboard();
+            
+            alert(`Saque de $${valor} solicitado! O valor será transferido em 3 dias úteis.`);
+        }
+
+        function enviarMensagem(alunoNome) {
+            const texto = prompt(`Enviar mensagem para ${alunoNome}:`);
+            if (texto) {
+                dados.mensagens.push({
+                    id: Date.now(),
+                    from: 'Sarah Johnson',
+                    to: alunoNome,
+                    text: texto,
+                    time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+                    read: false
+                });
+                salvarDados();
+                alert('Mensagem enviada!');
+            }
+        }
+
+        function verPerfilAluno(alunoId) {
+            alert('Perfil completo do aluno seria exibido aqui');
+        }
+
+        function mudarSemana(direcao) {
+            // Simulação de mudança de semana
+            alert('Navegação entre semanas (simulação)');
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            renderizarDashboard();
+            
+            // Atualizar a cada 5 segundos para simular tempo real
+            setInterval(() => {
+                const novosDados = JSON.parse(localStorage.getItem('preply_dados'));
+                if (novosDados && JSON.stringify(novosDados) !== JSON.stringify(dados)) {
+                    dados = novosDados;
+                    renderizarDashboard();
+                }
+            }, 5000);
+        });
+
+        // Fechar modal ao clicar fora
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+    </script>
 </body>
 </html>
