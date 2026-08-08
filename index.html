@@ -6,6 +6,8 @@
   <meta name="description" content="Aulas de português online com professor experiente. Conversação, exames oficiais, negócios e viagens. Aula experimental disponível.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  
   <style>
     :root {
       --primary: #0d6efd;
@@ -13,27 +15,148 @@
       --success: #28a745;
       --dark: #222;
       --light: #f4f7fb;
+      --glass: rgba(255, 255, 255, 0.95);
     }
 
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
       font-family: 'Segoe UI', Tahoma, sans-serif;
       background: var(--light);
       color: #333;
       line-height: 1.6;
     }
 
-    h1, h2, h3 {
-      margin-top: 0;
-      color: #111;
+    /* MODAIS */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
 
-    a {
-      text-decoration: none;
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--glass);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 450px;
+      width: 100%;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal h2 {
+      margin-bottom: 20px;
+      color: var(--primary);
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #555;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 1em;
+      transition: 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn-submit:hover {
+      background: var(--secondary);
+      transform: translateY(-2px);
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 28px;
+      cursor: pointer;
+      color: #999;
+      transition: 0.3s;
+    }
+
+    .close-modal:hover {
+      color: var(--dark);
+    }
+
+    .switch-form {
+      text-align: center;
+      margin-top: 15px;
+      color: #666;
+    }
+
+    .switch-form a {
+      color: var(--primary);
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* NOTIFICAÇÃO */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--success);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      z-index: 1001;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+    }
+
+    .notification.show {
+      transform: translateX(0);
     }
 
     /* HEADER */
@@ -42,6 +165,7 @@
       color: #fff;
       padding: 70px 20px;
       text-align: center;
+      position: relative;
     }
 
     header h1 {
@@ -63,14 +187,81 @@
       border-radius: 30px;
       font-weight: bold;
       transition: 0.3s;
+      border: none;
+      cursor: pointer;
     }
 
     .cta:hover {
       background: #eaeaea;
       transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
 
-    /* PROFESSOR */
+    /* NAVBAR USUÁRIO LOGADO */
+    .user-nav {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: none;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-nav.active {
+      display: flex;
+    }
+
+    .user-badge {
+      background: rgba(255,255,255,0.2);
+      padding: 8px 15px;
+      border-radius: 20px;
+      color: white;
+      font-size: 0.9em;
+    }
+
+    .user-nav button {
+      background: white;
+      color: var(--primary);
+      border: none;
+      padding: 8px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .user-nav button:hover {
+      transform: scale(1.05);
+    }
+
+    /* VÍDEO SECTION */
+    .video-section {
+      background: white;
+      padding: 50px 20px;
+      text-align: center;
+    }
+
+    .video-container {
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+    }
+
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* TEACHER */
     .teacher {
       background: #fff;
       max-width: 900px;
@@ -79,6 +270,8 @@
       border-radius: 20px;
       text-align: center;
       box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+      position: relative;
+      z-index: 10;
     }
 
     .teacher img {
@@ -88,6 +281,13 @@
       object-fit: cover;
       border: 5px solid var(--primary);
       margin-bottom: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .teacher img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 30px rgba(13, 110, 253, 0.3);
     }
 
     .teacher h2 {
@@ -101,8 +301,34 @@
       margin-bottom: 20px;
     }
 
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-item .number {
+      font-size: 2em;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    .stat-item .label {
+      font-size: 0.9em;
+      color: #666;
+    }
+
     .prices {
       margin: 25px 0;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 15px;
     }
 
     .old-price {
@@ -113,31 +339,54 @@
 
     .new-price {
       color: var(--success);
-      font-size: 1.8em;
+      font-size: 2em;
       font-weight: bold;
     }
 
-    .actions a {
-      margin: 10px;
+    .promo-badge {
       display: inline-block;
+      background: var(--success);
+      color: white;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      margin-top: 10px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 25px;
     }
 
     .btn {
-      padding: 12px 26px;
-      border-radius: 8px;
+      padding: 14px 30px;
+      border-radius: 10px;
       background: var(--primary);
       color: #fff;
       font-weight: bold;
       transition: 0.3s;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .btn.secondary {
       background: #555;
     }
 
+    .btn.success {
+      background: var(--success);
+    }
+
     .btn:hover {
       background: var(--secondary);
       transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     }
 
     /* SEÇÕES */
@@ -152,6 +401,16 @@
       margin-bottom: 40px;
     }
 
+    .section-title h2 {
+      font-size: 2.2em;
+      color: var(--dark);
+    }
+
+    .section-title p {
+      color: #666;
+      margin-top: 10px;
+    }
+
     /* CARDS */
     .cards {
       display: grid;
@@ -161,10 +420,13 @@
 
     .card {
       background: #fff;
-      padding: 25px;
+      padding: 30px;
       border-radius: 16px;
       box-shadow: 0 8px 22px rgba(0,0,0,0.1);
       transition: 0.3s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
     }
 
     .card:hover {
@@ -172,18 +434,95 @@
       box-shadow: 0 14px 30px rgba(0,0,0,0.15);
     }
 
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--primary);
+      transform: scaleX(0);
+      transition: 0.3s;
+    }
+
+    .card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .card-icon {
+      font-size: 2.5em;
+      margin-bottom: 15px;
+    }
+
     .card h3 {
       color: var(--primary);
       margin-bottom: 10px;
+      font-size: 1.3em;
     }
 
     .card ul {
       padding-left: 20px;
       margin: 0;
+      color: #555;
     }
 
     .card li {
-      margin-bottom: 6px;
+      margin-bottom: 8px;
+    }
+
+    .card .card-action {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    /* AGENDAMENTO RÁPIDO */
+    .quick-book {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .quick-book h2 {
+      color: white;
+      margin-bottom: 15px;
+    }
+
+    .quick-book-form {
+      max-width: 600px;
+      margin: 30px auto 0;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .quick-book-form input,
+    .quick-book-form select {
+      padding: 14px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1em;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .quick-book-form button {
+      padding: 14px 35px;
+      background: var(--success);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .quick-book-form button:hover {
+      background: #218838;
+      transform: scale(1.05);
     }
 
     /* FOOTER */
@@ -191,8 +530,24 @@
       background: var(--dark);
       color: #ccc;
       text-align: center;
-      padding: 25px 15px;
-      margin-top: 60px;
+      padding: 40px 20px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: #ccc;
+      transition: 0.3s;
+    }
+
+    .footer-links a:hover {
+      color: white;
     }
 
     /* WHATSAPP */
@@ -202,20 +557,26 @@
       right: 20px;
       background: #25d366;
       color: #fff;
-      padding: 15px 18px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
-      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
       transition: 0.3s;
+      box-shadow: 0 10px 30px rgba(37, 211, 102, 0.3);
+      z-index: 100;
     }
 
     .chat:hover {
-      transform: scale(1.1);
+      transform: scale(1.1) rotate(10deg);
     }
 
     /* RESPONSIVE */
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
       header h1 {
-        font-size: 1.8em;
+        font-size: 2em;
       }
 
       header p {
@@ -223,12 +584,39 @@
       }
 
       .teacher {
-        padding: 20px 15px;
+        padding: 25px 15px;
         margin: -40px 15px 30px;
+      }
+
+      .teacher h2 {
+        font-size: 1.7em;
       }
 
       .cards {
         grid-template-columns: 1fr;
+      }
+
+      .actions {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .btn {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+      }
+
+      .quick-book-form {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .quick-book-form input,
+      .quick-book-form select,
+      .quick-book-form button {
+        width: 100%;
+        max-width: 350px;
       }
     }
   </style>
@@ -236,83 +624,595 @@
 
 <body>
 
+<!-- NOTIFICAÇÃO -->
+<div id="notification" class="notification">
+  <i class="fas fa-check-circle"></i> <span id="notif-text">Operação realizada!</span>
+</div>
+
+<!-- MODAL LOGIN -->
+<div id="loginModal" class="modal-overlay">
+  <div class="modal" style="position: relative;">
+    <span class="close-modal" onclick="closeModal('loginModal')">&times;</span>
+    <h2><i class="fas fa-user-circle"></i> Entrar</h2>
+    <form onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="seu@email.com" required>
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="loginSenha" placeholder="••••••" required>
+      </div>
+      <div class="form-group">
+        <label>Tipo de conta</label>
+        <select id="loginTipo">
+          <option value="aluno">Sou Aluno</option>
+          <option value="tutor">Sou Tutor (Prof. Filipe)</option>
+        </select>
+      </div>
+      <button type="submit" class="btn-submit">Entrar</button>
+    </form>
+    <div class="switch-form">
+      Não tem conta? <a onclick="switchModal('loginModal', 'registerModal')">Criar conta</a>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL REGISTRO -->
+<div id="registerModal" class="modal-overlay">
+  <div class="modal" style="position: relative;">
+    <span class="close-modal" onclick="closeModal('registerModal')">&times;</span>
+    <h2><i class="fas fa-user-plus"></i> Criar Conta</h2>
+    <form onsubmit="handleRegister(event)">
+      <div class="form-group">
+        <label>Nome completo</label>
+        <input type="text" id="regNome" placeholder="Seu nome" required>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="regEmail" placeholder="seu@email.com" required>
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="regSenha" placeholder="Mínimo 6 caracteres" required>
+      </div>
+      <div class="form-group">
+        <label>Quero ser</label>
+        <select id="regTipo">
+          <option value="aluno">Aluno (aprender português)</option>
+          <option value="tutor">Professor/Tutor</option>
+        </select>
+      </div>
+      <button type="submit" class="btn-submit">Criar Conta</button>
+    </form>
+    <div class="switch-form">
+      Já tem conta? <a onclick="switchModal('registerModal', 'loginModal')">Entrar</a>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AGENDAMENTO -->
+<div id="bookingModal" class="modal-overlay">
+  <div class="modal" style="position: relative; max-width: 500px;">
+    <span class="close-modal" onclick="closeModal('bookingModal')">&times;</span>
+    <h2><i class="fas fa-calendar-check"></i> Agendar Aula</h2>
+    <form onsubmit="handleBooking(event)">
+      <div class="form-group">
+        <label>Tipo de aula</label>
+        <select id="bookTipo">
+          <option value="experimental">Aula Experimental (5 USD)</option>
+          <option value="regular">Aula Regular (10 USD)</option>
+          <option value="pacote">Pacote 5 aulas (45 USD)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Data preferida</label>
+        <input type="date" id="bookData" required>
+      </div>
+      <div class="form-group">
+        <label>Horário</label>
+        <select id="bookHora" required>
+          <option value="">Selecione...</option>
+          <option value="09:00">09:00</option>
+          <option value="10:00">10:00</option>
+          <option value="11:00">11:00</option>
+          <option value="14:00">14:00</option>
+          <option value="15:00">15:00</option>
+          <option value="16:00">16:00</option>
+          <option value="17:00">17:00</option>
+          <option value="18:00">18:00</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Objetivo</label>
+        <select id="bookObjetivo">
+          <option>Conversação</option>
+          <option>Preparação para exame</option>
+          <option>Português para negócios</option>
+          <option>Iniciante</option>
+        </select>
+      </div>
+      <button type="submit" class="btn-submit">Confirmar Agendamento</button>
+    </form>
+  </div>
+</div>
+
 <header>
+  <div class="user-nav" id="userNav">
+    <span class="user-badge" id="userName">Visitante</span>
+    <button onclick="goToDashboard()">
+      <i class="fas fa-th-large"></i> Meu Painel
+    </button>
+    <button onclick="logout()">
+      <i class="fas fa-sign-out-alt"></i> Sair
+    </button>
+  </div>
+  
   <h1>Professor de Português Online</h1>
   <p>Aulas personalizadas para conversação, exames, negócios e viagens</p>
-  <a href="perfil-professor.html" class="cta">Marcar aula experimental</a>
+  <button class="cta" onclick="openBooking()">
+    <i class="fas fa-calendar-plus"></i> Marcar aula experimental
+  </button>
 </header>
 
+<!-- SEÇÃO DO PROFESSOR -->
 <section class="teacher">
-  <img src="filipe.jpg" alt="Professor Filipe Monteiro">
+  <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face" alt="Professor Filipe Monteiro" onclick="showNotification('👋 Olá! Sou o Prof. Filipe')">
+  
   <h2>Filipe Monteiro</h2>
   <p class="role">Professor de Português • Conversação e Exames Oficiais</p>
+  
+  <div class="stats-row">
+    <div class="stat-item">
+      <div class="number" id="stat-alunos">150+</div>
+      <div class="label">Alunos</div>
+    </div>
+    <div class="stat-item">
+      <div class="number" id="stat-aulas">1.200+</div>
+      <div class="label">Aulas dadas</div>
+    </div>
+    <div class="stat-item">
+      <div class="number">4.9</div>
+      <div class="label">Avaliação</div>
+    </div>
+    <div class="stat-item">
+      <div class="number">5</div>
+      <div class="label">Anos experiência</div>
+    </div>
+  </div>
 
   <div class="prices">
     <div class="old-price">Preço normal: 10 USD / hora</div>
     <div class="new-price">Aula experimental: 5 USD</div>
+    <div class="promo-badge"><i class="fas fa-gift"></i> Primeira aula com 50% OFF</div>
   </div>
 
   <div class="actions">
-    <a href="login.html" class="btn">Criar conta / Entrar</a>
-    <a href="perfil-professor.html" class="btn secondary">Ver perfil completo</a>
+    <button class="btn success" onclick="openBooking()">
+      <i class="fas fa-calendar-check"></i> Agendar Aula
+    </button>
+    <button class="btn" onclick="openModal('loginModal')">
+      <i class="fas fa-user"></i> Criar conta / Entrar
+    </button>
+    <a href="#video" class="btn secondary">
+      <i class="fas fa-play-circle"></i> Ver vídeo de apresentação
+    </a>
   </div>
 </section>
 
+<!-- VÍDEO DE APRESENTAÇÃO -->
+<section id="video" class="video-section">
+  <div class="section-title">
+    <h2>Conheça minha metodologia</h2>
+    <p>Assista ao vídeo e descubra como funciona as aulas</p>
+  </div>
+  <div class="video-container">
+    <iframe 
+      src="https://www.youtube.com/embed/gxBgJXZjSJI" 
+      title="Vídeo de apresentação do professor"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+      allowfullscreen>
+    </iframe>
+  </div>
+</section>
+
+<!-- OBJETIVOS -->
 <section id="objetivos">
   <div class="section-title">
-    <h2>Objetivos dos Estudantes</h2>
+    <h2>Para quem são as aulas?</h2>
+    <p>Escolha seu objetivo e comece a aprender</p>
   </div>
 
   <div class="cards">
-    <div class="card">
+    <div class="card" onclick="selectObjective('criancas')">
+      <div class="card-icon">👶</div>
       <h3>Crianças / Iniciantes</h3>
       <ul>
-        <li>Português básico</li>
-        <li>Vocabulário essencial</li>
-        <li>Frases simples</li>
+        <li>Português básico de forma lúdica</li>
+        <li>Vocabulário essencial do dia a dia</li>
+        <li>Frases simples e conversação</li>
+        <li>Material didático incluso</li>
       </ul>
+      <div class="card-action">
+        <span class="btn" style="width: 100%; display: block; text-align: center;">Começar agora →</span>
+      </div>
     </div>
 
-    <div class="card">
+    <div class="card" onclick="selectObjective('conversacao')">
+      <div class="card-icon">💬</div>
       <h3>Adultos / Conversação</h3>
       <ul>
-        <li>Fluência oral</li>
-        <li>Correção de erros</li>
+        <li>Fluência oral em pouco tempo</li>
+        <li>Correção de erros em tempo real</li>
+        <li>Temas do seu interesse</li>
+        <li>Flexibilidade de horários</li>
       </ul>
+      <div class="card-action">
+        <span class="btn" style="width: 100%; display: block; text-align: center;">Começar agora →</span>
+      </div>
     </div>
 
-    <div class="card">
+    <div class="card" onclick="selectObjective('negocios')">
+      <div class="card-icon">💼</div>
       <h3>Negócios / Profissional</h3>
       <ul>
-        <li>Comunicação no trabalho</li>
-        <li>E-mails e reuniões</li>
+        <li>Comunicação no ambiente corporativo</li>
+        <li>E-mails e reuniões profissionais</li>
+        <li>Apresentações e negociações</li>
+        <li>Vocabulário técnico específico</li>
       </ul>
+      <div class="card-action">
+        <span class="btn" style="width: 100%; display: block; text-align: center;">Começar agora →</span>
+      </div>
     </div>
 
-    <div class="card">
+    <div class="card" onclick="selectObjective('viagens')">
+      <div class="card-icon">✈️</div>
       <h3>Viagens / Hobbies</h3>
       <ul>
-        <li>Português para viajar</li>
-        <li>Conversas do dia a dia</li>
+        <li>Português para viajar pelo mundo</li>
+        <li>Conversas do cotidiano</li>
+        <li>Cultura lusófona</li>
+        <li>Preparação para intercâmbio</li>
       </ul>
+      <div class="card-action">
+        <span class="btn" style="width: 100%; display: block; text-align: center;">Começar agora →</span>
+      </div>
     </div>
 
-    <div class="card">
+    <div class="card" onclick="selectObjective('exames')">
+      <div class="card-icon">📝</div>
       <h3>Preparação para Exames</h3>
       <ul>
-        <li>CIPLE</li>
-        <li>DIPLE</li>
-        <li>DEPLE</li>
+        <li>CIPLE (A1/A2) - Inicial</li>
+        <li>DIPLE (B1/B2) - Intermédio</li>
+        <li>DEPLE (C1/C2) - Avançado</li>
+        <li>Simulados e técnicas de prova</li>
       </ul>
+      <div class="card-action">
+        <span class="btn" style="width: 100%; display: block; text-align: center;">Começar agora →</span>
+      </div>
     </div>
   </div>
 </section>
 
+<!-- AGENDAMENTO RÁPIDO -->
+<section class="quick-book">
+  <h2><i class="fas fa-rocket"></i> Comece hoje mesmo</h2>
+  <p>Agende sua aula experimental em menos de 1 minuto</p>
+  
+  <form class="quick-book-form" onsubmit="handleQuickBook(event)">
+    <input type="text" id="quickNome" placeholder="Seu nome" required>
+    <input type="email" id="quickEmail" placeholder="Seu email" required>
+    <select id="quickTipo" required>
+      <option value="">Tipo de aula...</option>
+      <option value="experimental">Aula Experimental (5 USD)</option>
+      <option value="regular">Aula Regular (10 USD)</option>
+    </select>
+    <button type="submit">
+      <i class="fas fa-paper-plane"></i> Quero agendar!
+    </button>
+  </form>
+</section>
+
+<!-- FOOTER -->
 <footer id="contato">
-  © 2026 • Professor de Português Online
+  <div class="footer-links">
+    <a href="#" onclick="openModal('loginModal')"><i class="fas fa-user"></i> Área do Aluno</a>
+    <a href="tutor.html"><i class="fas fa-chalkboard-teacher"></i> Área do Professor</a>
+    <a href="https://wa.me/258853131045" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+    <a href="#video"><i class="fas fa-play"></i> Vídeo</a>
+  </div>
+  <p>© 2026 • Professor de Português Online • Filipe Monteiro</p>
+  <p style="margin-top: 10px; font-size: 0.9em;">
+    <i class="fas fa-envelope"></i> contato@professorportugues.com
+  </p>
 </footer>
 
-<a class="chat" href="https://wa.me/258853131045" target="_blank">💬</a>
+<!-- WHATSAPP -->
+<a class="chat" href="https://wa.me/258853131045" target="_blank" title="Fale comigo no WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+</a>
+
+<script>
+  // Dados compartilhados com os dashboards
+  let appData = JSON.parse(localStorage.getItem('preply_dados')) || {
+    usuarios: [],
+    aulas: [],
+    mensagens: [],
+    tutor: {
+      nome: 'Filipe Monteiro',
+      saldo: 0,
+      avaliacao: 4.9
+    }
+  };
+
+  let currentUser = JSON.parse(localStorage.getItem('preply_user')) || null;
+
+  function saveData() {
+    localStorage.setItem('preply_dados', JSON.stringify(appData));
+  }
+
+  function saveUser() {
+    localStorage.setItem('preply_user', JSON.stringify(currentUser));
+  }
+
+  // Inicialização
+  document.addEventListener('DOMContentLoaded', () => {
+    checkUser();
+    
+    // Configurar data mínima nos inputs de data
+    const hoje = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('input[type="date"]').forEach(input => {
+      input.min = hoje;
+    });
+    
+    // Atualizar estatísticas
+    updateStats();
+  });
+
+  function checkUser() {
+    const nav = document.getElementById('userNav');
+    const userName = document.getElementById('userName');
+    
+    if (currentUser) {
+      nav.classList.add('active');
+      userName.textContent = currentUser.nome.split(' ')[0];
+    } else {
+      nav.classList.remove('active');
+    }
+  }
+
+  function updateStats() {
+    // Simular estatísticas dinâmicas
+    const alunos = appData.usuarios.filter(u => u.tipo === 'aluno').length;
+    const aulas = appData.aulas.length;
+    
+    if (alunos > 0) {
+      document.getElementById('stat-alunos').textContent = (150 + alunos) + '+';
+    }
+    if (aulas > 0) {
+      document.getElementById('stat-aulas').textContent = (1200 + aulas) + '+';
+    }
+  }
+
+  // Modais
+  function openModal(modalId) {
+    document.getElementById(modalId).classList.add('active');
+  }
+
+  function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove('active');
+  }
+
+  function switchModal(from, to) {
+    closeModal(from);
+    setTimeout(() => openModal(to), 200);
+  }
+
+  function openBooking() {
+    if (!currentUser) {
+      openModal('loginModal');
+      showNotification('Faça login para agendar uma aula!');
+    } else {
+      openModal('bookingModal');
+    }
+  }
+
+  // Login
+  function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const senha = document.getElementById('loginSenha').value;
+    const tipo = document.getElementById('loginTipo').value;
+    
+    const user = appData.usuarios.find(u => u.email === email && u.senha === senha);
+    
+    if (user) {
+      currentUser = user;
+      saveUser();
+      checkUser();
+      closeModal('loginModal');
+      showNotification(`Bem-vindo, ${user.nome}!`);
+      
+      // Se for tutor, redirecionar
+      if (user.tipo === 'tutor') {
+        setTimeout(() => {
+          window.location.href = 'tutor.html';
+        }, 1000);
+      }
+    } else {
+      showNotification('Email ou senha incorretos!', 'error');
+    }
+  }
+
+  // Registro
+  function handleRegister(e) {
+    e.preventDefault();
+    const nome = document.getElementById('regNome').value;
+    const email = document.getElementById('regEmail').value;
+    const senha = document.getElementById('regSenha').value;
+    const tipo = document.getElementById('regTipo').value;
+    
+    if (appData.usuarios.find(u => u.email === email)) {
+      showNotification('Este email já está cadastrado!', 'error');
+      return;
+    }
+    
+    const novoUsuario = {
+      id: Date.now(),
+      nome,
+      email,
+      senha,
+      tipo,
+      criado: new Date().toISOString()
+    };
+    
+    appData.usuarios.push(novoUsuario);
+    currentUser = novoUsuario;
+    
+    saveData();
+    saveUser();
+    checkUser();
+    closeModal('registerModal');
+    showNotification('Conta criada com sucesso!');
+    
+    // Criar dashboard do aluno se necessário
+    if (tipo === 'aluno') {
+      // Inicializar dados do aluno
+      if (!appData.aluno) appData.aluno = {};
+    }
+  }
+
+  // Agendamento
+  function handleBooking(e) {
+    e.preventDefault();
+    if (!currentUser) {
+      openModal('loginModal');
+      return;
+    }
+    
+    const tipo = document.getElementById('bookTipo').value;
+    const data = document.getElementById('bookData').value;
+    const hora = document.getElementById('bookHora').value;
+    const objetivo = document.getElementById('bookObjetivo').value;
+    
+    const preco = tipo === 'experimental' ? 5 : tipo === 'pacote' ? 45 : 10;
+    
+    const novaAula = {
+      id: Date.now(),
+      alunoId: currentUser.id,
+      alunoNome: currentUser.nome,
+      tutor: 'Filipe Monteiro',
+      tutorId: 'tutor_001',
+      tipo,
+      data,
+      hora,
+      objetivo,
+      preco,
+      status: 'agendada',
+      criada: new Date().toISOString()
+    };
+    
+    appData.aulas.push(novaAula);
+    saveData();
+    
+    closeModal('bookingModal');
+    showNotification(`Aula agendada! Enviamos confirmação para ${currentUser.email}`);
+    
+    // Adicionar mensagem automática
+    appData.mensagens.push({
+      id: Date.now(),
+      from: 'Filipe Monteiro',
+      to: currentUser.nome,
+      text: `Olá ${currentUser.nome.split(' ')[0]}! Recebi seu agendamento para ${data} às ${hora}. Confirmo minha disponibilidade!`,
+      time: new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}),
+      read: false
+    });
+    saveData();
+    
+    updateStats();
+  }
+
+  // Agendamento rápido
+  function handleQuickBook(e) {
+    e.preventDefault();
+    const nome = document.getElementById('quickNome').value;
+    const email = document.getElementById('quickEmail').value;
+    const tipo = document.getElementById('quickTipo').value;
+    
+    // Criar usuário temporário ou usar existente
+    let user = appData.usuarios.find(u => u.email === email);
+    if (!user) {
+      user = {
+        id: Date.now(),
+        nome,
+        email,
+        senha: 'temp123',
+        tipo: 'aluno',
+        criado: new Date().toISOString()
+      };
+      appData.usuarios.push(user);
+      saveData();
+    }
+    
+    currentUser = user;
+    saveUser();
+    checkUser();
+    
+    // Preencher e abrir modal de agendamento
+    openModal('bookingModal');
+    document.getElementById('bookTipo').value = tipo;
+    
+    showNotification('Ótimo! Agora escolha a data e horário.');
+  }
+
+  function selectObjective(obj) {
+    document.getElementById('bookObjetivo').value = 
+      obj === 'criancas' ? 'Iniciante' :
+      obj === 'conversacao' ? 'Conversação' :
+      obj === 'negocios' ? 'Português para negócios' :
+      obj === 'viagens' ? 'Viagens' : 'Preparação para exame';
+    openBooking();
+  }
+
+  function goToDashboard() {
+    if (!currentUser) return;
+    
+    if (currentUser.tipo === 'tutor') {
+      window.location.href = 'tutor.html';
+    } else {
+      window.location.href = 'estudante.html';
+    }
+  }
+
+  function logout() {
+    currentUser = null;
+    localStorage.removeItem('preply_user');
+    checkUser();
+    showNotification('Você saiu da conta.');
+  }
+
+  function showNotification(text, type = 'success') {
+    const notif = document.getElementById('notification');
+    const notifText = document.getElementById('notif-text');
+    
+    notifText.textContent = text;
+    notif.style.background = type === 'error' ? '#dc3545' : '#28a745';
+    notif.classList.add('show');
+    
+    setTimeout(() => {
+      notif.classList.remove('show');
+    }, 4000);
+  }
+
+  // Fechar modal ao clicar fora
+  window.onclick = function(e) {
+    if (e.target.classList.contains('modal-overlay')) {
+      e.target.classList.remove('active');
+    }
+  }
+</script>
 
 </body>
 </html>
